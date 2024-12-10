@@ -46,6 +46,22 @@ Inicie o servidor
 ```
 
 
+## Contribuindo
+
+Sempre que for iniciar qualquer desenvolvimento criar uma nova branch com base na branch `main` e nomear a branch com base no que está sendo feito. Após o desenvolvimento e tudo funcionando fazer o merge com a branch `main`.
+
+Comandos úteis:
+- Trocar de branch existente: `git checkout nomedabranch`
+- Trocar e criar nova branch: `git checkout -b nomedabranch`
+- Adicionar alterações: `git add nomearquivo`
+- Commitar: `git commit -m 'commit'`
+- Subir as alterações: `git push`
+- Merge: `git merge nomedabranch`
+
+
+
+
+
 ## Stack Utilizada
 
 **Front-end:** Bootstrap
