@@ -50,6 +50,8 @@ Inicie o servidor
 
 Sempre que for iniciar qualquer desenvolvimento criar uma nova branch com base na branch `main` e nomear a branch com base no que está sendo feito. Após o desenvolvimento e tudo funcionando fazer o merge com a branch `main`.
 
+De preferência seguir os padrões explicados no artigo [Padrões e Nomenclaturas no Git](https://www.brunodulcetti.com/padroes-e-nomenclaturas-no-git/).
+
 Comandos úteis:
 - Trocar de branch existente: `git checkout nomedabranch`
 - Trocar e criar nova branch: `git checkout -b nomedabranch`
