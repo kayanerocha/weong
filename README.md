@@ -38,10 +38,16 @@ Instale as bibliotecas
   pip install -m requirements.txt
 ```
 
-Inicie o servidor
+Aplique as migrações (precisa de um banco de dados MySQL chamado weong)
 
 ```bash
   cd weong
+  python manage.py migrate
+```
+
+Inicie o servidor
+
+```bash
   python manage.py runserver 7000
 ```
 
