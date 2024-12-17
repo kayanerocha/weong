@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Vagas</h1>
+    <p>Lista de vagas abertas WeOng</p>
+    {% for v in vagas %}
+        <tr class="{% cycle 'row1' 'row2' %}">
+            {{ v }}
+        </tr>
+    {% endfor %}
+{% endblock %}
