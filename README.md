@@ -41,14 +41,19 @@ Instale as bibliotecas
 Aplique as migrações (precisa de um banco de dados MySQL chamado weong)
 
 ```bash
-  cd weong
-  python manage.py migrate
+  python weong\\manage.py migrate
 ```
 
 Inicie o servidor
 
 ```bash
-  python manage.py runserver 7000
+  python weong\\manage.py runserver 7000
+```
+
+Crie um usuário administrador
+
+```bash
+  python weong\\manage.py createsuperuser
 ```
 
 
