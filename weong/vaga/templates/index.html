@@ -1,11 +1,19 @@
 {% extends "base.html" %}
 
+{% block titulo %}<title>{{ titulo }}</title>{% endblock %}
+
 {% block content %}
-    <h1>Vagas</h1>
-    <p>Lista de vagas abertas WeOng</p>
-    {% for v in vagas %}
-        <tr class="{% cycle 'row1' 'row2' %}">
-            {{ v }}
-        </tr>
-    {% endfor %}
+    <h1>{{ titulo }}</h1>
+    <p>Lista de vagas abertas no WeOng</p>
+    {% if vagas %}
+    <ul>
+        {% for v in vagas %}
+            <li style="list-style-type: none;">
+                <a href="{{ v.get_absolute_url }}">{{ v.titulo }}</a> - {{ v.created_at }}
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>Não há vagas abertas.</p>
+    {% endif %}
 {% endblock %}
