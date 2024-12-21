@@ -38,6 +38,20 @@ Instale as bibliotecas
   pip install -m requirements.txt
 ```
 
+## Variáveis de Ambiente
+
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
+
+`DB_HOST`
+
+`DB_NAME`
+
+`DB_USER`
+
+`DB_PASSWORD`
+
+`DB_PORT`
+
 Aplique as migrações (precisa de um banco de dados MySQL chamado weong)
 
 ```bash
