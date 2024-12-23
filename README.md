@@ -35,12 +35,12 @@ Ative o ambiente virtual
 Instale as bibliotecas
 
 ```bash
-  pip install -m requirements.txt
+  pip install -r requirements.txt
 ```
 
-## Variáveis de Ambiente
+### Variáveis de Ambiente
 
-Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env (renomear .env.exemple para .env)
 
 `DB_HOST`
 
@@ -58,7 +58,7 @@ Aplique as migrações (precisa de um banco de dados MySQL chamado weong)
   python weong\\manage.py migrate
 ```
 
-Inicie o servidor
+Inicie o servidor (pode alterar a porta para uma que esteja disponível)
 
 ```bash
   python weong\\manage.py runserver 7000
