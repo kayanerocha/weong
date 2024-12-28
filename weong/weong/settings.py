@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'vaga.apps.VagaConfig',
+    'usuario.apps.UsuarioConfig',
 ]
 
 MIDDLEWARE = [
