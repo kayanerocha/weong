@@ -44,6 +44,8 @@ class Endereco(models.Model):
 
     estado = models.CharField(max_length=2, choices=ESTADOS)
     cep = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'endereco'
