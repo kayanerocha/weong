@@ -10,6 +10,7 @@
         {% for v in vagas %}
             <li>
                 <a href="{{ v.get_absolute_url }}">{{ v.titulo }}</a> - {{ v.created_at }}
+                <p>{{ v.endereco }}</p>
             </li>
         {% endfor %}
     </ul>
