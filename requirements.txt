@@ -4,3 +4,4 @@ mysqlclient==2.2.6
 python-decouple==3.8
 sqlparse==0.5.2
 tzdata==2024.2
+validate-docbr==1.10.0
