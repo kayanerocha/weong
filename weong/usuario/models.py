@@ -14,15 +14,16 @@ class Ong(models.Model):
     razao_social = models.CharField(max_length=255, blank=True, null=True)
     cnpj = models.CharField(max_length=14)
     telefone = models.CharField(max_length=11, help_text='Contato de um responsável da ONG.')
-    site = models.CharField(max_length=255, blank=True, null=True)
+    site = models.URLField(max_length=255, blank=True, null=True)
 
     STATUS_ONG = (
+        ('Pendente', 'Pendente'),
+        ('Em análise', 'Em análise'),
         ('Ativa', 'Ativa'),
         ('Inativa', 'Inativa'),
-        ('Em análise', 'Em análise')
     )
 
-    status = models.CharField(max_length=50, choices=STATUS_ONG)
+    status = models.CharField(max_length=50, choices=STATUS_ONG, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT)
