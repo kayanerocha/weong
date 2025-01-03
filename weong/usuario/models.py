@@ -12,7 +12,7 @@ class Ong(models.Model):
     id = models.AutoField(primary_key=True)
     nome_fantasia = models.CharField(max_length=255)
     razao_social = models.CharField(max_length=255, blank=True, null=True)
-    cnpj = models.CharField(max_length=14)
+    cnpj = models.CharField(max_length=14, unique=True)
     telefone = models.CharField(max_length=11, help_text='Contato de um responsável da ONG.')
     site = models.URLField(max_length=255, blank=True, null=True)
 

@@ -17,11 +17,22 @@ class CadastroOngForm(forms.Form):
         cnpj = self.cleaned_data['cnpj']
         cnpj_valido = CNPJ()
         if not cnpj_valido.validate(cnpj):
-            raise ValidationError(_('CNPJ inválido, corrija.'))
+            raise ValidationError(_('CNPJ inválido.'), code='invalido')
         return cnpj
     
     def clean_telefone(self):
-        ddd = self.cleaned_data['telefone'][:2]
+        DDDS = (
+            61, 62, 64, 65, 66, 67, # centro oeste
+            82, 71, 73, 74, 75, 77, 85, 88, 98, 99, 83, 82, 87, 86, 89, 84, 79, # nordeste
+            68, 96, 92, 97, 91, 93, 94, 69, 95, 63, # Norte
+            27, 28, 31, 31, 33, 34, 35, 37, 38, 21, 22, 24, 11, 12, 13, 14, 15, 16, 17, 18, 19, # Sudeste
+            41, 42, 43, 44, 45, 46, # Sul
+        )
+        telefone = self.cleaned_data['telefone']
+        ddd = telefone[:2]
+        if int(ddd) not in DDDS:
+            raise ValidationError(_('Número de telefone inválido.'), code='invalido')
+        return telefone
 
         
 
