@@ -1,11 +1,13 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
-</html>
+<form method="post">
+    {% csrf_token %}
+    <h2>Informações do Usuário</h2>
+    {{ form_usuario.as_p }}
+
+    <h2>Informações da ONG</h2>
+    {{ form_ong.as_p }}
+
+    <h2>Endereço</h2>
+    {{ form_endereco.as_p }}
+
+    <button type="submit">Cadastrar</button>
+</form>

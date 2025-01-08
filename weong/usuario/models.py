@@ -23,7 +23,7 @@ class Ong(models.Model):
         ('Inativa', 'Inativa'),
     )
 
-    status = models.CharField(max_length=50, choices=STATUS_ONG, default='')
+    status = models.CharField(max_length=50, choices=STATUS_ONG, default='Pendente')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT)
@@ -36,3 +36,4 @@ class Ong(models.Model):
     
     def get_absolute_url(self):
         return reverse('detalhe-ong', args=[str(self.id)])
+
