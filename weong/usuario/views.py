@@ -17,18 +17,26 @@ def cadastro_ong(request):
         form_usuario = CadastroUsuarioForm(request.POST)
         form_ong = CadastroOngForm(request.POST)
         form_endereco = CadastroEnderecoForm(request.POST)
+
+        print(form_usuario.errors)
+        print(form_ong.errors)
+        print(form_endereco.errors)
         
         if form_usuario.is_valid() and form_ong.is_valid() and form_endereco.is_valid():
             usuario = form_usuario.save(commit=False)
             usuario.set_password(form_usuario.cleaned_data['password'])
+            usuario.is_active = False
             usuario.save()
 
             endereco = form_endereco.save()
-
-            ong = form_ong.save(commit=False)
-            ong.usuario = usuario
-            ong.endereco = endereco
-            ong.save()
+            
+            try:
+                ong = form_ong.save(commit=False)
+                ong.usuario = usuario
+                ong.endereco = endereco
+                ong.save()
+            except Exception as e:
+                print(e)
 
             return redirect('/')
         else:
