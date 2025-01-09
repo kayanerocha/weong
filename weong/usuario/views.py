@@ -11,9 +11,7 @@ from usuario.models import Ong
 
 
 def cadastro_ong(request):
-    print('inicio')
     if request.method == 'POST':
-        print('é um post')
         form_usuario = CadastroUsuarioForm(request.POST)
         form_ong = CadastroOngForm(request.POST)
         form_endereco = CadastroEnderecoForm(request.POST)
