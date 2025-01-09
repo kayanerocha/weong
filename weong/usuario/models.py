@@ -29,7 +29,7 @@ class Ong(models.Model):
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT)
 
     class Meta:
-        db_table = 'ong'
+        db_table = 'ongs'
     
     def __str__(self):
         return self.nome_fantasia
