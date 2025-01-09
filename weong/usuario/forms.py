@@ -4,10 +4,15 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
+from brasilapy import BrasilAPI
+from brasilapy.constants import APIVersion
+from brasilapy.exceptions import ProcessorException
 from validate_docbr import CNPJ
 
 from .models import Ong
 from vaga.models import Endereco
+
+client = BrasilAPI()
 
 class CadastroUsuarioForm(forms.ModelForm):
     username = forms.CharField(min_length=3, max_length=150, label='Usuário')
@@ -41,6 +46,17 @@ class CadastroEnderecoForm(forms.ModelForm):
     class Meta:
         model = Endereco
         fields = ['logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep']
+    
+    def clean_cep(self):
+        cep = self.cleaned_data['cep']
+        try:
+            client.get_cep(cep, APIVersion.V1)
+        except ProcessorException:
+            try:
+                client.get_cep(cep, APIVersion.V2)
+            except ProcessorException:
+                raise ValidationError(_('CEP não encontrado.'), code='invalido')    
+        return cep
 
 class CadastroOngForm(forms.ModelForm):
     nome_fantasia = forms.CharField(max_length=255, label='Nome Fantasia')
@@ -61,21 +77,10 @@ class CadastroOngForm(forms.ModelForm):
         return cnpj
     
     def clean_telefone(self):
-        DDDS = (
-            61, 62, 64, 65, 66, 67, # centro oeste
-            82, 71, 73, 74, 75, 77, 85, 88, 98, 99, 83, 82, 87, 86, 89, 84, 79, # nordeste
-            68, 96, 92, 97, 91, 93, 94, 69, 95, 63, # Norte
-            27, 28, 31, 31, 33, 34, 35, 37, 38, 21, 22, 24, 11, 12, 13, 14, 15, 16, 17, 18, 19, # Sudeste
-            41, 42, 43, 44, 45, 46, # Sul
-        )
         telefone = self.cleaned_data['telefone']
         ddd = telefone[:2]
-        if int(ddd) not in DDDS:
+        try:
+            client.get_ddd(ddd).dict()
+        except ProcessorException as e:
             raise ValidationError(_('Número de telefone inválido.'), code='invalido')
         return telefone
-
-        
-
-
-
-
