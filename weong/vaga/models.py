@@ -48,7 +48,7 @@ class Endereco(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'endereco'
+        db_table = 'enderecos'
 
     def __str__(self):
         return f'{self.logradouro}, {self.numero}, {self.complemento} - {self.bairro}, {self.cidade} - {self.estado}, {self.cep}'.replace('- None', '').replace(', None', '')
@@ -68,7 +68,7 @@ class Vaga(models.Model):
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, null=True)
 
     class Meta:
-        db_table = 'vaga'
+        db_table = 'vagas'
 
     def __str__(self):
         '''String representando um objeto'''
