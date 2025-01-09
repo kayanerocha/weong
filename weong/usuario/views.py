@@ -17,10 +17,6 @@ def cadastro_ong(request):
         form_usuario = CadastroUsuarioForm(request.POST)
         form_ong = CadastroOngForm(request.POST)
         form_endereco = CadastroEnderecoForm(request.POST)
-
-        print(form_usuario.errors)
-        print(form_ong.errors)
-        print(form_endereco.errors)
         
         if form_usuario.is_valid() and form_ong.is_valid() and form_endereco.is_valid():
             usuario = form_usuario.save(commit=False)
@@ -30,13 +26,10 @@ def cadastro_ong(request):
 
             endereco = form_endereco.save()
             
-            try:
-                ong = form_ong.save(commit=False)
-                ong.usuario = usuario
-                ong.endereco = endereco
-                ong.save()
-            except Exception as e:
-                print(e)
+            ong = form_ong.save(commit=False)
+            ong.usuario = usuario
+            ong.endereco = endereco
+            ong.save()
 
             return redirect('/')
         else:
