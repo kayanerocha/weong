@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block titulo %}<title>{{ titulo }}</title>{% endblock %}
+
+{% block content %}
+    <h1>{{ titulo }}</h1>
+    {% if user.is_authenticated %}
+        Oi {{ user.username }}!
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <p>Você não está logado</p>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+    <p>Lista de vagas abertas no WeOng</p>
+    {% if vagas %}
+    <ul>
+        {% for v in vagas %}
+            <li>
+                <a href="{{ v.get_absolute_url }}">{{ v.titulo }}</a> - {{ v.created_at }}
+                <p>{{ v.endereco }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>Não há vagas abertas.</p>
+    {% endif %}
+{% endblock %}
