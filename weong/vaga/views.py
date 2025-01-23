@@ -24,7 +24,7 @@ class ListaVagasView(generic.ListView):
 class DetalheVagaView(generic.DetailView):
     model = Vaga
 
-def cadastro_vaga(request):
+def cadastrar_vaga(request):
     if not request.user.is_authenticated:
         return redirect('login')
     
@@ -36,6 +36,7 @@ def cadastro_vaga(request):
             endereco = form_endereco.save()
             vaga = form_vaga.save(commit=False)
             vaga.endereco = endereco
+            vaga.ong = request.user.ong
             vaga.save()
             return redirect('detalhe-vaga', pk=vaga.pk)
         else:
