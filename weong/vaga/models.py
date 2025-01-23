@@ -66,6 +66,7 @@ class Vaga(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, null=True)
+    ong = models.ForeignKey('usuario.Ong', on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = 'vagas'
