@@ -6,4 +6,7 @@
     <p>{{ vaga.descricao }}</p>
     <p>{{ vaga.requisitos }}</p>
     <p>{{ vaga.endereco }}</p>
+    {% if vaga.ong and vaga.ong.usuario_id == user.id %}
+    <a href="">Editar</a>
+    {% endif %}
 {% endblock %}
