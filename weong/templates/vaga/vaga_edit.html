@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block titulo %}<title>Cadastro de Vaga</title>{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+        {% csrf_token %}
+        <h2>Dados da Vaga</h2>
+        {{ form_vaga.as_p }}
+        <h2>Dados do Endereço</h2>
+        {{ form_endereco.as_p }}
+        <button type="submit">Salvar</button>
+    </form>
+
+{% endblock %}

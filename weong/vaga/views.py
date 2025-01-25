@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from .models import Vaga
 from .forms import VagaForm
 from usuario.forms import CadastroEnderecoForm
+from usuario.models import Endereco
 
 class ListaVagasView(generic.ListView):
     model = Vaga
@@ -46,3 +47,25 @@ def cadastrar_vaga(request):
         form_endereco = CadastroEnderecoForm()
 
     return render(request, 'vaga/cadastro.html', {'form_vaga': form_vaga, 'form_endereco': form_endereco})
+
+def editar_vaga(request, pk=None):
+    
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    vaga = Vaga.objects.get(id=pk)
+    form_vaga = VagaForm(request.POST or None, instance=vaga)
+    form_endereco = CadastroEnderecoForm(request.POST or None, instance=vaga.endereco)
+
+    if request.user.id != vaga.ong.usuario_id:
+        return redirect('index')
+    
+    if request.method == 'POST':
+        print('post')
+        if form_vaga.is_valid() and form_endereco.is_valid():
+            print('válido')
+            form_endereco.save()
+            form_vaga.save()
+
+            return redirect('detalhe-vaga', pk=vaga.pk)
+    return render(request, 'vaga/vaga_edit.html', {'form_vaga': form_vaga, 'form_endereco': form_endereco})
