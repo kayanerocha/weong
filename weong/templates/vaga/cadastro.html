@@ -7,9 +7,9 @@
     <form method="post">
         {% csrf_token %}
         <h2>Dados da Vaga</h2>
-        {{ form_vaga.as_p }}
+        {{ form.as_p }}
         <h2>Dados do Endereço</h2>
-        {{ form_endereco.as_p }}
+        {{ endereco_form.as_p }}
         <button type="submit">Cadastrar</button>
     </form>
 
