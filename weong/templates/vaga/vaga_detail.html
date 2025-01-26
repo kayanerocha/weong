@@ -7,6 +7,7 @@
     <p>{{ vaga.requisitos }}</p>
     <p>{{ vaga.endereco }}</p>
     {% if vaga.ong and vaga.ong.usuario_id == user.id %}
-    <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
+        <p>Preenchida: {{ vaga.preenchida }}</p>
+        <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
     {% endif %}
 {% endblock %}
