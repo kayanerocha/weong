@@ -1,12 +1,14 @@
-from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import generic
+from django.views.generic.edit import CreateView
+from django.views.generic.list import ListView
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse_lazy
 
 from .models import Vaga
 from .forms import VagaForm
 from usuario.forms import CadastroEnderecoForm
-from usuario.models import Endereco
+from usuario.models import Ong
 
 class ListaVagasView(generic.ListView):
     model = Vaga
@@ -24,29 +26,6 @@ class ListaVagasView(generic.ListView):
 
 class DetalheVagaView(generic.DetailView):
     model = Vaga
-
-def cadastrar_vaga(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
-    
-    if request.method == 'POST' and request.user.is_authenticated:
-        form_vaga = VagaForm(request.POST)
-        form_endereco = CadastroEnderecoForm(request.POST)
-
-        if form_vaga.is_valid() and form_endereco.is_valid():
-            endereco = form_endereco.save()
-            vaga = form_vaga.save(commit=False)
-            vaga.endereco = endereco
-            vaga.ong = request.user.ong
-            vaga.save()
-            return redirect('detalhe-vaga', pk=vaga.pk)
-        else:
-            messages.error(request, _('Cadastro de vaga não realizado.'))
-    else:
-        form_vaga = VagaForm()
-        form_endereco = CadastroEnderecoForm()
-
-    return render(request, 'vaga/cadastro.html', {'form_vaga': form_vaga, 'form_endereco': form_endereco})
 
 def editar_vaga(request, pk=None):
     
@@ -69,3 +48,42 @@ def editar_vaga(request, pk=None):
 
             return redirect('detalhe-vaga', pk=vaga.pk)
     return render(request, 'vaga/vaga_edit.html', {'form_vaga': form_vaga, 'form_endereco': form_endereco})
+
+class VagaCreate(CreateView):
+    model = Vaga
+    form_class = VagaForm
+    template_name = 'vaga/cadastro.html'
+    success_url = reverse_lazy('index')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['endereco_form'] = CadastroEnderecoForm(self.request.POST)
+        else:
+            context['endereco_form'] = CadastroEnderecoForm()
+        return context
+    
+    def form_valid(self, form):
+        context = self.get_context_data()
+        endereco_form = context['endereco_form']
+        if endereco_form.is_valid():
+            endereco = endereco_form.save()
+            vaga = form.save(commit=False)
+            vaga.endereco = endereco
+            vaga.ong = self.request.user.ong
+            vaga.save()
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+class VagaList(ListView):
+    model = Vaga
+    template_name = 'vaga/vaga_list.html'
+
+    def get_queryset(self):
+        return Vaga.objects.filter(preenchida__exact=0)
+
+class MinhasVagasList(VagaList):
+    def get_queryset(self):
+        ong = Ong.objects.filter(usuario_id__exact=self.request.user.id).get()
+        return Vaga.objects.filter(ong_id__exact=ong.id)
