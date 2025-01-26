@@ -9,5 +9,6 @@
     {% if vaga.ong and vaga.ong.usuario_id == user.id %}
         <p>Preenchida: {{ vaga.preenchida }}</p>
         <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
+        <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
     {% endif %}
 {% endblock %}

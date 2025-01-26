@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.views.generic.edit import CreateView
+from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
@@ -53,7 +54,7 @@ class VagaCreate(CreateView):
     model = Vaga
     form_class = VagaForm
     template_name = 'vaga/cadastro.html'
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('minhas-vagas')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -82,6 +83,11 @@ class VagaList(ListView):
 
     def get_queryset(self):
         return Vaga.objects.filter(preenchida__exact=0)
+
+class VagaDelete(DeleteView):
+    model = Vaga
+    template_name = 'vaga/vaga_delete.html'
+    success_url = reverse_lazy('minhas-vagas')
 
 class MinhasVagasList(VagaList):
     def get_queryset(self):

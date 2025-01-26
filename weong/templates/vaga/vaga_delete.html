@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <p>Tem certeza que deseja deletar a vaga "{{ vaga }}"?</p>
+        <a href="{{ vaga.get_absolute_url }}">Cancelar</a>
+        <button type="submit" value="">Deletar</button>
+    </form>
+{% endblock %}
