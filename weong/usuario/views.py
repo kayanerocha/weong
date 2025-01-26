@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
