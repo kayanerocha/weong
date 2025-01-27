@@ -4,6 +4,17 @@
 
 {% block content %}
     <h1>{{ titulo }}</h1>
+    {% if user.is_authenticated %}
+        Oi {{ user.username }}!
+        <p><a href="{% url 'password_change' %}">Alterar Senha</a></p>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <p>Você não está logado</p>
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
     <p>Lista de vagas abertas no WeOng</p>
     {% if vagas %}
     <ul>

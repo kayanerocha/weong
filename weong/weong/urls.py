@@ -17,13 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
-from django.urls import path
+from django.urls import path, include as inc
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('vagas/', include('vaga.urls')),
     path('usuario/', include('usuario.urls')),
     path('', RedirectView.as_view(url='/vagas/', permanent=True)),

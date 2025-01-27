@@ -41,7 +41,7 @@ class CadastroEnderecoForm(forms.ModelForm):
     bairro = forms.CharField(max_length=255, label='Bairro', required=False)
     cidade = forms.CharField(max_length=255, label='Cidade')
     estado = forms.CharField(widget=forms.Select(choices=Endereco.ESTADOS), label='Estado')
-    cep = forms.CharField(max_length=10, label='CEP')
+    cep = forms.CharField(max_length=8, label='CEP')
 
     class Meta:
         model = Endereco
