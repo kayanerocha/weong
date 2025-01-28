@@ -19,6 +19,7 @@
                     <li><a href="{% url 'index' %}">Home</a></li>
                     {% if not user.is_authenticated %}
                     <li><a href="{% url 'cadastro-ong' %}">Cadastro de Ong</a></li>
+                    <li><a href="{% url 'cadastro-voluntario' %}">Cadastro de Voluntário</a></li>
                     <li><a href="{% url 'login' %}">Login</a></li>
                     {% endif %}
                     {% if user.is_authenticated and user.ong %}
