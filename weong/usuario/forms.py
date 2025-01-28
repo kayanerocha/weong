@@ -7,9 +7,9 @@ from django.utils.translation import gettext_lazy as _
 from brasilapy import BrasilAPI
 from brasilapy.constants import APIVersion
 from brasilapy.exceptions import ProcessorException
-from validate_docbr import CNPJ
+from validate_docbr import CNPJ, CPF
 
-from .models import Ong
+from .models import Ong, Voluntario
 from vaga.models import Endereco
 
 client = BrasilAPI()
@@ -82,5 +82,36 @@ class CadastroOngForm(forms.ModelForm):
         try:
             client.get_ddd(ddd).dict()
         except ProcessorException as e:
+            raise ValidationError(_('Número de telefone inválido.'), code='invalido')
+        return telefone
+
+class CadastroVoluntarioForm(forms.ModelForm):
+    nome_completo=forms.CharField(max_length=255, label='Nome Completo')
+    telefone = forms.CharField(max_length=11, label='Telefone')
+    cpf = forms.CharField(max_length=11, label='CPF')
+    data_nascimento = forms.DateField(label='Data de Nascimento', widget=forms.DateInput(attrs={'type': 'date'}))
+    
+    class Meta:
+        model = Voluntario
+        fields = [
+            'nome_completo',
+            'telefone',
+            'cpf',
+            'data_nascimento',
+        ]
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data['cpf']
+        cpf_valido = CPF()
+        if not cpf_valido.validate(cpf):
+            raise ValidationError(_('CPF inválido.'), code='invalido')
+        return cpf
+
+    def clean_telefone(self):
+        telefone = self.cleaned_data['telefone']
+        ddd = telefone[:2]
+        try:
+            client.get_ddd(ddd).dict()
+        except ProcessorException:
             raise ValidationError(_('Número de telefone inválido.'), code='invalido')
         return telefone
