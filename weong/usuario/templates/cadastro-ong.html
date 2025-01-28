@@ -88,34 +88,45 @@
                             <!-- Nome da ONG e CNPJ -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" name="nome_ong" class="form-control" placeholder=" " required>
-                                    <label>Nome da ONG</label>
+                                    <input type="text" id="razao_social" name="razao_social" class="form-control" placeholder=" " required>
+                                    <label for="razao_social">Razão Social</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" name="cnpj" class="form-control" placeholder=" " required>
-                                    <label>CNPJ</label>
+                                    <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder=" " required>
+                                    <label for="cnpj">CNPJ</label>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" placeholder=" " required>
+                                    <label for="nome_fantasia">Nome fantasia</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="email" id="email" name="cnpj" class="form-control" placeholder=" " required>
+                                    <label for="email">Email</label>
                                 </div>
                             </div>
 
                             <!-- CEP, Bairro, Logradouro e Número -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" name="cep" class="form-control" placeholder=" " required>
-                                    <label>CEP</label>
+                                    <input type="number" id="cep" name="cep" class="form-control" placeholder=" " required>
+                                    <label for="cep">CEP</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" name="bairro" class="form-control" placeholder=" " required>
-                                    <label>Bairro</label>
+                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " required>
+                                    <label for="bairro">Bairro</label>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-8 form-group">
-                                    <input type="text" name="logradouro" class="form-control" placeholder=" " required>
-                                    <label>Logradouro</label>
+                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" " required>
+                                    <label for="logradouro">Logradouro</label>
                                 </div>
                                 <div class="col-md-4 form-group">
-                                    <input type="text" name="numero" class="form-control" placeholder=" " required>
-                                    <label>Número</label>
+                                    <input type="text" id="numero" name="numero" class="form-control" placeholder=" " required>
+                                    <label for="numero">Número</label>
                                 </div>
                             </div>
 
@@ -126,11 +137,11 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" name="cidade" class="form-control" placeholder=" " required>
-                                    <label>Cidade</label>
+                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" " required>
+                                    <label for="cidade">Cidade</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <select name="estado" class="form-select" required>
+                                    <select name="estado" id="estado" class="form-select" required>
                                         <option value="" disabled selected>Estado</option>
                                         <option value="AC">Acre</option>
                                         <option value="AL">Alagoas</option>
@@ -166,7 +177,7 @@
                             <!-- Telefone, Site, Senha e Confirmar Senha -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" name="telefone" class="form-control" placeholder=" " required>
+                                    <input type="text" name="ddd_telefone_1" class="form-control" placeholder=" " required>
                                     <label>Telefone</label>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -208,4 +219,59 @@
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script>
+    // Função para buscar CNPJ
+    document.getElementById('cnpj').addEventListener('blur', function () {
+        const cnpj = this.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+        if (cnpj.length === 14) { // Verifica se o CNPJ tem 14 dígitos
+            fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('CNPJ não encontrado');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Preenche os campos com os dados retornados pela API
+                    document.getElementById('nome_fantasia').value = data.nome_fantasia || '';
+                    document.getElementById('razao_social').value = data.razao_social || '';
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar CNPJ:', error);
+                    alert('CNPJ não encontrado ou inválido.');
+                });
+        } else {
+            alert('CNPJ inválido. Certifique-se de que possui 14 dígitos.');
+        }
+    });
+
+    // Função para buscar CEP
+    document.getElementById('cep').addEventListener('blur', function () {
+        const cep = this.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+        if (cep.length === 8) { // Verifica se o CEP tem 8 dígitos
+            fetch(`https://brasilapi.com.br/api/cep/v2/${cep}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('CEP não encontrado');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Preenche os campos com os dados retornados pela API
+                    document.getElementById('logradouro').value = data.street || '';
+                    document.getElementById('bairro').value = data.neighborhood || '';
+                    document.getElementById('cidade').value = data.city || '';
+                    document.getElementById('estado').value = data.state || '';
+                    document.getElementById('numero').value = ''; // Número não é fornecido pela API
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar CEP:', error);
+                    alert('CEP não encontrado ou inválido.');
+                });
+        } else {
+            alert('CEP inválido. Certifique-se de que possui 8 dígitos.');
+        }
+    });
+</script>
+
 </html>
