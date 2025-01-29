@@ -1,13 +1,19 @@
-<form method="post">
-    {% csrf_token %}
-    <h2>Informações do Usuário</h2>
-    {{ form_usuario.as_p }}
+{% extends 'base.html' %}
 
-    <h2>Informações pessoais</h2>
-    {{form_voluntario.as_p }}
+{% block content %}
 
-    <h2>Endereço</h2>
-    {{ form_endereco.as_p }}
+    <form method="post">
+        {% csrf_token %}
+        <h2>Informações do Usuário</h2>
+        {{ form_usuario.as_p }}
 
-    <button type="submit">Cadastrar</button>
-</form>
+        <h2>Informações pessoais</h2>
+        {{ form_voluntario.as_p }}
+
+        <h2>Endereço</h2>
+        {{ form_endereco.as_p }}
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+{% endblock %}
