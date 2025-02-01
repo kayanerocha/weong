@@ -1,10 +1,14 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import path
 
-from vaga import views
+from vaga.views import *
 
 urlpatterns = [
-    path('', views.ListaVagasView.as_view(), name='index'),
-    path('lista-vagas/', views.ListaVagasView.as_view(), name='lista-vagas'),
-    path('detalhe-vaga/<int:pk>', views.DetalheVagaView.as_view(), name='detalhe-vaga'),
-    path('cadastro-vaga/', views.cadastro_vaga, name='cadastro-vaga'),
+    path('', VagaList.as_view(), name='index'),
+    path('lista-vagas/', VagaList.as_view(), name='lista-vagas'),
+    path('detalhe-vaga/<int:pk>', DetalheVagaView.as_view(), name='detalhe-vaga'),
+    path('cadastro-vaga/', login_required(VagaCreate.as_view()), name='cadastro-vaga'),
+    path('editar-vaga/<int:pk>', login_required(VagaUpdate.as_view()), name='edita-vaga'),
+    path('minhas-vagas/', login_required(MinhasVagasList.as_view()), name='minhas-vagas'),
+    path('deletar-vaga/<int:pk>', login_required(VagaDelete.as_view()), name='deletar-vaga'),
 ]

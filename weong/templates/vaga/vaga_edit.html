@@ -7,10 +7,10 @@
     <form method="post">
         {% csrf_token %}
         <h2>Dados da Vaga</h2>
-        {{ form.as_p }}
+        {{ form_vaga.as_p }}
         <h2>Dados do Endereço</h2>
-        {{ endereco_form.as_p }}
-        <button type="submit">Cadastrar</button>
+        {{ form_endereco.as_p }}
+        <button type="submit">Salvar</button>
     </form>
 
 {% endblock %}

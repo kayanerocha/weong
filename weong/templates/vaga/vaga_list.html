@@ -16,9 +16,9 @@
         <a href="{% url 'login' %}">Login</a>
     {% endif %}
     <p>Lista de vagas abertas no WeOng</p>
-    {% if lista_vagas %}
+    {% if object_list %}
     <ul>
-        {% for vaga in lista_vagas %}
+        {% for vaga in object_list %}
             <li>
                 <a href="{{ vaga.get_absolute_url }}">{{ vaga.titulo }}</a> - {{ vaga.created_at }}
                 <p>{{ vaga.endereco }}</p>
