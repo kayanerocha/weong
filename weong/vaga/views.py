@@ -3,13 +3,14 @@ from django.views import generic
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
+from django.views.generic.edit import UpdateView
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
 
 from .models import Vaga
 from .forms import VagaForm
 from usuario.forms import CadastroEnderecoForm
-from usuario.models import Ong
+from usuario.models import Ong, Endereco
 
 class ListaVagasView(generic.ListView):
     model = Vaga
@@ -27,28 +28,6 @@ class ListaVagasView(generic.ListView):
 
 class DetalheVagaView(generic.DetailView):
     model = Vaga
-
-def editar_vaga(request, pk=None):
-    
-    if not request.user.is_authenticated:
-        return redirect('login')
-    
-    vaga = Vaga.objects.get(id=pk)
-    form_vaga = VagaForm(request.POST or None, instance=vaga)
-    form_endereco = CadastroEnderecoForm(request.POST or None, instance=vaga.endereco)
-
-    if request.user.id != vaga.ong.usuario_id:
-        return redirect('index')
-    
-    if request.method == 'POST':
-        print('post')
-        if form_vaga.is_valid() and form_endereco.is_valid():
-            print('válido')
-            form_endereco.save()
-            form_vaga.save()
-
-            return redirect('detalhe-vaga', pk=vaga.pk)
-    return render(request, 'vaga/vaga_edit.html', {'form_vaga': form_vaga, 'form_endereco': form_endereco})
 
 class VagaCreate(CreateView):
     model = Vaga
@@ -83,6 +62,33 @@ class VagaList(ListView):
 
     def get_queryset(self):
         return Vaga.objects.filter(preenchida__exact=0)
+
+class VagaUpdate(UpdateView):
+    model = Vaga
+    form_class = VagaForm
+    template_name = 'vaga/vaga_update.html'
+    success_url = reverse_lazy('minhas-vagas')
+
+    def get_context_data(self, **kwargs):
+        context = super(VagaUpdate, self).get_context_data(**kwargs)
+        context['endereco_form'] = CadastroEnderecoForm(self.request.POST or None, self.request.FILES or None, instance=Endereco.objects.get(id=self.get_object().endereco_id))
+        return context
+    
+    def form_valid(self, form):
+        context = self.get_context_data()
+        endereco_form = context['endereco_form']
+
+        if form.is_valid() and endereco_form.is_valid():
+            endereco = endereco_form.save()
+            vaga = form.save(commit=False)
+            vaga.endereco = endereco
+            vaga.ong = self.request.user.ong
+            vaga.save()
+            print('caindo aqui')
+            return super().form_valid(form)
+        else:
+            print('caindo no inválido')
+            return self.form_invalid(form)
 
 class VagaDelete(DeleteView):
     model = Vaga

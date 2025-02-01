@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block titulo %}<title>Atualizando Vaga</title>{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+        {% csrf_token %}
+        <h2>Dados da Vaga</h2>
+        {{ form.as_p }}
+        <h2>Dados do Endereço</h2>
+        {{ endereco_form.as_p }}
+        <button type="submit">Salvar</button>
+    </form>
+
+{% endblock %}
