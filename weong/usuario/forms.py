@@ -35,7 +35,7 @@ class CadastroUsuarioForm(forms.ModelForm):
         return cleaned_data
 
 class CadastroEnderecoForm(forms.ModelForm):
-    logradouro = forms.CadastroUsuarioForm(max_length=255, label='Logradouro')
+    logradouro = forms.CharField(max_length=255, label='Logradouro')
     numero = forms.CharField(max_length=20, label='Número')
     complemento = forms.CharField(max_length=255, label='Complemento', required=False)
     bairro = forms.CharField(max_length=255, label='Bairro', required=False)
