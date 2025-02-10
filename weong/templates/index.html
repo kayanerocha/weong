@@ -12,6 +12,12 @@
         <a href="{% url 'login' %}">Login</a>
     {% endif %}
     <p>Lista de vagas abertas no WeOng</p>
+    {{ perms.vaga.add_vaga }}
+    {% if perms.vaga.add_vaga %}
+    <p>Pode criar vaga</p>
+    {% else %}
+    <p>Não pode criar vaga</p>
+    {% endif %}
     {% if vagas %}
     <ul>
         {% for v in vagas %}

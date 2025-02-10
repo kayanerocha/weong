@@ -11,4 +11,5 @@ urlpatterns = [
     path('editar-vaga/<int:pk>', login_required(VagaUpdate.as_view()), name='edita-vaga'),
     path('minhas-vagas/', login_required(MinhasVagasList.as_view()), name='minhas-vagas'),
     path('deletar-vaga/<int:pk>', login_required(VagaDelete.as_view()), name='deletar-vaga'),
+    path(r'^permissao_negada/$', VagaList.as_view(), name='lista-vagas')
 ]

@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.views import generic
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import DeleteView
@@ -29,11 +30,12 @@ class ListaVagasView(generic.ListView):
 class DetalheVagaView(generic.DetailView):
     model = Vaga
 
-class VagaCreate(CreateView):
+class VagaCreate(PermissionRequiredMixin, CreateView):
     model = Vaga
     form_class = VagaForm
     template_name = 'vaga/cadastro.html'
     success_url = reverse_lazy('minhas-vagas')
+    permission_required = 'vaga.add_vaga'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

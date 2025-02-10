@@ -70,6 +70,7 @@ class Vaga(models.Model):
 
     class Meta:
         db_table = 'vagas'
+        permissions = (('criar_vaga', 'Criar vaga.'),)
 
     def __str__(self):
         '''String representando um objeto'''
