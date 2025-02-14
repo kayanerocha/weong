@@ -31,11 +31,12 @@ class DetalheVagaView(generic.DetailView):
     model = Vaga
 
 class VagaCreate(PermissionRequiredMixin, CreateView):
+    permission_required = 'vaga.add_vaga'
     model = Vaga
     form_class = VagaForm
     template_name = 'vaga/cadastro.html'
     success_url = reverse_lazy('minhas-vagas')
-    permission_required = 'vaga.add_vaga'
+    login_url = '403.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
