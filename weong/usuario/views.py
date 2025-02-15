@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
+from django.contrib.auth import get_user
 
 from usuario.forms import CadastroUsuarioForm, CadastroOngForm, CadastroEnderecoForm, CadastroVoluntarioForm
 from usuario.models import Ong, Voluntario
@@ -10,6 +11,9 @@ from usuario.models import Ong, Voluntario
 
 
 def cadastro_ong(request):
+    if request.user.is_authenticated:
+        return redirect('/')
+    
     if request.method == 'POST':
         form_usuario = CadastroUsuarioForm(request.POST)
         form_ong = CadastroOngForm(request.POST)
@@ -46,6 +50,9 @@ class CadastroOngView(generic.CreateView):
     form_class = CadastroOngForm
 
 def cadastro_voluntario(request):
+    if request.user.is_authenticated:
+        return redirect('/')
+
     if request.method == 'POST':
         form_usuario = CadastroUsuarioForm(request.POST)
         form_voluntario = CadastroVoluntarioForm(request.POST)
