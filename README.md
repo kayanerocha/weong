@@ -52,15 +52,6 @@ Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de
 
 `DB_PORT`
 
-### Permissões
-
-Para restringir o que ONGs e voluntários podem fazer basta criar dois grupos do painel de administração, adicionar as permissões e adicionar os usuários aos seus respectivos grupos. Abaixo a configuração atual das permissões:
-#### ONGs
-![alt text](docs/permissoes-ongs.png)
-
-#### Voluntários
-![alt text](docs/permissoes-voluntarios.png)
-
 Aplique as migrações (precisa de um banco de dados MySQL chamado weong)
 
 ```bash
@@ -78,6 +69,15 @@ Crie um usuário administrador
 ```bash
   python weong\\manage.py createsuperuser
 ```
+
+### Permissões
+
+Para restringir o que ONGs e voluntários podem fazer basta criar dois grupos do painel de administração, adicionar as permissões e adicionar os usuários aos seus respectivos grupos. Abaixo a configuração atual das permissões:
+#### ONGs
+![alt text](docs/permissoes-ongs.png)
+
+#### Voluntários
+![alt text](docs/permissoes-voluntarios.png)
 
 
 ## Contribuindo
