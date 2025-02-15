@@ -66,7 +66,8 @@ class VagaList(ListView):
     def get_queryset(self):
         return Vaga.objects.filter(preenchida__exact=0)
 
-class VagaUpdate(UpdateView):
+class VagaUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = 'vaga.change_vaga'
     model = Vaga
     form_class = VagaForm
     template_name = 'vaga/vaga_update.html'
@@ -93,12 +94,15 @@ class VagaUpdate(UpdateView):
             print('caindo no inválido')
             return self.form_invalid(form)
 
-class VagaDelete(DeleteView):
+class VagaDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = 'vaga.delete_vaga'
     model = Vaga
     template_name = 'vaga/vaga_delete.html'
     success_url = reverse_lazy('minhas-vagas')
 
-class MinhasVagasList(VagaList):
+class MinhasVagasList(PermissionRequiredMixin, VagaList):
+    permission_required = 'vaga.visualizar_minhas_vagas'
+
     def get_queryset(self):
         ong = Ong.objects.filter(usuario_id__exact=self.request.user.id).get()
         return Vaga.objects.filter(ong_id__exact=ong.id)
