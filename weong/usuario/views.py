@@ -39,11 +39,7 @@ def cadastro_ong(request):
         form_usuario = CadastroUsuarioForm()
         form_ong = CadastroOngForm()
         form_endereco = CadastroEnderecoForm()
-<<<<<<< HEAD
-    return render(request, 'cadastro-ong.html', {
-=======
     return render(request, 'registration/ong.html', {
->>>>>>> main
         'form_usuario': form_usuario,
         'form_ong': form_ong,
         'form_endereco': form_endereco,

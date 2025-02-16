@@ -126,8 +126,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-<<<<<<< HEAD
-=======
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -137,7 +135,6 @@ STATICFILES_DIRS = [
 # (normalmente usado com servidores como Nginx)
 # Para colocar os arquivos static em produção: python manage.py collectstatic
 STATIC_ROOT = BASE_DIR / "staticfiles"
->>>>>>> main
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

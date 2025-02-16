@@ -3,6 +3,17 @@
 {% load static %}
 <html>   
   <head>
+
+    <style>
+
+      .navbar-logo {
+        height: 40px; /* Ajuste para um tamanho adequado */
+        width: auto;  /* Mantém a proporção da imagem */
+    }
+    
+
+    </style>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block titulo %}<title>WeOng</title>{% endblock %}
@@ -18,36 +29,40 @@
   </head>
 <body>
 
-              <nav class="navbar navbar-expand-lg d-flex" style="background-color: #81d3f9;">
-                <a class="navbar-brand float-left" href="#"><img src="./img/logoClaraVertical.png" alt="Logo WeOng"></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-                {% block sidebar %}
-                <div class="collapse navbar-collapse text-right float-right justify-content-end" id="navbarSupportedContent">
-                    <a class="nav-link" style="color: white;" href="{% url 'index' %}">Home</a>
-                    {% if user.is_authenticated and user.ong %}
-                    <a class="nav-link" style="color: white;"href="{% url 'cadastro-vaga' %}">Cadastrar Vaga</a>
-                    <a class="nav-link" style="color: white;" href="{% url 'minhas-vagas' %}">Minhas Vagas</a>
-                    {% endif %}
-                    {% if not user.is_authenticated %}
-                    <a class="nav-link" style="color: white;" href="{% url 'cadastro-ong' %}">Cadastro de Ong</a>
-                    <a class="nav-link" style="color: white;" href="{% url 'cadastro-voluntario' %}">Cadastro de Voluntário</a>
-                    <a class="nav-link" style="color: white;" href="{% url 'login' %}">Login</a>
-                    {% else %}
-                    <form action="{% url 'logout' %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit">Logout</button>
-                    </form>
-                    {% endif %}
-                  
-                  <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Pesquisar" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fa fa-search" style="font-size:24px; color: white;"></i></button>
-                  </form>
-                </div>
-                {% endblock %}
-              </nav>
+  <nav class="navbar navbar-expand-lg d-flex" style="background-color: #81d3f9;">
+    <a class="navbar-brand float-left" href="#">
+        <img src="{% static 'img/logoClaraVertical.png' %}" alt="Logo WeOng" class="navbar-logo">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    {% block sidebar %}
+    <div class="collapse navbar-collapse text-right float-right justify-content-end" id="navbarSupportedContent">
+        <a class="nav-link" style="color: white;" href="{% url 'index' %}">Home</a>
+        {% if user.is_authenticated and user.ong %}
+            <a class="nav-link" style="color: white;" href="{% url 'cadastro-vaga' %}">Cadastrar Vaga</a>
+            <a class="nav-link" style="color: white;" href="{% url 'minhas-vagas' %}">Minhas Vagas</a>
+        {% endif %}
+        {% if not user.is_authenticated %}
+            <a class="nav-link" style="color: white;" href="{% url 'cadastro-ong' %}">Cadastro de Ong</a>
+            <a class="nav-link" style="color: white;" href="{% url 'cadastro-voluntario' %}">Cadastro de Voluntário</a>
+            <a class="nav-link" style="color: white;" href="{% url 'login' %}">Login</a>
+        {% else %}
+            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            </form>
+        {% endif %}
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Pesquisar" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                <i class="fa fa-search" style="font-size:24px; color: white;"></i>
+            </button>
+        </form>
+    </div>
+    {% endblock %}
+  </nav>
 
             <div class="">{% block content %}{% endblock %}</div>
     
