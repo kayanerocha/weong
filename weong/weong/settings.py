@@ -59,7 +59,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),
             BASE_DIR / 'templates',
         ],
         'APP_DIRS': True,
@@ -127,6 +126,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+<<<<<<< HEAD
+=======
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Em produção, o Django coleta os arquivos para STATIC_ROOT
+# (normalmente usado com servidores como Nginx)
+# Para colocar os arquivos static em produção: python manage.py collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
+>>>>>>> main
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

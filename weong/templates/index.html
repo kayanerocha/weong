@@ -2,20 +2,19 @@
 
 {% block titulo %}<title>{{ titulo }}</title>{% endblock %}
 
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 {% block content %}
-    <h1>{{ titulo }}</h1>
+    <h1 class="display-1">{{ titulo }}</h1>
     {% if user.is_authenticated %}
         Oi {{ user.username }}!
         <p><a href="{% url 'password_change' %}">Alterar Senha</a></p>
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
     {% else %}
         <p>Você não está logado</p>
         <a href="{% url 'login' %}">Login</a>
     {% endif %}
-    <p>Lista de vagas abertas no WeOng</p>
+    <p>Lista de vagas abertas no site WeOng</p>
     {% if vagas %}
     <ul>
         {% for v in vagas %}

@@ -65,10 +65,12 @@ class Vaga(models.Model):
     preenchida = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT, null=True)
+    endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True)
+    ong = models.ForeignKey('usuario.Ong', on_delete=models.CASCADE, null=True)
 
     class Meta:
         db_table = 'vagas'
+        permissions = (('visualizar_minhas_vagas', 'ONG visualizar as suas vagas.'),)
 
     def __str__(self):
         '''String representando um objeto'''
@@ -78,3 +80,7 @@ class Vaga(models.Model):
         '''Retorna a URL para acessar detalhes de uma vaga'''
         return reverse('detalhe-vaga', args=[str(self.id)])
     
+    def delete(self, using = None):
+        if self.endereco:
+            self.endereco.delete()
+        super(Vaga, self).delete(using)
