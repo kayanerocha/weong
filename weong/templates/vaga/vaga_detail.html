@@ -11,4 +11,11 @@
         <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
         <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
     {% endif %}
+
+    {% if user.is_authenticated and user.groups.all.0.id == 2 %}
+        <form method="post" action="{% url 'candidatarse' pk=vaga.id %}">
+            {% csrf_token %}
+            <button type="submit">Candidatar-se</button>
+        </form>
+    {% endif %}
 {% endblock %}
