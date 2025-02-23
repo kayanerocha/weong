@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ vaga.titulo }}</h1>
-    <p>{{ vaga.created_at }}</p>
-    <p>{{ vaga.descricao }}</p>
-    <p>{{ vaga.requisitos }}</p>
-    <p>{{ vaga.endereco }}</p>
-    {% if vaga.ong and vaga.ong.usuario_id == user.id %}
-        <p>Preenchida: {{ vaga.preenchida }}</p>
-        <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
-        <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
-    {% endif %}
-{% endblock %}
+
+    <div class="card ml-3 mt-3" style="background-color: white;">
+        <h3 class="card-title ml-3 mt-3">Detalhes - Vaga {{ vaga.titulo }}</h3>
+        <!-- <p>{{ vaga.created_at }}</p> --><br>
+        <p class=" ml-3">Descrição: {{ vaga.descricao }}</p>
+        <p class=" ml-3">Endereço da Vaga: {{ vaga.endereco }}</p>
+        <p class=" ml-3">Requisitos da Vaga: {{ vaga.requisitos }}</p>
+        {% if vaga.ong and vaga.ong.usuario_id == user.id %}
+            <p>Preenchida: {{ vaga.preenchida }}</p>
+            <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
+            <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
+        {% endif %}
+    </div>
+    {% endblock %}
+

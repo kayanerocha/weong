@@ -10,8 +10,8 @@
         <div class="card p-5 mt-5">
             <div class="d-flex justify-content-center">
                 <div>
-                    <img src="{% static 'img/logoClaraVertical.png' %}" alt="Logotipo do site WeONG" height="200">
-                    <h4 class="text-center mb-3">Login - Voluntário</h4>
+                    <img src="{% static 'img/MAIN_V1.png' %}" alt="Logotipo do site WeONG" class="mx-auto d-block" height="100">
+                    <h4 class="text-center mb-3 mt-3">Login - Voluntário</h4>
                 </div>
             </div>
             <div class="d-flex justify-content-center form_container">
@@ -19,7 +19,7 @@
                     {% csrf_token %}
                     <div class="input-group mb-3">
                         <div class="input-group-append">
-                            <span class="input-group-text"><i class="fa fa-at"></i></span>
+                            <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                         </div>{{ form.username }}
                     </div>
                     <div class="input-group mb-2">
@@ -29,13 +29,13 @@
                         {{ form.password }}
                     </div>
                     <div class="form-group">
-                        <div class="custom-control custom-checkbox mt-3">
+                        <div class="custom-control custom-checkbox mt-3 text-center">
                             <input type="checkbox" class="custom-control-input" id="lembrarCredenciais">
                             <label class="custom-control-label" for="lembrarCredenciais">Lembrar credenciais</label>
                         </div>
                     </div>
                     <div class="d-flex justify-content-center mt-3">
-                         <button name="button" type="submit" class="btn btn-block loginBtn text-white">Login</button>
+                         <button name="button" type="submit" class="btn btn-block text-white" style="background-color: #5d7398;">Login</button>
                     </div>
                 </form>
             </div>
@@ -45,7 +45,7 @@
                     <p><a href="{% url 'password_reset' %}">Redefinir senha</a></p>
                 </div>
                 <div class="d-flex justify-content-center links mt-2">
-                    Não possui uma conta? <!--<a href="#" class="ml-2">Cadastrar conta</a>-->
+                    Não possui uma conta? <a href="{% url 'cadastro-voluntario' %}" class="ml-2">Cadastrar conta</a>
                 </div>
             </div>
         </div>

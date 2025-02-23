@@ -30,12 +30,12 @@
 <body>
 
   <nav class="navbar navbar-expand-lg d-flex" style="background-color: #81d3f9;">
-    <a class="navbar-brand float-left" href="#">
-        <img src="{% static 'img/MAIN_V2.png' %}" alt="Logo WeOng" class="navbar-logo">
+    <a class="navbar-brand float-left" href="{% url 'index' %}">
+        <img src="{% static 'img/MAIN_V2_HORIZONTAL.png' %}" alt="Logo WeOng" class="navbar-logo" style="width: 100px;">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" 
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon"><i class="fa fa-bars" style="color: white;"></i></span>
     </button>
     {% block sidebar %}
     <div class="collapse navbar-collapse text-right float-right justify-content-end" id="navbarSupportedContent">
@@ -54,10 +54,10 @@
                 <button type="submit" class="btn btn-danger btn-sm">Logout</button>
             </form>
         {% endif %}
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Pesquisar" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
-                <i class="fa fa-search" style="font-size:24px; color: white;"></i>
+        <form class="form-inline">
+            <input class="form-control" type="search" placeholder="Pesquisar" aria-label="Search">
+            <button class="btn" type="submit" style="background-color: #5d7398; border: 1px solid #5d7398;">
+                <i class="fa fa-search" style="font-size:24px; color: white; background-color: #5d7398;"></i>
             </button>
         </form>
     </div>
