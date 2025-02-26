@@ -1,26 +1,25 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.views.generic.edit import CreateView
-from django.urls import reverse_lazy
+from django.http import HttpRequest
+from django.shortcuts import redirect
+from django.utils.translation import gettext_lazy as _
 
-from .models import Candidatura, Vaga
 
-class CandidaturaCreate(PermissionRequiredMixin, CreateView):
-    model = Candidatura
-    success_url = reverse_lazy('detalhe-vaga')
-    login_url = '403.html'
+from .models import Vaga, Candidatura
+from usuario.models import Voluntario
 
-    def form_valid(self, form):
-        candidatura = Candidatura()
-        candidatura.vaga = Vaga()
+def candidatura_existe(vaga_id: int, voluntario_id: int):
+    candidatura = Candidatura.objects.filter(vaga_id=vaga_id, voluntario_id=voluntario_id).first()
+    if candidatura:
+        return True
+    return False
 
-        # context = self.get_context_data()
-        # endereco_form = context['endereco_form']
-        # if endereco_form.is_valid():
-        #     endereco = endereco_form.save()
-        #     vaga = form.save(commit=False)
-        #     vaga.endereco = endereco
-        #     vaga.ong = self.request.user.ong
-        #     vaga.save()
-        #     return super().form_valid(form)
-        # else:
-        #     return self.form_invalid(form)
+def criar_candidatura(request: HttpRequest, pk: int):
+    if request.method == 'POST':
+        vaga = Vaga.objects.filter(id=pk).get()
+        voluntario = Voluntario.objects.filter(usuario_id=request.user.id).get()
+        candidatura = Candidatura(vaga=vaga.id,voluntario=voluntario.id)
+        candidatura.save()
+
+        messages.success(request, _('Candidatura realizada com sucesso!'))
+        return redirect('detalhe-vaga', pk)

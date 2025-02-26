@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.views import generic
@@ -11,7 +12,8 @@ from django.urls import reverse_lazy
 from .models import Vaga
 from .forms import VagaForm
 from usuario.forms import CadastroEnderecoForm
-from usuario.models import Ong, Endereco
+from usuario.models import Ong, Voluntario, Endereco
+from .views_candidaturas import candidatura_existe
 
 class ListaVagasView(generic.ListView):
     model = Vaga
@@ -29,6 +31,16 @@ class ListaVagasView(generic.ListView):
 
 class DetalheVagaView(generic.DetailView):
     model = Vaga
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_candidato'] = False
+        if self.request.user.is_authenticated:
+            voluntario = Voluntario.objects.filter(usuario_id=self.request.user.id).get()
+            if candidatura_existe(context['object'].id, voluntario.id):
+                messages.info(self.request, _('Candidatura já realizada.'))
+                context['is_candidato'] = True
+        return context
 
 class VagaCreate(PermissionRequiredMixin, CreateView):
     permission_required = 'vaga.add_vaga'
@@ -88,10 +100,8 @@ class VagaUpdate(PermissionRequiredMixin, UpdateView):
             vaga.endereco = endereco
             vaga.ong = self.request.user.ong
             vaga.save()
-            print('caindo aqui')
             return super().form_valid(form)
         else:
-            print('caindo no inválido')
             return self.form_invalid(form)
 
 class VagaDelete(PermissionRequiredMixin, DeleteView):

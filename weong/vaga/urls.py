@@ -12,5 +12,5 @@ urlpatterns = [
     path('editar-vaga/<int:pk>', login_required(VagaUpdate.as_view()), name='edita-vaga'),
     path('minhas-vagas/', login_required(MinhasVagasList.as_view()), name='minhas-vagas'),
     path('deletar-vaga/<int:pk>', login_required(VagaDelete.as_view()), name='deletar-vaga'),
-    path('candidatarse/<int:pk>', login_required(CandidaturaCreate.as_view()), name='candidatarse')
+    path('candidatarse/<int:pk>', criar_candidatura, name='candidatarse')
 ]

@@ -12,10 +12,15 @@
         <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
     {% endif %}
 
-    {% if user.is_authenticated and user.groups.all.0.id == 2 %}
-        <form method="post" action="{% url 'candidatarse' pk=vaga.id %}">
+    {% if user.is_authenticated and user.groups.all.0.id == 2 and not is_candidato %}
+        <form method="post" action="{% url 'candidatarse' vaga.id %}">
             {% csrf_token %}
             <button type="submit">Candidatar-se</button>
         </form>
+    {% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
     {% endif %}
 {% endblock %}
