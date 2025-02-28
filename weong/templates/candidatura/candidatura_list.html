@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Minhas Candidaturas</h1>
+
+{% if object_list %}
+    {% for candidatura in object_list %}
+        <a href="{{ candidatura.vaga.get_absolute_url }}">{{ candidatura.vaga.titulo }}</a>
+        <p>Status: {{ candidatura.status }}</p>
+        <br>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
