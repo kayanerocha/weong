@@ -84,7 +84,7 @@ def cadastro_voluntario(request):
         form_endereco = CadastroEnderecoForm()
 
     #Renderizar endereco
-    return render(request, 'registration/voluntario.html', {
+    return render(request, 'registration/cadastro-voluntario.html', {
         'form_usuario': form_usuario,
         'form_voluntario': form_voluntario,
         'form_endereco': form_endereco,
