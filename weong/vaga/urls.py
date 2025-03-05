@@ -13,5 +13,6 @@ urlpatterns = [
     path('minhas-vagas/', login_required(MinhasVagasList.as_view()), name='minhas-vagas'),
     path('deletar-vaga/<int:pk>', login_required(VagaDelete.as_view()), name='deletar-vaga'),
     path('candidatarse/<int:pk>', criar_candidatura, name='candidatarse'),
-    path('minhas-candidaturas/', MinhasCandidaturas.as_view(), name='minhas-candidaturas'),
+    path('minhas-candidaturas/', login_required(MinhasCandidaturas.as_view()), name='minhas-candidaturas'),
+    path('cancelar-candidatura/<int:pk>', cancelar_candidatura, name='cancelar-candidatura'),
 ]

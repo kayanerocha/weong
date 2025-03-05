@@ -35,11 +35,14 @@ class DetalheVagaView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_candidato'] = False
-        if self.request.user.is_authenticated:
-            voluntario = Voluntario.objects.filter(usuario_id=self.request.user.id).get()
-            if candidatura_existe(context['object'].id, voluntario.id):
-                messages.info(self.request, _('Candidatura já realizada.'))
-                context['is_candidato'] = True
+        try:
+            if self.request.user.is_authenticated:
+                voluntario = Voluntario.objects.filter(usuario_id=self.request.user.id).get()
+                if candidatura_existe(context['object'].id, voluntario.id):
+                    messages.info(self.request, _('Candidatura já realizada.'))
+                    context['is_candidato'] = True
+        except Voluntario.DoesNotExist:
+            pass
         return context
 
 class VagaCreate(PermissionRequiredMixin, CreateView):

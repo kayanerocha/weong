@@ -8,8 +8,20 @@
     {% for candidatura in object_list %}
         <a href="{{ candidatura.vaga.get_absolute_url }}">{{ candidatura.vaga.titulo }}</a>
         <p>Status: {{ candidatura.status }}</p>
+        <form method="post" action="{% url 'cancelar-candidatura' candidatura.id %}">
+            {% csrf_token %}
+            <button type="submit">Cancelar candidatura</button>
+        </form>
         <br>
     {% endfor %}
+{% else %}
+    <p>Não há candidatura.</p>
 {% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+{% endif  %}
 
 {% endblock %}
