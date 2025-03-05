@@ -145,3 +145,5 @@ LOGIN_REDIRECT_URL = 'lista-vagas'
 LOGOUT_REDIRECT_URL = 'lista-vagas'
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

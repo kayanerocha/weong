@@ -84,3 +84,30 @@ class Vaga(models.Model):
         if self.endereco:
             self.endereco.delete()
         super(Vaga, self).delete(using)
+
+class Candidatura(models.Model):
+    '''Modelo representando uma candidatura.'''
+    id = models.AutoField(primary_key=True)
+    vaga = models.ForeignKey(Vaga, on_delete=models.CASCADE, null=True)
+    voluntario = models.ForeignKey('usuario.Voluntario', on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    STATUS_CANDIDATURA = (
+        ('Pendente', 'Pendente'),
+        ('Aceito', 'Aceito'),
+        ('Recusado', 'Recusado'),
+    )
+
+    status = models.CharField(max_length=50, choices=STATUS_CANDIDATURA, default='Pendente')
+
+    class Meta:
+        db_table = 'candidaturas'
+
+    def __str__(self):
+        '''String representando um objeto'''
+        return f'{self.id} - {self.vaga.titulo}: {self.candidato.nome_completo}'
+    
+    def get_absolute_url(self):
+        '''Retorna a URL para acessar detalhes de uma inscrição'''
+        return reverse('detalhe-inscricao', args=[str(self.id)])
