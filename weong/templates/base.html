@@ -44,6 +44,9 @@
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-vaga' %}">Cadastrar Vaga</a>
             <a class="nav-link" style="color: white;" href="{% url 'minhas-vagas' %}">Minhas Vagas</a>
         {% endif %}
+        {% if user.is_authenticated and user.voluntario %}
+            <a class="nav-link" style="color: white;" href="{% url 'minhas-candidaturas' %}">Minhas Candidaturas</a>
+        {% endif %}
         {% if not user.is_authenticated %}
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-ong' %}">Cadastro de Ong</a>
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-voluntario' %}">Cadastro de Voluntário</a>
