@@ -115,3 +115,19 @@ class CadastroVoluntarioForm(forms.ModelForm):
         except ProcessorException:
             raise ValidationError(_('Número de telefone inválido.'), code='invalido')
         return telefone
+
+class EditarOngForm(forms.ModelForm):
+    class Meta:
+        model = Ong
+        fields = ['telefone', 'site', 'status']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+class EditarVoluntarioForm(forms.ModelForm):
+    class Meta:
+        model: Voluntario
+        fields = ['telefone']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
