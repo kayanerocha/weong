@@ -3,8 +3,9 @@ from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from django.contrib.auth import get_user
+from django.contrib.auth.decorators import login_required
 
-from usuario.forms import CadastroUsuarioForm, CadastroOngForm, CadastroEnderecoForm, CadastroVoluntarioForm
+from usuario.forms import CadastroUsuarioForm, CadastroOngForm, CadastroEnderecoForm, CadastroVoluntarioForm,  EditarOngForm, EditarVoluntarioForm
 from usuario.models import Ong, Voluntario
 
 # Create your views here.
@@ -93,3 +94,42 @@ def cadastro_voluntario(request):
 class CadastroVoluntaioView(generic.CreateView):
     model = Voluntario
     form_class = CadastroVoluntarioForm
+
+@login_required
+def perfil_usuario(request):
+    usuario = request.user
+    ong = Ong.objects.filter(usuario=usuario).first()
+    voluntario = Voluntario.objects.filter(usuario=usuario).first()
+
+    if ong:
+        form = EditarOngForm(instance=ong)
+        endereco_form = CadastroEnderecoForm(isinstance=ong.endereco)
+    elif voluntario:
+        form = EditarVoluntarioForm(instance=voluntario)
+        endereco_form = CadastroEnderecoForm(instance=voluntario.endereco)
+    else:
+        messages.error(request, "Perfil não encontrado!")
+        return redirect('perfil_usuario')
+
+    if request.method == "POST":
+        if ong:
+            form = EditarOngForm(request.POST, instance=ong)
+            endereco_form = CadastroEnderecoForm(request.POST, instance=ong.endereco)
+        elif voluntario:
+            form = EditarVoluntarioForm(request.POST, instance=voluntario)
+            endereco_form = CadastroEnderecoForm(request.POST, instance=voluntario.endereco)
+
+        if form.is_valid() and endereco_form.is_valid():
+            # Salvar o endereço primeiro
+            endereco = endereco_form.save(commit=False)
+            endereco.save()
+
+            # Atualizar os dados do usuário e do endereço
+            perfil = form.save(commit=False)
+            perfil.endereco = endereco
+            perfil.save()
+
+            messages.success(request, "Perfil atualizado com sucesso!")
+            return redirect('perfil_usuario')
+        
+    return render(request, 'usuario/perfil.html', {'form': form, 'endereco_form': endereco_form, 'ong': ong, 'voluntario': voluntario})
