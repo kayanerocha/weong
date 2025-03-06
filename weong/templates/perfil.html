@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Editar Perfil</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <h4>Informações Pessoais</h4>
+
+        {% if voluntario %}
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" class="form-control" value="{{ voluntario.usuario }}" disabled>
+            
+                <label>Nome Completo</label>
+                <input type="text" class="form-control" value="{{ voluntario.nome_completo }}" disabled>              
+
+                <label>CPF</label>
+                <input type="text" class="form-control" value="{{ voluntario.cpf }}" disabled>
+                
+                <label>Data de nascimento</label>
+                <input type="text" class="form-control" value="{{ voluntario.data_nascimento }}" disabled>
+
+                <label>Status</label>
+                <input type="text" class="form-control" value="{{ voluntario.status }}" disabled>
+            </div>
+        {% elif ong %}
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" class="form-control" value="{{ ong.usuario }}" disabled>
+
+                <label>Fantazia</label>
+                <input type="text" class="form-control" value="{{ ong.razao_social }}" disabled>
+
+                <label>Razão Social</label>
+                <input type="text" class="form-control" value="{{ ong.nome_fantasia }}" disabled>
+
+                <label>CNPJ</label>
+                <input type="text" class="form-control" value="{{ ong.cnpj }}" disabled>
+
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            {% if field.name != "nome_completo" and field.name != "razao_social" %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <h4>Endereço</h4>
+        {% for field in endereco_form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+        <a href="{% url 'perfil_usuario' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
