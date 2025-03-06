@@ -103,7 +103,7 @@ def perfil_usuario(request):
 
     if ong:
         form = EditarOngForm(instance=ong)
-        endereco_form = CadastroEnderecoForm(isinstance=ong.endereco)
+        endereco_form = CadastroEnderecoForm(instance=ong.endereco)
     elif voluntario:
         form = EditarVoluntarioForm(instance=voluntario)
         endereco_form = CadastroEnderecoForm(instance=voluntario.endereco)
@@ -132,4 +132,4 @@ def perfil_usuario(request):
             messages.success(request, "Perfil atualizado com sucesso!")
             return redirect('perfil_usuario')
         
-    return render(request, 'usuario/perfil.html', {'form': form, 'endereco_form': endereco_form, 'ong': ong, 'voluntario': voluntario})
+    return render(request, 'perfil.html', {'form': form, 'endereco_form': endereco_form, 'ong': ong, 'voluntario': voluntario})

@@ -126,7 +126,7 @@ class EditarOngForm(forms.ModelForm):
 
 class EditarVoluntarioForm(forms.ModelForm):
     class Meta:
-        model: Voluntario
+        model = Voluntario
         fields = ['telefone']
     
     def __init__(self, *args, **kwargs):
