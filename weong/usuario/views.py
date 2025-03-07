@@ -32,9 +32,10 @@ def cadastro_ong(request):
             ong.endereco = endereco
             ong.save()
 
-            return redirect('/')
+            messages.success(request, _('Cadastro realizado com sucesso! Aguarde ser validado.'))
+            return redirect('cadastro-ong')
         else:
-            messages.error(request, _('Cadastro não realizado.'))
+            messages.error(request, _('Erro no cadastro. Verifique os dados informados.'))
     else:
         form_usuario = CadastroUsuarioForm()
         form_ong = CadastroOngForm()
@@ -74,8 +75,8 @@ def cadastro_voluntario(request):
             voluntario.endereco = endereco
             voluntario.save()
 
-            messages.success(request, _('Cadastro realizado com sucesso!'))
-            return redirect('/')
+            messages.success(request, _('Cadastro realizado com sucesso! Aguarde ser validado.'))
+            return redirect('cadastro-voluntario')
         else:
             messages.error(request, _('Erro no cadastro. Verifique os dados informados.'))
     else:

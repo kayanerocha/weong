@@ -95,7 +95,7 @@
                             <!-- Nome do voluntário e CPF -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="nome" name="nome" class="form-control" placeholder=" " required>
+                                    <input type="text" id="nome_completo" name="nome_completo" class="form-control" placeholder=" " required>
                                     <label for="nome">Nome Completo</label>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -107,7 +107,7 @@
                             <!-- CEP, Bairro -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " required>
+                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required>
                                     <label for="cep">CEP</label>
                                 </div>
                                 <div class="col-md-6 form-group">
@@ -181,14 +181,25 @@
                                 </div>
                             </div>
 
+                            <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="username" name="username" class="form-control" placeholder=" ">
+                                    <label for="username">Usuário</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="date" id="data_nascimento" name="data_nascimento" class="form-control" placeholder=" ">
+                                    <label for="data_nascimento">Data de nascimento</label>
+                                </div>
+                            </div>
+
                             <!-- Senha e Confirmar Senha -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="password" id="senha" name="senha" class="form-control" placeholder=" ">
+                                    <input type="password" id="password" name="password" class="form-control" placeholder=" ">
                                     <label for="senha">Senha</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="password" id="confirma_senha" name="confirma_senha" class="form-control" placeholder=" ">
+                                    <input type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder=" ">
                                     <label for="confirma_senha">Confirmar Senha</label>
                                 </div>
                             </div>
@@ -206,6 +217,14 @@
                             <!-- Botão de Enviar -->
                             <button type="submit" class="btn btn-submit">Enviar para análise</button>
                         </form>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        {% endif %}
+                        {{ form_usuario.errors }}
+                        {{ form_voluntario.errors }}
+                        {{ form_endereco.errors }}
                     </div>
                 </div>
             </div>
