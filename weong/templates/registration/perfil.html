@@ -63,5 +63,10 @@
         <button type="submit" class="btn btn-success">Salvar Alterações</button>
         <a href="{% url 'perfil_usuario' %}" class="btn btn-secondary">Cancelar</a>
     </form>
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
