@@ -132,4 +132,4 @@ def perfil_usuario(request):
             messages.success(request, "Perfil atualizado com sucesso!")
             return redirect('perfil_usuario')
         
-    return render(request, 'perfil.html', {'form': form, 'endereco_form': endereco_form, 'ong': ong, 'voluntario': voluntario})
+    return render(request, 'registration/perfil.html', {'form': form, 'endereco_form': endereco_form, 'ong': ong, 'voluntario': voluntario})
