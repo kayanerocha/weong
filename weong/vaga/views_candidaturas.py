@@ -44,12 +44,9 @@ class MinhasCandidaturas(PermissionRequiredMixin, ListView):
     def get_queryset(self):
         try:
             voluntario = Voluntario.objects.filter(usuario_id=self.request.user.id).get()
-            print('aqui 1')
         except Voluntario.DoesNotExist:
             self.template_name = '403.html'
-            print('ta caindo aqui essa porra')
         else:
-            print('aqui 2')
             return Candidatura.objects.filter(voluntario_id=voluntario.id)
         
 @login_required
@@ -64,4 +61,29 @@ def cancelar_candidatura(request: HttpRequest, pk: int):
         else:
             messages.success(request, _('Candidatura cancelada com sucesso!'))
         return redirect('minhas-candidaturas')
+    return redirect('lista-vagas')
+
+def aprovar_candidato(request: HttpRequest, id_candidatura: int):
+    if request.method == 'POST':
+        try:
+            candidatura = Candidatura.objects.filter(id=id_candidatura).get()
+            Candidatura.objects.filter(id=id_candidatura).update(status='Aceito')
+        except Exception as e:
+            messages.error(request, _('Erro ao aprovar o candidato, entre em contato com o administrador do sistema.'))
+        else:
+            messages.success(request, _('Candidato aprovado com sucesso, entre em contato com ele!'))
+            return redirect('detalhe-vaga', candidatura.vaga_id)
+    return redirect('lista-vagas')
+    
+
+def reprovar_candidato(request: HttpRequest, id_candidatura: int):
+    if request.method == 'POST':
+        try:
+            candidatura = Candidatura.objects.filter(id=id_candidatura).get()
+            Candidatura.objects.filter(id=id_candidatura).update(status='Recusado')
+        except Exception as e:
+            messages.error(request, _('Erro ao reprovar o candidato, entre em contato com o administrador do sistema.'))
+        else:
+            messages.success(request, _('Candidato reprovado!'))
+            return redirect('detalhe-vaga', candidatura.vaga_id)
     return redirect('lista-vagas')

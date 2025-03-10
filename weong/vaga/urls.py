@@ -15,4 +15,6 @@ urlpatterns = [
     path('candidatarse/<int:pk>', criar_candidatura, name='candidatarse'),
     path('minhas-candidaturas/', login_required(MinhasCandidaturas.as_view()), name='minhas-candidaturas'),
     path('cancelar-candidatura/<int:pk>', cancelar_candidatura, name='cancelar-candidatura'),
+    path('aprovar-candidato/<int:id_candidatura>', aprovar_candidato, name='aprovar-candidato'),
+    path('reprovar-candidato/<int:id_candidatura>', reprovar_candidato, name='reprovar-candidato'),
 ]

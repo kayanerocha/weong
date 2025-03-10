@@ -9,7 +9,7 @@ from django.views.generic.edit import UpdateView
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
 
-from .models import Vaga
+from .models import Vaga, Candidatura
 from .forms import VagaForm
 from usuario.forms import CadastroEnderecoForm
 from usuario.models import Ong, Voluntario, Endereco
@@ -35,14 +35,19 @@ class DetalheVagaView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_candidato'] = False
-        try:
-            if self.request.user.is_authenticated:
+        context['candidaturas'] = []
+        
+        if self.request.user.is_authenticated:
+            id_vaga = context['object'].id
+            if Voluntario.objects.filter(usuario_id=self.request.user.id).exists():
                 voluntario = Voluntario.objects.filter(usuario_id=self.request.user.id).get()
-                if candidatura_existe(context['object'].id, voluntario.id):
+                if candidatura_existe(id_vaga, voluntario.id):
                     messages.info(self.request, _('Candidatura já realizada.'))
                     context['is_candidato'] = True
-        except Voluntario.DoesNotExist:
-            pass
+        
+            if Ong.objects.filter(usuario_id=self.request.user.id).exists():
+                candidaturas = Candidatura.objects.filter(vaga_id=id_vaga).all()
+                context['candidaturas'] = candidaturas
         return context
 
 class VagaCreate(PermissionRequiredMixin, CreateView):
