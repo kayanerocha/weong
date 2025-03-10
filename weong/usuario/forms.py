@@ -119,7 +119,7 @@ class CadastroVoluntarioForm(forms.ModelForm):
 class EditarOngForm(forms.ModelForm):
     class Meta:
         model = Ong
-        fields = ['telefone', 'site', 'status']
+        fields = ['telefone', 'site']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
