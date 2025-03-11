@@ -36,6 +36,7 @@ class DetalheVagaView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['is_candidato'] = False
         context['candidaturas'] = []
+        context['quantidade_candidatos'] = 0
         
         if self.request.user.is_authenticated:
             id_vaga = context['object'].id
@@ -48,6 +49,7 @@ class DetalheVagaView(generic.DetailView):
             if Ong.objects.filter(usuario_id=self.request.user.id).exists():
                 candidaturas = Candidatura.objects.filter(vaga_id=id_vaga).all()
                 context['candidaturas'] = candidaturas
+                context['quantidade_candidatos'] = len(candidaturas)
         return context
 
 class VagaCreate(PermissionRequiredMixin, CreateView):

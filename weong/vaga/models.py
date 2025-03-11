@@ -63,6 +63,7 @@ class Vaga(models.Model):
     descricao = models.TextField(max_length=5000, help_text='Descrição da vaga')
     requisitos = models.TextField(max_length=2500, help_text='Requisitos da vaga')
     preenchida = models.BooleanField(default=False)
+    quantidade_vagas = models.IntegerField(default=1, help_text='Quantidade de vagas')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True)

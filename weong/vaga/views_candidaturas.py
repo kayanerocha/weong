@@ -68,6 +68,11 @@ def aprovar_candidato(request: HttpRequest, id_candidatura: int):
         try:
             candidatura = Candidatura.objects.filter(id=id_candidatura).get()
             Candidatura.objects.filter(id=id_candidatura).update(status='Aceito')
+            
+            candidaturas_aceitas = Candidatura.objects.filter(vaga_id=candidatura.vaga.id, status='Aceito').count()
+            qnt_vagas = Vaga.objects.filter(id=candidatura.vaga.id).get().quantidade_vagas
+            if candidaturas_aceitas == qnt_vagas:
+                Candidatura.objects.filter(status='Pendente').update(status='Recusado')
         except Exception as e:
             messages.error(request, _('Erro ao aprovar o candidato, entre em contato com o administrador do sistema.'))
         else:
@@ -81,6 +86,11 @@ def reprovar_candidato(request: HttpRequest, id_candidatura: int):
         try:
             candidatura = Candidatura.objects.filter(id=id_candidatura).get()
             Candidatura.objects.filter(id=id_candidatura).update(status='Recusado')
+
+            candidaturas_pendentes = Candidatura.objects.filter(vaga_id=candidatura.vaga.id, status='Pendente').count()
+            qnt_vagas = Vaga.objects.filter(id=candidatura.vaga.id).get().quantidade_vagas
+            if candidaturas_pendentes == qnt_vagas:
+                Candidatura.objects.filter(status='Pendente').update(status='Aceito')
         except Exception as e:
             messages.error(request, _('Erro ao reprovar o candidato, entre em contato com o administrador do sistema.'))
         else:

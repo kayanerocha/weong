@@ -7,8 +7,10 @@
         <p class=" ml-3">Descrição: {{ vaga.descricao }}</p>
         <p class=" ml-3">Endereço da Vaga: {{ vaga.endereco }}</p>
         <p class=" ml-3">Requisitos da Vaga: {{ vaga.requisitos }}</p>
+        <p class=" ml-3">Quantidade de Vagas: {{ vaga.quantidade_vagas }}</p>
         {% if vaga.ong and vaga.ong.usuario_id == user.id %}
             <p>Preenchida: {{ vaga.preenchida }}</p>
+            <p>Quantidade de candidatos: {{ quantidade_candidatos }}</p>
             <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
             <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
             {% if candidaturas %}
