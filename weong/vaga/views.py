@@ -37,6 +37,8 @@ class DetalheVagaView(generic.DetailView):
         context['is_candidato'] = False
         context['candidaturas'] = []
         context['quantidade_candidatos'] = 0
+        context['vagas_preenchidas'] = 0
+        context['vagas_restantes'] = 0
         
         if self.request.user.is_authenticated:
             id_vaga = context['object'].id
@@ -50,6 +52,9 @@ class DetalheVagaView(generic.DetailView):
                 candidaturas = Candidatura.objects.filter(vaga_id=id_vaga).all()
                 context['candidaturas'] = candidaturas
                 context['quantidade_candidatos'] = len(candidaturas)
+                vagas_preenchidas = len(candidaturas.filter(status='Aceito'))
+                context['vagas_preenchidas'] = vagas_preenchidas
+                context['vagas_restantes'] = context['object'].quantidade_vagas - vagas_preenchidas
         return context
 
 class VagaCreate(PermissionRequiredMixin, CreateView):
