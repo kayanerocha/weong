@@ -15,6 +15,12 @@
             <p class=" ml-3">Vagas restantes: {{ vagas_restantes }}</p>
             <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
             <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
+            {% if not candidatura.encerrada %}
+                <form method="post" action="{% url 'encerrar-candidatura' vaga.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Encerrar candidaturas</button>
+                </form>
+            {% endif %}
             {% if candidaturas %}
                 {% for candidatura in candidaturas %}
                     <a href="">{{ candidatura.voluntario.nome_completo }}</a>
