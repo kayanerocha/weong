@@ -1,27 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1>Minhas Candidaturas</h1>
-
-{% if object_list %}
-    {% for candidatura in object_list %}
-        <a href="{{ candidatura.vaga.get_absolute_url }}">{{ candidatura.vaga.titulo }}</a>
-        <p>Status: {{ candidatura.status }}</p>
-        <form method="post" action="{% url 'cancelar-candidatura' candidatura.id %}">
-            {% csrf_token %}
-            <button type="submit">Cancelar candidatura</button>
-        </form>
-        <br>
-    {% endfor %}
-{% else %}
-    <p>Não há candidatura.</p>
-{% endif %}
-
-{% if messages %}
-    {% for message in messages %}
-        <p>{{ message }}</p>
-    {% endfor %}
-{% endif  %}
+<div class="container">
+    <h1 class="mt-5">Minhas Candidaturas</h1>
+    
+    {% if object_list %}
+        {% for candidatura in object_list %}
+        <div class="card" style="width: 20rem; margin-top: 1vw; min-height:10rem;">
+            <div class="card-body">
+                <a href="{{ candidatura.vaga.get_absolute_url }}" class="ml-2 mt-3">{{ candidatura.vaga.titulo }}</a>
+                <p class="ml-2">Status: {{ candidatura.status }}</p>
+                <form method="post" action="{% url 'cancelar-candidatura' candidatura.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Cancelar candidatura</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>Não há candidatura.</p>
+    {% endif %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif  %}
+</div>
 
 {% endblock %}
