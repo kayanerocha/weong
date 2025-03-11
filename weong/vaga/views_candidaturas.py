@@ -63,6 +63,8 @@ def cancelar_candidatura(request: HttpRequest, pk: int):
         return redirect('minhas-candidaturas')
     return redirect('lista-vagas')
 
+@login_required
+@permission_required(['vaga.change_candidatura'], login_url='lista-vagas')
 def aprovar_candidato(request: HttpRequest, id_candidatura: int):
     if request.method == 'POST':
         try:
@@ -75,7 +77,8 @@ def aprovar_candidato(request: HttpRequest, id_candidatura: int):
             return redirect('detalhe-vaga', candidatura.vaga_id)
     return redirect('lista-vagas')
     
-
+@login_required
+@permission_required(['vaga.change_candidatura'], login_url='lista-vagas')
 def reprovar_candidato(request: HttpRequest, id_candidatura: int):
     if request.method == 'POST':
         try:
