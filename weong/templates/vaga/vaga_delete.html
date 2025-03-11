@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <form method="post">
+<div class="container d-flex">
+    <form method="post" class="mt-5">
         {% csrf_token %}
         <p>Tem certeza que deseja deletar a vaga "{{ vaga }}"?</p>
-        <a href="{{ vaga.get_absolute_url }}">Cancelar</a>
-        <button type="submit" value="">Deletar</button>
+        <a href="{{ vaga.get_absolute_url }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" value="" class="btn btn-danger">Deletar</button>
     </form>
+</div>
 {% endblock %}

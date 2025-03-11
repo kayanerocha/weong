@@ -52,7 +52,7 @@
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-voluntario' %}">Cadastro de Voluntário</a>
             <a class="nav-link" style="color: white;" href="{% url 'login' %}">Login</a>
         {% else %}
-            <form action="{% url 'logout' %}" method="post" class="d-inline">
+            <form action="{% url 'logout' %}" method="post" class="d-inline mr-2">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger btn-sm">Logout</button>
             </form>
