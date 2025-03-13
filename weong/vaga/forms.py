@@ -2,6 +2,7 @@ import datetime
 from django import forms
 
 from .models import Vaga
+from usuario.forms import CadastroEnderecoForm
 
 class VagaForm(forms.ModelForm):
     titulo = forms.CharField(max_length=100, label='Título da vaga',widget=forms.TextInput(attrs={'class':'form-control'}))

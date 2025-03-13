@@ -1,8 +1,9 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest
+from django.shortcuts import render, redirect
 from django.views import generic
-from django.views.generic.edit import CreateView
 from django.views.generic.edit import DeleteView
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
@@ -57,34 +58,27 @@ class DetalheVagaView(generic.DetailView):
                 context['vagas_restantes'] = context['object'].quantidade_vagas - vagas_preenchidas
         return context
 
-class VagaCreate(PermissionRequiredMixin, CreateView):
-    permission_required = 'vaga.add_vaga'
-    model = Vaga
-    form_class = VagaForm
-    template_name = 'vaga/cadastro.html'
-    success_url = reverse_lazy('minhas-vagas')
-    login_url = '403.html'
+@login_required
+@permission_required(['vaga.add_vaga'], login_url='lista-vagas')
+def cadastrar_vaga(request: HttpRequest):
+    if request.method == 'POST':
+        form_vaga = VagaForm(request.POST)
+        form_endereco = CadastroEnderecoForm(request.POST)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.POST:
-            context['endereco_form'] = CadastroEnderecoForm(self.request.POST)
-        else:
-            context['endereco_form'] = CadastroEnderecoForm()
-        return context
-    
-    def form_valid(self, form):
-        context = self.get_context_data()
-        endereco_form = context['endereco_form']
-        if endereco_form.is_valid():
-            endereco = endereco_form.save()
-            vaga = form.save(commit=False)
+        if form_vaga.is_valid() and form_endereco.is_valid():
+            endereco = form_endereco.save()
+            vaga = form_vaga.save(commit=False)
             vaga.endereco = endereco
-            vaga.ong = self.request.user.ong
+            vaga.ong = request.user.ong
             vaga.save()
-            return super().form_valid(form)
-        else:
-            return self.form_invalid(form)
+            return redirect('minhas-vagas')
+    else:
+        form_vaga = VagaForm()
+        form_endereco = CadastroEnderecoForm()
+    return render(request, 'vaga/cadastro.html', {
+        'form': form_vaga,
+        'form_endereco': form_endereco
+    })
 
 class VagaList(ListView):
     model = Vaga
