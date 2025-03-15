@@ -8,19 +8,32 @@
         <p class=" ml-3">Endereço da Vaga: {{ vaga.endereco }}</p>
         <p class=" ml-3">Requisitos da Vaga: {{ vaga.requisitos }}</p>
         <p class=" ml-3">Quantidade de Vagas: {{ vaga.quantidade_vagas }}</p>
+        <p class=" ml-3">Fim das candidaturas: {{ vaga.fim_candidaturas }}</p>
         {% if vaga.ong and vaga.ong.usuario_id == user.id %}
             <p class=" ml-3">Preenchida: {{ vaga.preenchida }}</p>
+            <p class=" ml-3">Encerrada: {{ vaga.encerrada }}</p>
             <p class=" ml-3">Quantidade de candidatos: {{ quantidade_candidatos }}</p>
             <p class=" ml-3">Vagas preenchidas: {{ vagas_preenchidas }}</p>
             <p class=" ml-3">Vagas restantes: {{ vagas_restantes }}</p>
             <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
             <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
-            {% if not candidatura.encerrada %}
-                <form method="post" action="{% url 'encerrar-candidatura' vaga.id %}">
+            {% now "Y-m-d" as hoje %}
+            {% if vaga.encerrada and vaga.fim_candidaturas|date:"Y-m-d" >= hoje  %}
+                <form method="post" action="{% url 'reabrir-vaga' vaga.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Reabrir candidaturas</button>
+                </form>
+            {% endif %}
+            {% if not vaga.encerrada %}
+                <form method="post" action="{% url 'encerrar-vaga' vaga.id %}">
                     {% csrf_token %}
                     <button type="submit">Encerrar candidaturas</button>
                 </form>
             {% endif %}
+            <form method="post" action="{% url 'preencher-vaga' vaga.id %}">
+                {% csrf_token %}
+                <button type="submit" {% if not candidatos_selecionados or vaga.preenchida %} disabled="true" {% endif %} >Preencher vaga</button>
+            </form>
             {% if candidaturas %}
                 {% for candidatura in candidaturas %}
                     <a href="">{{ candidatura.voluntario.nome_completo }}</a>

@@ -1,6 +1,8 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest
+from django.shortcuts import redirect
 from django.views import generic
 from django.views.generic.edit import CreateView
 from django.views.generic.edit import DeleteView
@@ -29,6 +31,12 @@ class ListaVagasView(generic.ListView):
     
     template_name = 'vagas/lista.html'
 
+def candidatos_selecionados(id_vaga: int) -> bool:
+    candidatos_aceitos = Candidatura.objects.filter(vaga_id=id_vaga, status='Aceito').count()
+    if candidatos_aceitos == Vaga.objects.filter(id=id_vaga).get().quantidade_vagas:
+        return True
+    return False
+
 class DetalheVagaView(generic.DetailView):
     model = Vaga
 
@@ -39,6 +47,7 @@ class DetalheVagaView(generic.DetailView):
         context['quantidade_candidatos'] = 0
         context['vagas_preenchidas'] = 0
         context['vagas_restantes'] = 0
+        context['candidatos_selecionados'] = candidatos_selecionados(context['object'].id)
         
         if self.request.user.is_authenticated:
             id_vaga = context['object'].id
@@ -131,3 +140,42 @@ class MinhasVagasList(PermissionRequiredMixin, VagaList):
     def get_queryset(self):
         ong = Ong.objects.filter(usuario_id__exact=self.request.user.id).get()
         return Vaga.objects.filter(ong_id__exact=ong.id)
+
+@login_required
+@permission_required(['vaga.change_vaga'], login_url='lista-vagas')
+def encerrar_vaga(request: HttpRequest, pk: int):
+    if request.method == 'POST':
+        try:
+            Vaga.objects.filter(id=pk).update(encerrada=1)
+        except Exception as e:
+            messages.error(request, _('Erro ao encerrar vaga, entre em contato com o administrador do sistema.'))
+        else:
+            messages.success(request, _('Vaga encerrada com sucesso!'))
+        return redirect('detalhe-vaga', pk)
+    return redirect('lista-vagas')
+
+@login_required
+@permission_required(['vaga.change_vaga'], login_url='lista-vagas')
+def reabrir_vaga(request: HttpRequest, pk: int):
+    if request.method == 'POST':
+        try:
+            Vaga.objects.filter(id=pk).update(encerrada=0)
+        except Exception as e:
+            messages.error(request, _('Erro ao reabrir vaga, entre em contato com o administrador do sistema.'))
+        else:
+            messages.success(request, _('Vaga reaberta com sucesso!'))
+        return redirect('detalhe-vaga', pk)
+    return redirect('lista-vagas')
+
+@login_required
+@permission_required(['vaga.change_vaga'], login_url='lista-vagas')
+def preencher_vaga(request: HttpRequest, pk: int):
+    if request.method == 'POST':
+        try:
+            Vaga.objects.filter(id=pk).update(preenchida=1)
+        except Exception as e:
+            messages.error(request, _('Erro ao preencher vaga, entre em contato com o administrador do sistema.'))
+        else:
+            messages.success(request, _('Vaga preenchida com sucesso!'))
+        return redirect('detalhe-vaga', pk)
+    return redirect('lista-vagas')
