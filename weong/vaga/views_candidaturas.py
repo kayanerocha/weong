@@ -80,7 +80,9 @@ def reprovar_candidato(request: HttpRequest, id_candidatura: int):
     if request.method == 'POST':
         try:
             candidatura = Candidatura.objects.filter(id=id_candidatura).get()
-            Candidatura.objects.filter(id=id_candidatura).update(status='Recusado')
+            candidatura.status = 'Recusado'
+            candidatura.save()
+            # Candidatura.objects.filter(id=id_candidatura).update(status='Recusado')
         except Exception as e:
             messages.error(request, _('Erro ao reprovar o candidato, entre em contato com o administrador do sistema.'))
         else:
