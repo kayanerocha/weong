@@ -143,32 +143,6 @@ class MinhasVagasList(PermissionRequiredMixin, VagaList):
 
 @login_required
 @permission_required(['vaga.change_vaga'], login_url='lista-vagas')
-def encerrar_vaga(request: HttpRequest, pk: int):
-    if request.method == 'POST':
-        try:
-            Vaga.objects.filter(id=pk).update(encerrada=1)
-        except Exception as e:
-            messages.error(request, _('Erro ao encerrar vaga, entre em contato com o administrador do sistema.'))
-        else:
-            messages.success(request, _('Vaga encerrada com sucesso!'))
-        return redirect('detalhe-vaga', pk)
-    return redirect('lista-vagas')
-
-@login_required
-@permission_required(['vaga.change_vaga'], login_url='lista-vagas')
-def reabrir_vaga(request: HttpRequest, pk: int):
-    if request.method == 'POST':
-        try:
-            Vaga.objects.filter(id=pk).update(encerrada=0)
-        except Exception as e:
-            messages.error(request, _('Erro ao reabrir vaga, entre em contato com o administrador do sistema.'))
-        else:
-            messages.success(request, _('Vaga reaberta com sucesso!'))
-        return redirect('detalhe-vaga', pk)
-    return redirect('lista-vagas')
-
-@login_required
-@permission_required(['vaga.change_vaga'], login_url='lista-vagas')
 def preencher_vaga(request: HttpRequest, pk: int):
     if request.method == 'POST':
         try:

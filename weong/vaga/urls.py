@@ -17,7 +17,5 @@ urlpatterns = [
     path('cancelar-candidatura/<int:pk>', cancelar_candidatura, name='cancelar-candidatura'),
     path('aprovar-candidato/<int:id_candidatura>', aprovar_candidato, name='aprovar-candidato'),
     path('reprovar-candidato/<int:id_candidatura>', reprovar_candidato, name='reprovar-candidato'),
-    path('encerrar-vaga/<int:pk>', encerrar_vaga, name='encerrar-vaga'),
-    path('reabrir-vaga/<int:pk>', reabrir_vaga, name='reabrir-vaga'),
     path('preencher-vaga/<int:pk>', preencher_vaga, name='preencher-vaga'),
 ]

@@ -2,6 +2,7 @@
 
 {% block content %}
     <div class="card ml-3 mt-3" style="background-color: white;">
+        {% now "Y-m-d" as hoje %}
         <h3 class="card-title ml-3 mt-3">Detalhes - Vaga {{ vaga.titulo }}</h3>
         <!-- <p>{{ vaga.created_at }}</p> --><br>
         <p class=" ml-3">Descrição: {{ vaga.descricao }}</p>
@@ -11,25 +12,11 @@
         <p class=" ml-3">Fim das candidaturas: {{ vaga.fim_candidaturas }}</p>
         {% if vaga.ong and vaga.ong.usuario_id == user.id %}
             <p class=" ml-3">Preenchida: {{ vaga.preenchida }}</p>
-            <p class=" ml-3">Encerrada: {{ vaga.encerrada }}</p>
             <p class=" ml-3">Quantidade de candidatos: {{ quantidade_candidatos }}</p>
             <p class=" ml-3">Vagas preenchidas: {{ vagas_preenchidas }}</p>
             <p class=" ml-3">Vagas restantes: {{ vagas_restantes }}</p>
             <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
             <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
-            {% now "Y-m-d" as hoje %}
-            {% if vaga.encerrada and vaga.fim_candidaturas|date:"Y-m-d" >= hoje  %}
-                <form method="post" action="{% url 'reabrir-vaga' vaga.id %}">
-                    {% csrf_token %}
-                    <button type="submit">Reabrir candidaturas</button>
-                </form>
-            {% endif %}
-            {% if not vaga.encerrada %}
-                <form method="post" action="{% url 'encerrar-vaga' vaga.id %}">
-                    {% csrf_token %}
-                    <button type="submit">Encerrar candidaturas</button>
-                </form>
-            {% endif %}
             <form method="post" action="{% url 'preencher-vaga' vaga.id %}">
                 {% csrf_token %}
                 <button type="submit" {% if not candidatos_selecionados or vaga.preenchida %} disabled="true" {% endif %} >Preencher vaga</button>
@@ -55,7 +42,7 @@
             {% endif %}
         {% endif %}
 
-        {% if user.is_authenticated and user.groups.all.0.id == 2 and not is_candidato and not vaga.preenchida and not vaga.encerrada %}
+        {% if user.is_authenticated and user.groups.all.0.id == 2 and not is_candidato and not vaga.preenchida and and vaga.fim_candidaturas|date:"Y-m-d" >= hoje %}
             <form method="post" action="{% url 'candidatarse' vaga.id %}">
                 {% csrf_token %}
                 <button type="submit">Candidatar-se</button>
