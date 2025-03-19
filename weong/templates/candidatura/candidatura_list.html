@@ -8,10 +8,13 @@
     {% for candidatura in object_list %}
         <a href="{{ candidatura.vaga.get_absolute_url }}">{{ candidatura.vaga.titulo }}</a>
         <p>Status: {{ candidatura.status }}</p>
-        <form method="post" action="{% url 'cancelar-candidatura' candidatura.id %}">
-            {% csrf_token %}
-            <button type="submit">Cancelar candidatura</button>
-        </form>
+        {% now "Y-m-d" as hoje %}
+        {% if candidatura.status == 'Pendente' and not candidatura.vaga.preenchida and candidatura.vaga.fim_candidaturas|date:"Y-m-d" >= hoje %}
+            <form method="post" action="{% url 'cancelar-candidatura' candidatura.id %}">
+                {% csrf_token %}
+                <button type="submit">Cancelar candidatura</button>
+            </form>
+        {% endif %}
         <br>
     {% endfor %}
 {% else %}

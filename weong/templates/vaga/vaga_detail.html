@@ -42,7 +42,7 @@
             {% endif %}
         {% endif %}
 
-        {% if user.is_authenticated and user.groups.all.0.id == 2 and not is_candidato and not vaga.preenchida and and vaga.fim_candidaturas|date:"Y-m-d" >= hoje %}
+        {% if user.is_authenticated and user.groups.all.0.id == 2 and not is_candidato and not vaga.preenchida and vaga.fim_candidaturas|date:"Y-m-d" >= hoje %}
             <form method="post" action="{% url 'candidatarse' vaga.id %}">
                 {% csrf_token %}
                 <button type="submit">Candidatar-se</button>
