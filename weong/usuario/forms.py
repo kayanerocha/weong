@@ -8,6 +8,7 @@ from brasilapy import BrasilAPI
 from brasilapy.constants import APIVersion
 from brasilapy.exceptions import ProcessorException
 from validate_docbr import CNPJ, CPF
+from datetime import date
 
 from .models import Ong, Voluntario
 from vaga.models import Endereco
@@ -115,6 +116,20 @@ class CadastroVoluntarioForm(forms.ModelForm):
         except ProcessorException:
             raise ValidationError(_('Número de telefone inválido.'), code='invalido')
         return telefone
+
+    def clean_data_nascimento(self):
+        data_nascimento = self.cleaned_data.get('data_nascimento')
+        if not data_nascimento:
+            raise ValidationError(_('Data de nascimento obrigatória.'), code='obrigatorio')
+
+        # Calcula a idade
+        hoje = date.today()
+        idade = hoje.year - data_nascimento.year - ((hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day))
+
+        if idade < 18:
+            raise ValidationError(_('Você deve ter pelo menos 18 anos para se cadastrar.'), code='idade_insuficiente')
+
+        return data_nascimento
 
 class EditarOngForm(forms.ModelForm):
     class Meta:
