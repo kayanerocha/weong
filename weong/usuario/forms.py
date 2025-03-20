@@ -118,18 +118,26 @@ class CadastroVoluntarioForm(forms.ModelForm):
         return telefone
 
     def clean_data_nascimento(self):
-        data_nascimento = self.cleaned_data.get('data_nascimento')
-        if not data_nascimento:
-            raise ValidationError(_('Data de nascimento obrigatória.'), code='obrigatorio')
+        try:
+            data_nascimento = self.cleaned_data.get('data_nascimento')
+            if not data_nascimento:
+                raise ValidationError(_('Data de nascimento obrigatória.'), code='obrigatorio')
 
-        # Calcula a idade
-        hoje = date.today()
-        idade = hoje.year - data_nascimento.year - ((hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day))
+            hoje = date.today()
+            idade = hoje.year - data_nascimento.year
 
-        if idade < 18:
-            raise ValidationError(_('Você deve ter pelo menos 18 anos para se cadastrar.'), code='idade_insuficiente')
+            if (hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day):
+                idade -= 1
+            if idade < 18:
+                raise ValidationError(_('Você deve ter pelo menos 18 anos para se cadastrar.'), code='idade_insuficiente')
 
-        return data_nascimento
+            return data_nascimento
+
+        except ValidationError as e:
+            raise e  # Se for um erro esperado, apenas repassa
+
+        except Exception as e:
+            raise ValidationError(_('Erro ao validar a data de nascimento. Tente novamente.'), code='erro_interno')
 
 class EditarOngForm(forms.ModelForm):
     class Meta:
