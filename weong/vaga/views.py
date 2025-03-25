@@ -94,11 +94,37 @@ class VagaList(ListView):
     def get_queryset(self):
         return Vaga.objects.filter(preenchida__exact=0)
 
+@login_required
+@permission_required(['vaga.add_vaga'], login_url='lista-vagas')
+def editar_vaga(request: HttpRequest, pk):
+    if request.method == 'POST':
+        form_vaga = VagaForm(request.POST)
+        form_endereco = CadastroEnderecoForm(request.POST)
+
+        if form_vaga.is_valid() and form_endereco.is_valid():
+            endereco = form_endereco.save()
+            vaga = form_vaga.save(commit=False)
+            vaga.endereco = endereco
+            vaga.ong = request.user.ong
+            vaga.save()
+            return redirect('minhas-vagas')
+    else:
+        vaga = Vaga.objects.filter(id=pk)
+        endereco = Endereco.objects.filter(id=vaga.get().endereco.id)
+        print(vaga)
+        print(endereco)
+        form_vaga = VagaForm(vaga)
+        form_endereco = CadastroEnderecoForm(endereco)
+    return render(request, 'vaga/vaga_edit.html', {
+        'form': form_vaga,
+        'form_endereco': form_endereco
+    })
+
 class VagaUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = 'vaga.change_vaga'
     model = Vaga
     form_class = VagaForm
-    template_name = 'vaga/vaga_update.html'
+    template_name = 'vaga/vaga_edit.html'
     success_url = reverse_lazy('minhas-vagas')
 
     def get_context_data(self, **kwargs):
@@ -116,7 +142,7 @@ class VagaUpdate(PermissionRequiredMixin, UpdateView):
             vaga.endereco = endereco
             vaga.ong = self.request.user.ong
             vaga.save()
-            return super().form_valid(form)
+            return redirect('detalhe-vaga', vaga.id)
         else:
             return self.form_invalid(form)
 

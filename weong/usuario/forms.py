@@ -35,13 +35,13 @@ class CadastroUsuarioForm(forms.ModelForm):
         return cleaned_data
 
 class CadastroEnderecoForm(forms.ModelForm):
-    logradouro = forms.CharField(max_length=255, label='Logradouro')
-    numero = forms.CharField(max_length=20, label='Número')
-    complemento = forms.CharField(max_length=255, label='Complemento', required=False)
-    bairro = forms.CharField(max_length=255, label='Bairro', required=False)
-    cidade = forms.CharField(max_length=255, label='Cidade')
-    estado = forms.CharField(widget=forms.Select(choices=Endereco.ESTADOS), label='Estado')
-    cep = forms.CharField(max_length=8, label='CEP')
+    logradouro = forms.CharField(max_length=255, label='Logradouro', widget=forms.TextInput(attrs={'class':'form-control'}))
+    numero = forms.CharField(max_length=20, label='Número', widget=forms.TextInput(attrs={'class':'form-control'}))
+    complemento = forms.CharField(max_length=255, label='Complemento', required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
+    bairro = forms.CharField(max_length=255, label='Bairro', required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
+    cidade = forms.CharField(max_length=255, label='Cidade', widget=forms.TextInput(attrs={'class':'form-control'}))
+    estado = forms.CharField(widget=forms.Select(choices=Endereco.ESTADOS, attrs={'class':'form-control'}), label='Estado')
+    cep = forms.CharField(max_length=8, label='CEP', widget=forms.NumberInput(attrs={'class':'form-control'}))
 
     class Meta:
         model = Endereco
