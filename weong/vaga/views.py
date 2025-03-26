@@ -11,10 +11,10 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
 
 from .models import Vaga, Candidatura
-from .forms import VagaForm
+from .forms import *
 from usuario.forms import CadastroEnderecoForm
 from usuario.models import Ong, Voluntario, Endereco
-from .views_candidaturas import candidatura_existe
+from .services import candidatos_selecionados, candidatura_existe
 
 class ListaVagasView(generic.ListView):
     model = Vaga
@@ -29,12 +29,6 @@ class ListaVagasView(generic.ListView):
         return context
     
     template_name = 'vagas/lista.html'
-
-def candidatos_selecionados(id_vaga: int) -> bool:
-    candidatos_aceitos = Candidatura.objects.filter(vaga_id=id_vaga, status='Aceito').count()
-    if candidatos_aceitos == Vaga.objects.filter(id=id_vaga).get().quantidade_vagas:
-        return True
-    return False
 
 class DetalheVagaView(generic.DetailView):
     model = Vaga
@@ -109,12 +103,12 @@ def editar_vaga(request: HttpRequest, pk):
             vaga.save()
             return redirect('minhas-vagas')
     else:
-        vaga = Vaga.objects.filter(id=pk)
-        endereco = Endereco.objects.filter(id=vaga.get().endereco.id)
+        vaga = Vaga.objects.filter(id=pk).first()
+        endereco = Endereco.objects.filter(id=vaga.endereco.id).first()
         print(vaga)
         print(endereco)
-        form_vaga = VagaForm(vaga)
-        form_endereco = CadastroEnderecoForm(endereco)
+        form_vaga = VagaForm(instance=vaga)
+        form_endereco = CadastroEnderecoForm(instance=endereco)
     return render(request, 'vaga/vaga_edit.html', {
         'form': form_vaga,
         'form_endereco': form_endereco
@@ -123,9 +117,14 @@ def editar_vaga(request: HttpRequest, pk):
 class VagaUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = 'vaga.change_vaga'
     model = Vaga
-    form_class = VagaForm
+    form_class = EditarVagaForm
     template_name = 'vaga/vaga_edit.html'
     success_url = reverse_lazy('minhas-vagas')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['id_vaga'] = self.kwargs.get('pk')
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(VagaUpdate, self).get_context_data(**kwargs)

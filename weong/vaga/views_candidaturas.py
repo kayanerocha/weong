@@ -13,12 +13,6 @@ from django.urls import reverse_lazy
 from .models import Vaga, Candidatura
 from usuario.models import Voluntario
 
-def candidatura_existe(vaga_id: int, voluntario_id: int):
-    candidatura = Candidatura.objects.filter(vaga_id=vaga_id, voluntario_id=voluntario_id).first()
-    if candidatura:
-        return True
-    return False
-
 @login_required
 @permission_required(['vaga.add_candidatura'], login_url='lista-vagas')
 def criar_candidatura(request: HttpRequest, pk: int):

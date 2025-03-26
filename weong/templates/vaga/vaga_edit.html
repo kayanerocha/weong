@@ -15,7 +15,7 @@
                 <h2 class="mt-5 mb-4">Dados da Vaga</h2>
                 <div class="form-group mt-3">
                     <label for="titulo-vaga">Título da Vaga</label>
-                    {{form.titulo}}
+                    {{ form.titulo }}
                 </div>
                 <div class="form-group">
                     <label for="descricao-vaga">Descrição da Vaga</label>
@@ -25,13 +25,20 @@
                     <label for="requisitos-vaga">Requisitos da Vaga</label>
                     {{form.requisitos}}
                 </div>
+                <div class="form-group">
+                    <label for="requisitos-vaga">Quantidade de Vagas</label>
+                    {{form.quantidade_vagas}}
+                </div>
+                <div class="form-group">
+                    <label for="requisitos-vaga">Fim das candidaturas</label>
+                    {{form.fim_candidaturas}}
+                </div>
                 <h2 class="mt-5 mb-4">Dados do Endereço</h2>
                 <!-- {{  endereco_form.as_p  }} -->
                 <div class="form-group row">
                     <div class="form-group col-6">
                         <label for="logradouro">Logradouro</label>
                         {{ endereco_form.logradouro }}
-                        <input type="text" class="form-control" value="{{ endereco_form.logradouro }}" required>
                     </div>
                     <div class="form-group col-3">
                         <label for="numero">Numero</label>
