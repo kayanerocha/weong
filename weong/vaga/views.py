@@ -12,9 +12,9 @@ from django.urls import reverse_lazy
 
 from .models import Vaga, Candidatura
 from .forms import *
-from usuario.forms import CadastroEnderecoForm
+from usuario.forms import CadastroEnderecoForm, EditarEnderecoForm
 from usuario.models import Ong, Voluntario, Endereco
-from .services import candidatos_selecionados, candidatura_existe
+from .services import candidatos_selecionados, candidatura_existe, possui_candidatura
 
 class ListaVagasView(generic.ListView):
     model = Vaga
@@ -41,6 +41,7 @@ class DetalheVagaView(generic.DetailView):
         context['vagas_preenchidas'] = 0
         context['vagas_restantes'] = 0
         context['candidatos_selecionados'] = candidatos_selecionados(context['object'].id)
+        context['vagas_preenchidas'] = candidatos_selecionados(context['object'].id)
         
         if self.request.user.is_authenticated:
             id_vaga = context['object'].id
@@ -54,9 +55,9 @@ class DetalheVagaView(generic.DetailView):
                 candidaturas = Candidatura.objects.filter(vaga_id=id_vaga).all()
                 context['candidaturas'] = candidaturas
                 context['quantidade_candidatos'] = len(candidaturas)
-                vagas_preenchidas = len(candidaturas.filter(status='Aceito'))
-                context['vagas_preenchidas'] = vagas_preenchidas
-                context['vagas_restantes'] = context['object'].quantidade_vagas - vagas_preenchidas
+                qnt_vagas_preenchidas = len(candidaturas.filter(status='Aceito'))
+                context['qnt_vagas_preenchidas'] = qnt_vagas_preenchidas
+                context['vagas_restantes'] = context['object'].quantidade_vagas - qnt_vagas_preenchidas
         return context
 
 @login_required
@@ -127,8 +128,14 @@ class VagaUpdate(PermissionRequiredMixin, UpdateView):
         return kwargs
 
     def get_context_data(self, **kwargs):
+        id_vaga = self.kwargs.get('pk')
+        kwargs['id_vaga'] = id_vaga
         context = super(VagaUpdate, self).get_context_data(**kwargs)
-        context['endereco_form'] = CadastroEnderecoForm(self.request.POST or None, self.request.FILES or None, instance=Endereco.objects.get(id=self.get_object().endereco_id))
+        endereco_form = EditarEnderecoForm(self.request.POST or None, self.request.FILES or None, instance=Endereco.objects.get(id=self.get_object().endereco_id))
+        if possui_candidatura(id_vaga):
+            for campo in endereco_form.fields:
+                endereco_form.fields[campo].disabled = True
+        context['endereco_form'] = endereco_form
         return context
     
     def form_valid(self, form):

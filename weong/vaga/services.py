@@ -1,7 +1,10 @@
 from .models import Candidatura, Vaga
 
+def qnt_candidatos_selecionados(id_vaga: int) -> int:
+    return Candidatura.objects.filter(vaga_id=id_vaga, status='Aceito').count()
+
 def candidatos_selecionados(id_vaga: int) -> bool:
-    candidatos_aceitos = Candidatura.objects.filter(vaga_id=id_vaga, status='Aceito').count()
+    candidatos_aceitos = qnt_candidatos_selecionados(id_vaga)
     if candidatos_aceitos == Vaga.objects.filter(id=id_vaga).get().quantidade_vagas:
         return True
     return False

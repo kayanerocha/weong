@@ -11,6 +11,7 @@ from validate_docbr import CNPJ, CPF
 
 from .models import Ong, Voluntario
 from vaga.models import Endereco
+from vaga.services import possui_candidatura
 
 client = BrasilAPI()
 
@@ -51,12 +52,17 @@ class CadastroEnderecoForm(forms.ModelForm):
         cep = self.cleaned_data['cep']
         try:
             client.get_cep(cep, APIVersion.V1)
-        except ProcessorException:
+        except (ProcessorException, TypeError):
             try:
                 client.get_cep(cep, APIVersion.V2)
-            except ProcessorException:
+            except (ProcessorException, TypeError):
                 raise ValidationError(_('CEP não encontrado.'), code='invalido')    
         return cep
+
+class EditarEnderecoForm(CadastroEnderecoForm):
+    
+    class Meta(CadastroEnderecoForm.Meta):
+        pass
 
 class CadastroOngForm(forms.ModelForm):
     nome_fantasia = forms.CharField(max_length=255, label='Nome Fantasia')

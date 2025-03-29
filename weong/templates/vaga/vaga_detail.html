@@ -13,7 +13,7 @@
         {% if vaga.ong and vaga.ong.usuario_id == user.id %}
             <p class=" ml-3">Preenchida: {{ vaga.preenchida }}</p>
             <p class=" ml-3">Quantidade de candidatos: {{ quantidade_candidatos }}</p>
-            <p class=" ml-3">Vagas preenchidas: {{ vagas_preenchidas }}</p>
+            <p class=" ml-3">Vagas preenchidas: {{ qnt_vagas_preenchidas }}</p>
             <p class=" ml-3">Vagas restantes: {{ vagas_restantes }}</p>
             <a href="{% url 'edita-vaga' pk=vaga.id %}">Editar</a>
             <a href="{% url 'deletar-vaga' pk=vaga.id %}">Deletar</a>
@@ -25,18 +25,14 @@
                 {% for candidatura in candidaturas %}
                     <a href="">{{ candidatura.voluntario.nome_completo }}</a>
                     <p>{{ candidatura.status }}</p>
-                    {% if candidatura.status != 'Aceito' %}
-                        <form method="post" action="{% url 'aprovar-candidato' candidatura.id %}">
-                            {% csrf_token %}
-                            <button type="submit">Aprovar</button>
-                        </form>
-                    {% endif %}
-                    {% if candidatura.status != 'Recusado' %}
-                        <form method="post" action="{% url 'reprovar-candidato' candidatura.id %}">
-                            {% csrf_token %}
-                            <button type="submit">Reprovar</button>
-                        </form>
-                    {% endif %}
+                    <form method="post" action="{% url 'aprovar-candidato' candidatura.id %}">
+                        {% csrf_token %}
+                        <button type="submit" {% if candidatura.status != 'Recusado' and candidatura.status != 'Pendente' or vagas_preenchidas %} disabled="true" {% endif %}>Aprovar</button>
+                    </form>
+                    <form method="post" action="{% url 'reprovar-candidato' candidatura.id %}">
+                        {% csrf_token %}
+                        <button type="submit" {% if candidatura.status != 'Aceito' and candidatura.status != 'Pendente' %} disabled="True" {% endif %}>Reprovar</button>
+                    </form>
                     <hr>
                 {% endfor %}
             {% endif %}
