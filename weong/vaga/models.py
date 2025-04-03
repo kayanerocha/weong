@@ -1,6 +1,8 @@
+from decouple import config
 from django.db import models
 from django.db.models.signals import post_save
 from django.urls import reverse
+from opencage.geocoder import OpenCageGeocode
 
 # Create your models here.
 
@@ -45,6 +47,8 @@ class Endereco(models.Model):
 
     estado = models.CharField(max_length=2, choices=ESTADOS)
     cep = models.CharField(max_length=10)
+    latitude = models.FloatField(max_length=20, blank=True, null=True)
+    longitude = models.FloatField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -56,6 +60,15 @@ class Endereco(models.Model):
     
     def get_absolute_url(self):
         return reverse('detalhe-endereco', args=[str(self.id)])
+    
+    def save(self, *args, **kwargs):
+        geocoder = OpenCageGeocode(config('GEOCODER_API_KEY'))
+        result = geocoder.geocode(self.__str__())
+        if result:
+            self.latitude = result[0]['geometry']['lat']
+            self.longitude = result[0]['geometry']['lng']
+        super().save(*args, **kwargs)
+
 
 class Vaga(models.Model):
     '''Modelo representando uma vaga'''
