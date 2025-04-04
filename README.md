@@ -40,7 +40,7 @@ Instale as bibliotecas
 
 ### Variáveis de Ambiente
 
-Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env (renomear .env.exemple para .env)
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env (`copy .env.example .env`)
 
 `DB_HOST`
 
@@ -51,6 +51,8 @@ Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de
 `DB_PASSWORD`
 
 `DB_PORT`
+
+`GEOCODER_API_KEY`
 
 Aplique as migrações (precisa de um banco de dados MySQL chamado weong)
 
