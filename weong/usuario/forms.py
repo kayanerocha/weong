@@ -134,7 +134,7 @@ class CadastroVoluntarioForm(forms.ModelForm):
             return data_nascimento
 
         except ValidationError as e:
-            raise e  # Se for um erro esperado, apenas repassa
+            raise e
 
         except Exception as e:
             raise ValidationError(_('Erro ao validar a data de nascimento. Tente novamente.'), code='erro_interno')
