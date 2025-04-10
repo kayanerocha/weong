@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'vaga.apps.VagaConfig',
     'usuario.apps.UsuarioConfig',
+    'dashboard.apps.DashboardConfig',
 ]
 
 MIDDLEWARE = [
