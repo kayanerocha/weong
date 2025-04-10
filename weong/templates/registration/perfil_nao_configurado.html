@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 d-flex flex-column align-items-center justify-content-center text-center">
+    <img src="https://cdn-icons-png.flaticon.com/512/6598/6598516.png" alt="Perfil não configurado" width="150" class="mb-4">
+
+    <h3 class="mb-3">Perfil não configurado</h3>
+    <p class="lead mb-4">
+        Você ainda não possui um perfil vinculado como <strong>ONG</strong> ou <strong>Voluntário</strong>.<br>
+        Para continuar, por favor configure seu perfil ou entre em contato com um administrador.
+    </p>
+
+    <div class="d-flex gap-3">
+        <a href="/" class="btn btn-outline-primary mr-2">Voltar para Home</a>
+        <a href="mailto:suporte@seusite.com" class="btn btn-primary">Contatar Suporte</a>
+    </div>
+</div>
+{% endblock %}
