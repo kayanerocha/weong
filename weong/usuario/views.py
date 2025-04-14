@@ -102,35 +102,41 @@ def perfil_usuario(request):
     ong = Ong.objects.filter(usuario=usuario).first()
     voluntario = Voluntario.objects.filter(usuario=usuario).first()
 
+    # 🟡 Se não houver perfil vinculado, mostrar tela amigável
+    if not ong and not voluntario:
+        return render(request, 'registration/perfil_nao_configurado.html')
+
+    # 🟢 Se houver perfil, carregar os formulários
     if ong:
         form = EditarOngForm(instance=ong)
-        endereco_form = CadastroEnderecoForm(instance=ong.endereco)
+        endereco_form = CadastroEnderecoForm(instance=ong.endereco if ong.endereco else None)
     elif voluntario:
         form = EditarVoluntarioForm(instance=voluntario)
-        endereco_form = CadastroEnderecoForm(instance=voluntario.endereco)
-    else:
-        messages.error(request, "Perfil não encontrado!")
-        return redirect('perfil_usuario')
+        endereco_form = CadastroEnderecoForm(instance=voluntario.endereco if voluntario.endereco else None)
 
+    # 🔁 Se for submissão de formulário
     if request.method == "POST":
         if ong:
             form = EditarOngForm(request.POST, instance=ong)
-            endereco_form = CadastroEnderecoForm(request.POST, instance=ong.endereco)
+            endereco_form = CadastroEnderecoForm(request.POST, instance=ong.endereco if ong.endereco else None)
         elif voluntario:
             form = EditarVoluntarioForm(request.POST, instance=voluntario)
-            endereco_form = CadastroEnderecoForm(request.POST, instance=voluntario.endereco)
+            endereco_form = CadastroEnderecoForm(request.POST, instance=voluntario.endereco if voluntario.endereco else None)
 
         if form.is_valid() and endereco_form.is_valid():
-            # Salvar o endereço primeiro
             endereco = endereco_form.save(commit=False)
             endereco.save()
 
-            # Atualizar os dados do usuário e do endereço
             perfil = form.save(commit=False)
             perfil.endereco = endereco
             perfil.save()
 
             messages.success(request, "Perfil atualizado com sucesso!")
             return redirect('perfil_usuario')
-        
-    return render(request, 'registration/perfil.html', {'form': form, 'endereco_form': endereco_form, 'ong': ong, 'voluntario': voluntario})
+
+    return render(request, 'registration/perfil.html', {
+        'form': form,
+        'endereco_form': endereco_form,
+        'ong': ong,
+        'voluntario': voluntario
+    })
