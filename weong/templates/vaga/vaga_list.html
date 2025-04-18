@@ -13,8 +13,8 @@
     <h1 class="display-4 mt-3 ml-3 text-center">Vagas Abertas - Lista de Vagas Abertas</h1>
     {% if user.is_authenticated %}
         <h2 class="mt-3 ml-3">Olá, {{ user.username }}!</h2>
-        <p class="mt-3 ml-3"><a href="{% url 'password_change' %}">Alterar Minha Senha</a></p>
-        <p class="mt-3 ml-3"><a href="{% url 'perfil_usuario' %}">Meu Perfil</a></p>
+        <!-- <p class="mt-3 ml-3"><a href="{% url 'password_change' %}">Alterar Minha Senha</a></p>
+        <p class="mt-3 ml-3"><a href="{% url 'perfil_usuario' %}">Meu Perfil</a></p> -->
         <!-- <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit">Logout</button>

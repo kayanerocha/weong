@@ -43,19 +43,38 @@
         {% if user.is_authenticated and user.ong %}
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-vaga' %}">Cadastrar Vaga</a>
             <a class="nav-link" style="color: white;" href="{% url 'minhas-vagas' %}">Minhas Vagas</a>
+            <form action="{% url 'logout' %}" method="post" class="d-inline mr-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            </form>
         {% endif %}
         {% if user.is_authenticated and user.voluntario %}
-            <a class="nav-link" style="color: white;" href="{% url 'minhas-candidaturas' %}">Minhas Candidaturas</a>
+            <div class="btn-group mr-2">
+                <button type="button" class="btn dropdown-toggle text-white" style="background-color: #81d3f9;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ user.username }}
+                </button>
+                <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'perfil_usuario' %}">Meu Perfil</a>
+                <a class="dropdown-item" href="{% url 'minhas-candidaturas' %}">Minhas Candidaturas</a>
+                <a class="dropdown-item" href="{% url 'password_change' %}">Alterar Minha Senha</a>
+                <div class="dropdown-divider"></div>
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-block">Logout</button>
+                </form>
+                </div>
+            </div>
+            
         {% endif %}
         {% if not user.is_authenticated %}
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-ong' %}">Cadastro de Ong</a>
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-voluntario' %}">Cadastro de Voluntário</a>
             <a class="nav-link" style="color: white;" href="{% url 'login' %}">Login</a>
         {% else %}
-            <form action="{% url 'logout' %}" method="post" class="d-inline mr-2">
+            <!-- <form action="{% url 'logout' %}" method="post" class="d-inline mr-2">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger btn-sm">Logout</button>
-            </form>
+            </form> -->
         {% endif %}
         <form class="form-inline">
             <input class="form-control" type="search" placeholder="Pesquisar" aria-label="Search">
