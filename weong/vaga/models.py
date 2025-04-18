@@ -2,6 +2,7 @@ from decouple import config
 from django.db import models
 from django.db.models.signals import post_save
 from django.urls import reverse
+from django.utils import timezone
 from opencage.geocoder import OpenCageGeocode
 
 # Create your models here.
