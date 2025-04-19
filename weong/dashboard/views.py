@@ -9,8 +9,8 @@ import folium
 import folium.raster_layers
 import json
 
-from utils.charts import meses, get_meses, cor_primaria, cor_sucesso, cor_vagas_abertas
-from usuario.models import Ong
+from utils.charts import meses, get_meses, cor_primaria, cor_sucesso, cor_vagas_abertas, cor_ongs, cor_voluntarios
+from usuario.models import Ong, Voluntario
 from vaga.models import Vaga, Candidatura
 
 sao_paulo = tz('America/Sao_Paulo')
@@ -82,6 +82,26 @@ def get_vagas_data(request: HttpRequest, ano: int):
                 'data': [
                     vagas.filter(preenchida=1).count(),
                     vagas.filter(preenchida=0, fim_candidaturas__gte=datetime.now().date()).count(),
+                ],
+            }]
+        },
+    })
+
+def get_usuarios_data(request: HttpRequest, ano: int):
+    ongs = Ong.objects.filter(status='Ativa').count()
+    voluntarios = Voluntario.objects.filter(status='Ativo').count()
+
+    return JsonResponse({
+        'title': f'Usuários cadastrados em {ano}',
+        'data': {
+            'labels': ['ONGs', 'Voluntários'],
+            'datasets': [{
+                'label': 'Usuários',
+                'backgroundColor': [cor_ongs, cor_voluntarios],
+                'borderColor': [cor_ongs, cor_voluntarios],
+                'data': [
+                    ongs,
+                    voluntarios
                 ],
             }]
         },

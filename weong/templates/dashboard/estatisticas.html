@@ -14,6 +14,9 @@
         <div class="col-6">
             <canvas id="vagasChart"></canvas>
         </div>
+        <div class="col-6">
+            <canvas id="usuariosChart"></canvas>
+        </div>
     </div>
     <script>
         let candidaturasCtx = document.getElementById('candidaturasChart').getContext('2d');
@@ -30,6 +33,18 @@
 
         let vagasCtx = document.getElementById('vagasChart').getContext('2d');
         let vagasChart = new Chart(vagasCtx, {
+            type: 'pie',
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: ''
+                }
+            }
+        });
+
+        let usuariosCtx = document.getElementById('usuariosChart').getContext('2d');
+        let usuariosChart = new Chart(usuariosCtx, {
             type: 'pie',
             options: {
                 responsive: true,
@@ -92,6 +107,7 @@
     function loadAllCharts(ano) {
         loadChart(candidaturasChart, `/dashboard/candidaturas-chart/${ano}/`);
         loadChart(vagasChart, `/dashboard/vagas-chart/${ano}/`);
+        loadChart(usuariosChart, `/dashboard/usuarios-chart/${ano}/`);
     }
 </script>
 {% endblock %}
