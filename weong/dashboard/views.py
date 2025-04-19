@@ -1,15 +1,15 @@
-from django.core import serializers
+from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count
-from django.db.models.functions import ExtractYear, ExtractMonth
+from django.db.models.functions import ExtractYear
 from django.shortcuts import render
 from django.http import HttpRequest, JsonResponse
-from django.utils import timezone
+from datetime import datetime
 from pytz import timezone as tz
 import folium
 import folium.raster_layers
 import json
 
-from utils.charts import meses, get_meses, cor_primaria
+from utils.charts import meses, get_meses, cor_primaria, cor_sucesso, cor_vagas_abertas
 from usuario.models import Ong
 from vaga.models import Vaga, Candidatura
 
@@ -68,24 +68,21 @@ def get_candidaturas_chart(request: HttpRequest, ano: int):
 def estatisticas(request: HttpRequest):
     return render(request, 'dashboard/estatisticas.html', {})
 
-def chart_vagas(request: HttpRequest):
-    return render(request, 'dashboard/chart_vagas.html', {})
+def get_vagas_data(request: HttpRequest, ano: int):
+    vagas = Vaga.objects.filter(created_at__date__year=ano)
 
-def vagas_data(request: HttpRequest):
-    vagas_preenchidas = Vaga.objects.filter(preenchida=True).all()
-    num_vagas_preenchidas = 0
-    for vaga in vagas_preenchidas:
-        num_vagas_preenchidas += vaga.quantidade_vagas
-    
-    vagas_abertas = Vaga.objects.filter(preenchida=False).all()
-    num_vagas_abertas = 0
-    for vaga in vagas_abertas:
-        num_vagas_abertas += vaga.quantidade_vagas
-    
-    dataset = {
-        'num_vagas_preenchidas': num_vagas_preenchidas,
-        'num_vagas_abertas': num_vagas_abertas
-    }
-
-    # data = serializers.serialize('json', dataset)
-    return JsonResponse(json.loads(json.dumps(dataset)), safe=False)
+    return JsonResponse({
+        'title': f'Vagas cadastradas em {ano}',
+        'data': {
+            'labels': ['Abertas', 'Preenchidas'],
+            'datasets': [{
+                'label': 'Vagas',
+                'backgroundColor': [cor_vagas_abertas, cor_sucesso],
+                'borderColor': [cor_vagas_abertas, cor_sucesso],
+                'data': [
+                    vagas.filter(preenchida=1).count(),
+                    vagas.filter(preenchida=0, fim_candidaturas__gte=datetime.now().date()).count(),
+                ],
+            }]
+        },
+    })

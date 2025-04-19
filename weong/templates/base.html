@@ -47,6 +47,7 @@
     <div class="collapse navbar-collapse text-right float-right justify-content-end" id="navbarSupportedContent">
         <a class="nav-link" style="color: white;" href="{% url 'index' %}">Home</a>
         <a class="nav-link" style="color: white;" href="{% url 'mapa-ongs' %}">Mapa de ONGs</a>
+        <a class="nav-link" style="color: white;" href="{% url 'estatisticas' %}">Alcance do Projeto</a>
         {% if user.is_authenticated and user.ong %}
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-vaga' %}">Cadastrar Vaga</a>
             <a class="nav-link" style="color: white;" href="{% url 'minhas-vagas' %}">Minhas Vagas</a>
