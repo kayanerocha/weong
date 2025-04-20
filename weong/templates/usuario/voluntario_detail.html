@@ -3,6 +3,7 @@
 {% block content %}
 <p>Nome: {{ voluntario.nome_completo }}</p>
 <p>Telefone: {{ voluntario.telefone }}</p>
+<p>E-mail: {{ voluntario.usuario.email }}</p>
 <p>Data de nascimento: {{ voluntario.data_nascimento }}</p>
 <p>CPF: {{ voluntario.cpf }}</p>
 <p>Endereço: {{ voluntario.endereco }}</p>
