@@ -9,7 +9,7 @@ import folium
 import folium.raster_layers
 import json
 
-from utils.charts import meses, get_meses, cor_primaria, cor_sucesso, cor_vagas_abertas, cor_ongs, cor_voluntarios
+from utils.charts import *
 from usuario.models import Ong, Voluntario
 from vaga.models import Vaga, Candidatura
 
@@ -105,4 +105,25 @@ def get_usuarios_data(request: HttpRequest, ano: int):
                 ],
             }]
         },
+    })
+
+def get_vagas_area_data(request: HttpRequest, ano: int):
+    vagas_area = Vaga.objects.filter(created_at__date__year=ano).values('area').annotate(quantidade=Count('area')).order_by()
+
+    areas_dict = get_areas()
+    
+    for area in vagas_area:
+        areas_dict[area['area']] = area['quantidade']
+
+    return JsonResponse({
+        'title': f'Vagas por área em {ano}',
+        'data': {
+            'labels': list(areas_dict.keys()),
+            'datasets': [{
+                'label': 'Quantidade de Vagas',
+                'backgroundColor': cores_areas,
+                'borderColor': cores_areas,
+                'data': list(areas_dict.values()),
+            }]
+        }
     })
