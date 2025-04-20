@@ -9,6 +9,7 @@
         <p class=" ml-3">Descrição: {{ vaga.descricao }}</p>
         <p class=" ml-3">Endereço da Vaga: {{ vaga.endereco }}</p>
         <p class=" ml-3">Requisitos da Vaga: {{ vaga.requisitos }}</p>
+        <p class=" ml-3">Área: {{ vaga.area }}</p>
         <p class=" ml-3">Quantidade de Vagas: {{ vaga.quantidade_vagas }}</p>
         <p class=" ml-3">Fim das candidaturas: {{ vaga.fim_candidaturas }}</p>
         {% if vaga.ong and vaga.ong.usuario_id == user.id %}

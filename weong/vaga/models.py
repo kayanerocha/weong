@@ -85,6 +85,24 @@ class Vaga(models.Model):
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True)
     ong = models.ForeignKey('usuario.Ong', on_delete=models.CASCADE, null=True)
 
+    AREAS = (
+        ('Animais', 'Animais'),
+        ('Apoio Psicológico', 'Apoio Psicológico'),
+        ('Assistência Social', 'Assistência Social'),
+        ('Captação de Recursos / Marketing Social', 'Captação de Recursos / Marketing Social'),
+        ('Cultura e Arte', 'Cultura e Arte'),
+        ('Direiros Humanos', 'Direiros Humanos'),
+        ('Educação', 'Educação'),
+        ('Esporte e Lazer', 'Esporte e Lazer'),
+        ('Inclusão Social', 'Inclusão Social'),
+        ('Meio Ambiente', 'Meio Ambiente'),
+        ('Outros', 'Outros'),
+        ('Saúde', 'Saúde'),
+        ('Tecnologia', 'Tecnologia'),
+    )
+
+    area = models.CharField(max_length=50, choices=AREAS, default='Outros')
+
     class Meta:
         db_table = 'vagas'
         permissions = (('visualizar_minhas_vagas', 'ONG visualizar as suas vagas.'),)
