@@ -12,6 +12,9 @@
             <canvas id="candidaturasChart"></canvas>
         </div>
         <div class="col-6">
+            <canvas id="vagasMesChart"></canvas>
+        </div>
+        <div class="col-6">
             <canvas id="vagasChart"></canvas>
         </div>
         <div class="col-6">
@@ -24,6 +27,18 @@
     <script>
         let candidaturasCtx = document.getElementById('candidaturasChart').getContext('2d');
         let candidaturasChart = new Chart(candidaturasCtx, {
+            type: 'bar',
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: ''
+                }
+            }
+        });
+
+        let vagasMesCtx = document.getElementById('vagasMesChart').getContext('2d');
+        let vagasMesChart = new Chart(vagasMesCtx, {
             type: 'bar',
             options: {
                 responsive: true,
@@ -124,6 +139,7 @@
         loadChart(vagasChart, `/dashboard/vagas-chart/${ano}/`);
         loadChart(usuariosChart, `/dashboard/usuarios-chart/${ano}/`);
         loadChart(vagasAreaChart, `/dashboard/vagas-area-chart/${ano}/`);
+        loadChart(vagasMesChart, `/dashboard/vagas-mes-chart/${ano}/`);
     }
 </script>
 {% endblock %}

@@ -127,3 +127,24 @@ def get_vagas_area_data(request: HttpRequest, ano: int):
             }]
         }
     })
+
+def get_vagas_mes_data(request: HttpRequest, ano: int):
+    vagas_mes = Vaga.objects.filter(created_at__date__year=ano).values('created_at__date__month').annotate(num_vagas=Count('created_at__date__month')).order_by()
+
+    meses_dict = get_meses()
+
+    for vaga in vagas_mes:
+        meses_dict[meses[vaga['created_at__date__month']-1]] = vaga['num_vagas']
+    
+    return JsonResponse({
+        'title': f'Vagas criadas em {ano}',
+        'data': {
+            'labels': list(meses_dict.keys()),
+            'datasets': [{
+                'label': 'Quantidade de Vagas',
+                'backgroundColor': cor_primaria,
+                'borderColor': cor_primaria,
+                'data': list(meses_dict.values())
+            }]
+        }
+    })

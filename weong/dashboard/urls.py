@@ -9,4 +9,5 @@ urlpatterns = [
     path('vagas-chart/<int:ano>/', get_vagas_data, name='vagas-chart'),
     path('usuarios-chart/<int:ano>/', get_usuarios_data, name='usuarios-chart'),
     path('vagas-area-chart/<int:ano>/', get_vagas_area_data, name='vagas-area-chart'),
+    path('vagas-mes-chart/<int:ano>/', get_vagas_mes_data, name='vagas-mes-chart'),
 ]
