@@ -140,3 +140,15 @@ def perfil_usuario(request):
         'ong': ong,
         'voluntario': voluntario
     })
+
+class DetalheOngView(generic.DetailView):
+    model = Ong
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+class DetalheVoluntarioView(generic.DetailView):
+    model = Voluntario
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)

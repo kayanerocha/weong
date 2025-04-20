@@ -16,13 +16,14 @@ class VagaForm(forms.ModelForm):
     
     class Meta:
         model = Vaga
-        fields = ['titulo', 'descricao', 'requisitos', 'quantidade_vagas', 'fim_candidaturas']
+        fields = ['titulo', 'descricao', 'requisitos', 'quantidade_vagas', 'fim_candidaturas', 'area']
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-control', 'max_length': 100}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
             'requisitos': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
             'quantidade_vagas': forms.NumberInput(attrs={'class':'form-control', 'max': 100}),
             'fim_candidaturas': forms.DateInput(attrs={'type':'date', 'initial': datetime.date.today}),
+            'area': forms.Select(choices=Vaga.AREAS, attrs={'class':'form-control'})
         }
     
     def clean_fim_candidaturas(self):

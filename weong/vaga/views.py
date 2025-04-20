@@ -9,6 +9,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse_lazy
+from datetime import datetime
 
 from .models import Vaga, Candidatura
 from .forms import *
@@ -21,7 +22,7 @@ class ListaVagasView(generic.ListView):
     context_object_name = 'lista_vagas'
 
     def get_queryset(self):
-        return Vaga.objects.filter(preenchida__exact=0)
+        return Vaga.objects.filter(preenchida__exact=0, ong__status__exact='Inativa')
     
     def get_context_data(self, **kwargs):
         context = super(ListaVagasView, self).get_context_data(**kwargs)
@@ -87,7 +88,7 @@ class VagaList(ListView):
     template_name = 'vaga/vaga_list.html'
 
     def get_queryset(self):
-        return Vaga.objects.filter(preenchida__exact=0)
+        return Vaga.objects.filter(preenchida__exact=0, ong__status__exact='Ativa', fim_candidaturas__gte=datetime.datetime.now().date())
 
 @login_required
 @permission_required(['vaga.add_vaga'], login_url='lista-vagas')
