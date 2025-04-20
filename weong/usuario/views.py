@@ -134,3 +134,15 @@ def perfil_usuario(request):
             return redirect('perfil_usuario')
         
     return render(request, 'registration/perfil.html', {'form': form, 'endereco_form': endereco_form, 'ong': ong, 'voluntario': voluntario})
+
+class DetalheOngView(generic.DetailView):
+    model = Ong
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+class DetalheVoluntarioView(generic.DetailView):
+    model = Voluntario
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
