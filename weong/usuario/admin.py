@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-from usuario.models import Ong
+from usuario.models import Ong, Voluntario
 
 # Register your models here.
 
@@ -14,7 +14,12 @@ class OngInline(admin.StackedInline):
 @admin.register(Ong)
 class OngAdmin(admin.ModelAdmin):
     list_display = ('nome_fantasia', 'razao_social', 'cnpj', 'telefone', 'status')
-    list_filter = ('nome_fantasia', 'status')
+    list_filter = ('status',)
 
 class UserAdmin(BaseUserAdmin):
     inlines = [OngInline]
+
+@admin.register(Voluntario)
+class VoluntarioAdmin(admin.ModelAdmin):
+    list_display = ('nome_completo', 'telefone', 'data_nascimento', 'cpf', 'status')
+    list_filter = ('status',)

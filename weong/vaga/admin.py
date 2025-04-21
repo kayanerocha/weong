@@ -7,8 +7,8 @@ from vaga.models import Vaga, Endereco
 
 @admin.register(Vaga)
 class VagaAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'descricao', 'requisitos', 'endereco', 'preenchida')
-    list_filter = ('titulo', 'preenchida')
+    list_display = ('titulo', 'descricao', 'requisitos', 'endereco', 'preenchida', 'quantidade_vagas', 'fim_candidaturas', 'area')
+    list_filter = ('preenchida', 'fim_candidaturas', 'area')
 
 @admin.register(Endereco)
 class EnderecoAdmin(admin.ModelAdmin):
