@@ -29,6 +29,8 @@ class CadastroUsuarioForm(forms.ModelForm):
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
         password_confirm = cleaned_data.get('password_confirm')
+        if len(password) < 8 or not (any(not c.isalnum() for c in password) and (not password.isnumeric() and not password.isalpha() and not password.isspace())):
+            self.add_error('password', 'A senha precisa ter no mínimo 8 caracteres com letras e números e pelo menos um caractere especial.')
 
         if password and password_confirm and password != password_confirm:
             self.add_error('password_confirm', 'Senhas divergentes')
