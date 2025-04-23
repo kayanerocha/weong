@@ -17,16 +17,17 @@ from vaga.services import possui_candidatura
 client = BrasilAPI()
 
 class CadastroUsuarioForm(forms.ModelForm):
-    username = forms.CharField(min_length=3, max_length=150, label='Usuário')
-    email = forms.EmailField(max_length=255, label='E-mail', validators=[EmailValidator(_('E-mail inválido, corrija.'))])
-    password = forms.CharField(widget=forms.PasswordInput, label='Senha')
-    password_confirm = forms.CharField(widget=forms.PasswordInput, label='Confirme a senha')
-
     class Meta:
         model = User
         fields = ['username', 'email', 'password']
+        widgets = {
+            'username': forms.TextInput(attrs={'type': 'text', 'min_length': 3, 'max_length': 150, 'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'type': 'email', 'max_length': 255, 'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'type': 'password', 'class': 'form-control'}),
+            'password_confirm': forms.PasswordInput(attrs={'type': 'password', 'class': 'form-control'}),
+        }
 
-    def clean(self):
+    def clean_password(self):
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
         password_confirm = cleaned_data.get('password_confirm')
@@ -68,15 +69,16 @@ class EditarEnderecoForm(CadastroEnderecoForm):
         pass
 
 class CadastroOngForm(forms.ModelForm):
-    nome_fantasia = forms.CharField(max_length=255, label='Nome Fantasia')
-    razao_social = forms.CharField(max_length=255, required=False, label='Razão Social')
-    cnpj = forms.CharField(min_length=14, max_length=14, label='CNPJ')
-    telefone = forms.CharField(min_length=11, max_length=11, label='Telefone')
-    site = forms.URLField(max_length=255, required=False, label='Site', validators=[URLValidator()])
-
     class Meta:
         model = Ong
         fields = ['nome_fantasia', 'razao_social', 'cnpj', 'telefone', 'site']
+        widgets = {
+            'nome_fantasia': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
+            'razao_social': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
+            'cnpj': forms.TextInput(attrs={'type': 'text', 'min_length': 14, 'max_length': 14, 'class':'form-control'}),
+            'telefone': forms.TextInput(attrs={'type': 'text', 'min_length': 11, 'max_length': 11, 'class':'form-control'}),
+            'site': forms.URLInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
+        }
 
     def clean_cnpj(self):
         cnpj = self.cleaned_data['cnpj']
@@ -95,11 +97,6 @@ class CadastroOngForm(forms.ModelForm):
         return telefone
 
 class CadastroVoluntarioForm(forms.ModelForm):
-    nome_completo=forms.CharField(max_length=255, label='Nome Completo')
-    telefone = forms.CharField(max_length=11, label='Telefone')
-    cpf = forms.CharField(max_length=11, label='CPF')
-    data_nascimento = forms.DateField(label='Data de Nascimento', widget=forms.DateInput(attrs={'type': 'date'}))
-    
     class Meta:
         model = Voluntario
         fields = [
@@ -108,6 +105,12 @@ class CadastroVoluntarioForm(forms.ModelForm):
             'cpf',
             'data_nascimento',
         ]
+        widgets = {
+            'nome_completo': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
+            'telefone': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
+            'cpf': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
+            'data_nascimento': forms.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+        }
 
     def clean_cpf(self):
         cpf = self.cleaned_data['cpf']
@@ -147,18 +150,40 @@ class CadastroVoluntarioForm(forms.ModelForm):
         except Exception as e:
             raise ValidationError(_('Erro ao validar a data de nascimento. Tente novamente.'), code='erro_interno')
 
-class EditarOngForm(forms.ModelForm):
-    class Meta:
-        model = Ong
-        fields = ['telefone', 'site']
+class EditarUsuarioForm(CadastroUsuarioForm):
+    class Meta(CadastroUsuarioForm.Meta):
+        fields = ['username', 'email']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+    
+    def clean_password(self):
+        return
 
-class EditarVoluntarioForm(forms.ModelForm):
-    class Meta:
-        model = Voluntario
-        fields = ['telefone']
+class EditarOngForm(CadastroOngForm):
+    class Meta(CadastroOngForm.Meta):
+        fields = CadastroOngForm.Meta.fields[:]
+        fields.append('status')
+        widgets = CadastroOngForm.Meta.widgets
+        widgets['status'] = forms.Select(choices=Ong.STATUS_ONG, attrs={'class':'form-control'})
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields['nome_fantasia'].disabled = True
+        self.fields['razao_social'].disabled = True
+        self.fields['cnpj'].disabled = True
+        self.fields['status'].disabled = True
+
+class EditarVoluntarioForm(CadastroVoluntarioForm):
+    class Meta(CadastroVoluntarioForm.Meta):
+        fields = CadastroVoluntarioForm.Meta.fields[:]
+        fields.append('status')
+        widgets = CadastroVoluntarioForm.Meta.widgets
+        widgets['status'] = forms.Select(choices=Voluntario.STATUS_VOLUNTARIO, attrs={'class':'form-control'})
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        self.fields['cpf'].disabled = True
+        self.fields['status'].disabled = True

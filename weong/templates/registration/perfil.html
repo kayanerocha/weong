@@ -16,44 +16,62 @@
                     {% if voluntario %}
                         <div class="col-md-6 mb-3">
                             <label>Usuário</label>
-                            <input type="text" class="form-control" value="{{ voluntario.usuario }}" disabled>
+                            {{ form_usuario.username }}
                         </div>
                         <div class="col-md-6 mb-3">
                             <label>Nome Completo</label>
-                            <input type="text" class="form-control" value="{{ voluntario.nome_completo }}" disabled>
-                        </div>
-                        <!-- Adicione os demais campos de voluntário aqui em col-md-6 -->
-                    {% elif ong %}
-                        <div class="col-md-6 mb-3">
-                            <label>Usuário</label>
-                            <input type="text" class="form-control" value="{{ ong.usuario }}" disabled>
+                            {{ form_voluntario.nome_completo }}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Nome Fantasia</label>
-                            <input type="text" class="form-control" value="{{ ong.nome_fantasia }}" disabled>
+                            <label>CPF</label>
+                            {{ form_voluntario.cpf }}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Razão Social</label>
-                            <input type="text" class="form-control" value="{{ ong.razao_social }}" disabled>
+                            <label>Data de nascimento</label>
+                            {{ form_voluntario.data_nascimento }}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>CNPJ</label>
-                            <input type="text" class="form-control" value="{{ ong.cnpj }}" disabled>
+                            <label>E-mail</label>
+                            {{ form_usuario.email }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Telefone</label>
+                            {{ form_voluntario.telefone }}
                         </div>
                         <div class="col-md-6 mb-3">
                             <label>Status</label>
-                            <input type="text" class="form-control" value="{{ ong.status }}" disabled>
+                            {{ form_voluntario.status }}
+                        </div>
+                    {% elif ong %}
+                        <div class="col-md-6 mb-3">
+                            <label>Usuário</label>
+                            {{ form_usuario.username }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Nome Fantasia</label>
+                            {{ form_ong.nome_fantasia }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Razão Social</label>
+                            {{ form_ong.razao_social }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>CNPJ</label>
+                            {{ form_ong.cnpj }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>E-mail</label>
+                            {{ form_usuario.email }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Telefone</label>
+                            {{ form_ong.telefone }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Status</label>
+                            {{ form_ong.status }}
                         </div>
                     {% endif %}
-
-                    {% for field in form %}
-                        {% if field.name != "nome_completo" and field.name != "razao_social" %}
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -78,6 +96,15 @@
             <button type="submit" class="btn btn-success">Salvar Alterações</button>
             <a href="{% url 'perfil_usuario' %}" class="btn btn-outline-secondary">Cancelar</a>
         </div>
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        {{ form_usuario.errors }}
+        {{ form_ong.errors }}
+        {{ form_voluntario.errors }}
+        {{ form_endereco.errors }}
     </form>
 </div>
 {% endblock %}

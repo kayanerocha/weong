@@ -5,7 +5,7 @@ from django.views import generic
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
 
-from usuario.forms import CadastroUsuarioForm, CadastroOngForm, CadastroEnderecoForm, CadastroVoluntarioForm,  EditarOngForm, EditarVoluntarioForm
+from usuario.forms import *
 from usuario.models import Ong, Voluntario
 
 # Create your views here.
@@ -107,27 +107,35 @@ def perfil_usuario(request):
         return render(request, 'registration/perfil_nao_configurado.html')
 
     # 🟢 Se houver perfil, carregar os formulários
+    form_usuario = EditarUsuarioForm(instance=usuario)
+    form_ong = None
+    form_voluntario = None
     if ong:
-        form = EditarOngForm(instance=ong)
+        form_ong = EditarOngForm(instance=ong)
         endereco_form = CadastroEnderecoForm(instance=ong.endereco if ong.endereco else None)
     elif voluntario:
-        form = EditarVoluntarioForm(instance=voluntario)
+        form_voluntario = EditarVoluntarioForm(instance=voluntario)
         endereco_form = CadastroEnderecoForm(instance=voluntario.endereco if voluntario.endereco else None)
 
     # 🔁 Se for submissão de formulário
     if request.method == "POST":
+        form_usuario = EditarUsuarioForm(request.POST, instance=usuario)
         if ong:
-            form = EditarOngForm(request.POST, instance=ong)
+            form_ong = EditarOngForm(request.POST, instance=ong)
             endereco_form = CadastroEnderecoForm(request.POST, instance=ong.endereco if ong.endereco else None)
         elif voluntario:
-            form = EditarVoluntarioForm(request.POST, instance=voluntario)
+            form_voluntario = EditarVoluntarioForm(request.POST, instance=voluntario)
             endereco_form = CadastroEnderecoForm(request.POST, instance=voluntario.endereco if voluntario.endereco else None)
+        
+        print(form_usuario.errors)
+        print(form_ong.errors)
+        print(endereco_form.errors)
+        if form_usuario.is_valid() and (form_ong and form_ong.is_valid() or form_voluntario and form_voluntario.is_valid()) and endereco_form.is_valid():
+            usuario = form_usuario.save()
+            endereco = endereco_form.save()
 
-        if form.is_valid() and endereco_form.is_valid():
-            endereco = endereco_form.save(commit=False)
-            endereco.save()
-
-            perfil = form.save(commit=False)
+            perfil = form_voluntario.save(commit=False) if form_voluntario else form_ong.save(commit=False)
+            perfil.usuario = usuario
             perfil.endereco = endereco
             perfil.save()
 
@@ -135,7 +143,9 @@ def perfil_usuario(request):
             return redirect('perfil_usuario')
 
     return render(request, 'registration/perfil.html', {
-        'form': form,
+        'form_ong': form_ong,
+        'form_usuario': form_usuario,
+        'form_voluntario': form_voluntario,
         'endereco_form': endereco_form,
         'ong': ong,
         'voluntario': voluntario
