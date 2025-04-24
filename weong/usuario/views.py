@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
@@ -162,3 +163,15 @@ class DetalheVoluntarioView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs)
+
+class CustomLoginView(LoginView):
+    authentication_form = CustomAuthenticationForm
+    template_name = 'registration/login.html'
+
+    # def get_context_data(self, **kwargs):
+    #     if self.request.method == 'POST':
+    #         print('fora do if')
+    #         if not self.request.user.is_active:
+    #             print('não está ativo')
+    #             messages.error(self.request, 'Sua conta ainda não está ativa. Aguarde a aprovação ou entre em contato com o administrador.')
+    #     return super().get_context_data(**kwargs)
