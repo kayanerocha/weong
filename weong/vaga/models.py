@@ -64,6 +64,7 @@ class Endereco(models.Model):
     
     def save(self, *args, **kwargs):
         geocoder = OpenCageGeocode(config('GEOCODER_API_KEY'))
+        print(config('GEOCODER_API_KEY'))
         result = geocoder.geocode(self.__str__())
         if result:
             self.latitude = result[0]['geometry']['lat']

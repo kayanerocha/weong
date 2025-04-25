@@ -23,11 +23,12 @@ def cadastro_ong(request):
         
         if form_usuario.is_valid() and form_ong.is_valid() and form_endereco.is_valid():
             usuario = form_usuario.save(commit=False)
+            print(form_usuario.cleaned_data['password'])
             usuario.set_password(form_usuario.cleaned_data['password'])
             usuario.is_active = False
-            usuario.save()
 
             endereco = form_endereco.save()
+            usuario.save()
             
             ong = form_ong.save(commit=False)
             ong.usuario = usuario

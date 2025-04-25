@@ -8,10 +8,12 @@ from django.core.validators import EmailValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 from brasilapy import BrasilAPI
 from brasilapy.constants import APIVersion
+from brasilapy.models.cnpj import CNPJ as Cnpj
 from brasilapy.exceptions import ProcessorException
 from validate_docbr import CNPJ, CPF
 
 from .models import Ong, Voluntario
+from .services import *
 from vaga.models import Endereco
 from vaga.services import possui_candidatura
 
@@ -36,9 +38,9 @@ class CadastroUsuarioForm(forms.ModelForm):
             self.add_error('password', 'A senha precisa ter no mínimo 8 caracteres com letras e números e pelo menos um caractere especial.')
 
         if password and password_confirm and password != password_confirm:
-            self.add_error('password_confirm', 'Senhas divergentes')
+            self.add_error('password_confirm', 'Senhas divergentes.')
         
-        return cleaned_data
+        return password
 
 class CadastroEnderecoForm(forms.ModelForm):
     logradouro = forms.CharField(max_length=255, label='Logradouro', widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -74,19 +76,42 @@ class CadastroOngForm(forms.ModelForm):
         model = Ong
         fields = ['nome_fantasia', 'razao_social', 'cnpj', 'telefone', 'site']
         widgets = {
+            'cnpj': forms.TextInput(attrs={'type': 'text', 'min_length': 14, 'max_length': 14, 'class':'form-control'}),
             'nome_fantasia': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
             'razao_social': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
-            'cnpj': forms.TextInput(attrs={'type': 'text', 'min_length': 14, 'max_length': 14, 'class':'form-control'}),
             'telefone': forms.TextInput(attrs={'type': 'text', 'min_length': 11, 'max_length': 11, 'class':'form-control'}),
             'site': forms.URLInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
         }
 
     def clean_cnpj(self):
         cnpj = self.cleaned_data['cnpj']
-        cnpj_valido = CNPJ()
-        if not cnpj_valido.validate(cnpj):
+        if not cnpj_valido(cnpj):
             raise ValidationError(_('CNPJ inválido.'), code='invalido')
         return cnpj
+    
+    def clean_nome_fantasia(self):
+        cnpj = self.data['cnpj']
+        nome_fantasia = self.cleaned_data['nome_fantasia']
+        print('cnpj', cnpj)
+        if not cnpj_valido(cnpj):
+            return
+        
+        cnpj_consultado = client.get_cnpj(cnpj)
+        if nome_fantasia != cnpj_consultado.nome_fantasia:
+            raise ValidationError(_('Nome da ONG inconsistente.'), code='invalido')
+        return nome_fantasia
+    
+    def clean_razao_social(self):
+        cnpj = self.data['cnpj']
+        razao_social = self.cleaned_data['razao_social']
+
+        if not cnpj_valido(cnpj):
+            return
+
+        cnpj_consultado = client.get_cnpj(cnpj)
+        if razao_social != cnpj_consultado.razao_social:
+            raise ValidationError(_('Razão social inconsistente.'), code='invalido')
+        return razao_social
     
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']
