@@ -57,51 +57,71 @@ class CadastroEnderecoForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cnpj_consultado = None
+        self.endereco_consultado = None
         if 'cnpj' in self.data.keys():
-            self.cnpj_consultado = consultar_cnpj(self.data['cnpj'])
+            self.endereco_consultado = consultar_cnpj(self.data['cnpj'])
+        elif 'cep' in self.data.keys():
+            self.endereco_consultado = consultar_cep(self.data['cep'])    
     
     def clean_logradouro(self):
         logradouro = self.cleaned_data['logradouro']
-        if self.cnpj_consultado and logradouro != f'{self.cnpj_consultado['descricao_tipo_de_logradouro']} {self.cnpj_consultado['logradouro']}':
-            raise ValidationError(_('Logradouro inconsistente.'), code='invalido')
+        if self.endereco_consultado:
+            if 'cnpj' in self.data.keys():
+                if logradouro != f'{self.endereco_consultado['descricao_tipo_de_logradouro']} {self.endereco_consultado['logradouro']}':
+                    raise ValidationError(_('Logradouro inconsistente.'), code='invalido')
+            else:
+                if logradouro != self.endereco_consultado['street']:
+                    raise ValidationError(_('Logradouro inconsistente.'), code='invalido')
+            
         return logradouro
     
     def clean_numero(self):
         numero = self.cleaned_data['numero']
-        if self.cnpj_consultado and numero != self.cnpj_consultado['numero']:
+        if 'cnpj' in self.data.keys() and self.endereco_consultado and numero != self.endereco_consultado['numero']:
             raise ValidationError(_('Número de endereço inconsistente.', code='invalido'))
         return numero
     
     def clean_bairro(self):
         bairro = self.cleaned_data['bairro']
-        if self.cnpj_consultado and bairro != self.cnpj_consultado['bairro']:
-            raise ValidationError(_('Bairro inconsistente.'), code='invalido')
+        if self.endereco_consultado:
+            if 'cnpj' in self.data.keys():
+                if bairro != self.endereco_consultado['bairro']:
+                    raise ValidationError(_('Bairro inconsistente.'), code='invalido')
+            else:
+                if bairro != self.endereco_consultado['neighborhood']:
+                    raise ValidationError(_('Bairro inconsistente.'), code='invalido')
         return bairro
 
     def clean_complemento(self):
         complemento = self.cleaned_data['complemento']
-        if self.cnpj_consultado and complemento != self.cnpj_consultado['complemento']:
+        if 'cnpj' in self.data.keys() and self.endereco_consultado and complemento != self.endereco_consultado['complemento']:
             raise ValidationError(_('Complemento inconsistente.'), code='invalido')
         return complemento
     
     def clean_cidade(self):
         cidade = self.cleaned_data['cidade']
-        if self.cnpj_consultado and cidade != self.cnpj_consultado['municipio']:
-            raise ValidationError(_('Município inconsistent.'), code='invalido')
+        if self.endereco_consultado:
+            if 'cnpj' in self.data.keys():
+                if cidade != self.endereco_consultado['municipio']:
+                    raise ValidationError(_('Município inconsistente.'), code='invalido')
+            else:
+                if cidade != self.endereco_consultado['city']:
+                    raise ValidationError(_('Município inconsistente.'), code='invalido')
         return cidade
     
     def clean_estado(self):
         estado = self.cleaned_data['estado']
-        if self.cnpj_consultado and estado != self.cnpj_consultado['uf']:
-            raise ValidationError(_('Estado inconsistente.'), code='invalido')
+        if self.endereco_consultado:
+            if 'cnpj' in self.data.keys():
+                if estado != self.endereco_consultado['uf']:
+                    raise ValidationError(_('Estado inconsistente.'), code='invalido')
+            else:
+                if estado != self.endereco_consultado['state']:
+                    raise ValidationError(_('Estado inconsistente.'), code='invalido')
         return estado
     
     def clean_cep(self):
         cep = self.cleaned_data['cep']
-
-        if self.cnpj_consultado and cep != self.cnpj_consultado['cep']:
-            raise ValidationError(_('CEP inconsistente.'), code='invalido')
         
         try:
             client.get_cep(cep, APIVersion.V1)
@@ -109,7 +129,16 @@ class CadastroEnderecoForm(forms.ModelForm):
             try:
                 client.get_cep(cep, APIVersion.V2)
             except (ProcessorException, TypeError):
-                raise ValidationError(_('CEP não encontrado.'), code='invalido')    
+                raise ValidationError(_('CEP não encontrado.'), code='invalido')
+
+        if self.endereco_consultado:
+            logradouro = self.data['logradouro']
+            if 'cnpj' in self.data.keys():
+                if cep != self.endereco_consultado['cep']:
+                    raise ValidationError(_('CEP inconsistente.'), code='invalido')
+            else:
+                if logradouro != self.endereco_consultado['street']:
+                    raise ValidationError(_('CEP inconsistente.'), code='invalido')
         return cep
 
 class EditarEnderecoForm(CadastroEnderecoForm):
@@ -138,7 +167,6 @@ class CadastroOngForm(forms.ModelForm):
     def clean_cnpj(self):
         cnpj = self.cleaned_data['cnpj']
         if not self.cnpj_consultado:
-            print(self.cnpj_consultado)
             raise ValidationError(_('CNPJ inválido.'), code='invalido')
         return cnpj
     

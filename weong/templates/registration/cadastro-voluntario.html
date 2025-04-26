@@ -104,22 +104,17 @@
                                 </div>
                             </div>
 
-                            <!-- CEP, Bairro -->
                             <div class="row mb-3">
-                                <div class="col-md-6 form-group">
+                                <div class="col-md-12 form-group">
                                     <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required>
                                     <label for="cep">CEP</label>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" ">
-                                    <label for="bairro">Bairro</label>
+                                    <a href="javascript:pesquisarCep()">Pesquisar CEP</a>
                                 </div>
                             </div>
 
-                            <!-- Logradouro e Número -->
                             <div class="row mb-3">
                                 <div class="col-md-8 form-group">
-                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" ">
+                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" " readonly>
                                     <label for="logradouro">Logradouro</label>
                                 </div>
                                 <div class="col-md-4 form-group">
@@ -128,43 +123,23 @@
                                 </div>
                             </div>
 
-                            <!-- Cidade e Estado -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" ">
+                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " readonly>
+                                    <label for="bairro">Bairro</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="complemento" name="complemento" class="form-control" placeholder=" ">
+                                    <label for="complemento">Complemento</label>
+                                </div>                            
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" " readonly>
                                     <label for="cidade">Cidade</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <select name="estado" id="estado" class="form-control">
-                                        <option value="" disabled selected>Estado</option>
-                                        <option value="AC">Acre</option>
-                                        <option value="AL">Alagoas</option>
-                                        <option value="AP">Amapá</option>
-                                        <option value="AM">Amazonas</option>
-                                        <option value="BA">Bahia</option>
-                                        <option value="CE">Ceará</option>
-                                        <option value="ES">Espirito Santo</option>
-                                        <option value="GO">Goiás</option>
-                                        <option value="MA">Maranhão</option>
-                                        <option value="MT">Mato Grosso</option>
-                                        <option value="MS">Mato Grosso do Sul</option>
-                                        <option value="MG">Minas Gerais</option>
-                                        <option value="PA">Pará</option>
-                                        <option value="PB">Paraíba</option>
-                                        <option value="PR">Paraná</option>
-                                        <option value="PE">Pernambuco</option>
-                                        <option value="PI">Piauí</option>
-                                        <option value="RJ">Rio de Janeiro</option>
-                                        <option value="RN">Rio Grande do Norte</option>
-                                        <option value="RS">Rio Grande do Sul</option>
-                                        <option value="RO">Rondônia</option>
-                                        <option value="RR">Roraima</option>
-                                        <option value="SC">Santa Catarina</option>
-                                        <option value="SP">São Paulo</option>
-                                        <option value="SE">Sergipe</option>
-                                        <option value="TO">Tocantins</option>
-                                        <!-- Adicione os outros estados -->
-                                    </select>
+                                    {{ form_endereco.estado }}
                                     <label for="estado">Estado</label>
                                 </div>
                             </div>
@@ -230,5 +205,31 @@
             </div>
         </div>
     </div>
+    <script>
+        function setValueInput(idInput, value) {
+            const inputElement = document.getElementById(idInput);
+            inputElement.value = value;
+        }
+
+        function pesquisarCep() {
+            cep = document.getElementById('cep').value;
+            const apiUrl = `https://brasilapi.com.br/api/cep/v2/${cep}`;
+            fetch(apiUrl).then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao consultar o CNPJ.')
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                setValueInput('logradouro', data.street);
+                setValueInput('bairro', data.neighborhood);
+                setValueInput('cidade', data.city);
+                setValueInput('estado', data.state);
+                setValueInput('cep', data.cep);
+            }).catch(error => {
+                console.error('Error: ', error);
+            });
+        }        
+    </script>
 </body>
 </html>
