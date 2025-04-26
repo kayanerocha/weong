@@ -8,10 +8,12 @@ from django.core.validators import EmailValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 from brasilapy import BrasilAPI
 from brasilapy.constants import APIVersion
+from brasilapy.models.cnpj import CNPJ as Cnpj
 from brasilapy.exceptions import ProcessorException
 from validate_docbr import CNPJ, CPF
 
 from .models import Ong, Voluntario
+from .services import *
 from vaga.models import Endereco
 from vaga.services import possui_candidatura
 
@@ -36,9 +38,9 @@ class CadastroUsuarioForm(forms.ModelForm):
             self.add_error('password', 'A senha precisa ter no mínimo 8 caracteres com letras e números e pelo menos um caractere especial.')
 
         if password and password_confirm and password != password_confirm:
-            self.add_error('password_confirm', 'Senhas divergentes')
+            self.add_error('password_confirm', 'Senhas divergentes.')
         
-        return cleaned_data
+        return password
 
 class CadastroEnderecoForm(forms.ModelForm):
     logradouro = forms.CharField(max_length=255, label='Logradouro', widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -46,15 +48,61 @@ class CadastroEnderecoForm(forms.ModelForm):
     complemento = forms.CharField(max_length=255, label='Complemento', required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
     bairro = forms.CharField(max_length=255, label='Bairro', required=False, widget=forms.TextInput(attrs={'class':'form-control'}))
     cidade = forms.CharField(max_length=255, label='Cidade', widget=forms.TextInput(attrs={'class':'form-control'}))
-    estado = forms.CharField(widget=forms.Select(choices=Endereco.ESTADOS, attrs={'class':'form-control'}), label='Estado')
+    estado = forms.CharField(widget=forms.Select(choices=Endereco.ESTADOS, attrs={'class':'form-control', 'id': 'estado', 'readonly': True}), label='Estado')
     cep = forms.CharField(max_length=8, label='CEP', widget=forms.NumberInput(attrs={'class':'form-control'}))
 
     class Meta:
         model = Endereco
         fields = ['logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep']
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.cnpj_consultado = None
+        if 'cnpj' in self.data.keys():
+            self.cnpj_consultado = consultar_cnpj(self.data['cnpj'])
+    
+    def clean_logradouro(self):
+        logradouro = self.cleaned_data['logradouro']
+        if self.cnpj_consultado and logradouro != f'{self.cnpj_consultado['descricao_tipo_de_logradouro']} {self.cnpj_consultado['logradouro']}':
+            raise ValidationError(_('Logradouro inconsistente.'), code='invalido')
+        return logradouro
+    
+    def clean_numero(self):
+        numero = self.cleaned_data['numero']
+        if self.cnpj_consultado and numero != self.cnpj_consultado['numero']:
+            raise ValidationError(_('Número de endereço inconsistente.', code='invalido'))
+        return numero
+    
+    def clean_bairro(self):
+        bairro = self.cleaned_data['bairro']
+        if self.cnpj_consultado and bairro != self.cnpj_consultado['bairro']:
+            raise ValidationError(_('Bairro inconsistente.'), code='invalido')
+        return bairro
+
+    def clean_complemento(self):
+        complemento = self.cleaned_data['complemento']
+        if self.cnpj_consultado and complemento != self.cnpj_consultado['complemento']:
+            raise ValidationError(_('Complemento inconsistente.'), code='invalido')
+        return complemento
+    
+    def clean_cidade(self):
+        cidade = self.cleaned_data['cidade']
+        if self.cnpj_consultado and cidade != self.cnpj_consultado['municipio']:
+            raise ValidationError(_('Município inconsistent.'), code='invalido')
+        return cidade
+    
+    def clean_estado(self):
+        estado = self.cleaned_data['estado']
+        if self.cnpj_consultado and estado != self.cnpj_consultado['uf']:
+            raise ValidationError(_('Estado inconsistente.'), code='invalido')
+        return estado
+    
     def clean_cep(self):
         cep = self.cleaned_data['cep']
+
+        if self.cnpj_consultado and cep != self.cnpj_consultado['cep']:
+            raise ValidationError(_('CEP inconsistente.'), code='invalido')
+        
         try:
             client.get_cep(cep, APIVersion.V1)
         except (ProcessorException, TypeError):
@@ -74,19 +122,45 @@ class CadastroOngForm(forms.ModelForm):
         model = Ong
         fields = ['nome_fantasia', 'razao_social', 'cnpj', 'telefone', 'site']
         widgets = {
+            'cnpj': forms.TextInput(attrs={'type': 'text', 'min_length': 14, 'max_length': 14, 'class':'form-control'}),
             'nome_fantasia': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
             'razao_social': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
-            'cnpj': forms.TextInput(attrs={'type': 'text', 'min_length': 14, 'max_length': 14, 'class':'form-control'}),
             'telefone': forms.TextInput(attrs={'type': 'text', 'min_length': 11, 'max_length': 11, 'class':'form-control'}),
             'site': forms.URLInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.data:
+            cnpj = self.data['cnpj']
+            self.cnpj_consultado = consultar_cnpj(cnpj)
 
     def clean_cnpj(self):
         cnpj = self.cleaned_data['cnpj']
-        cnpj_valido = CNPJ()
-        if not cnpj_valido.validate(cnpj):
+        if not self.cnpj_consultado:
+            print(self.cnpj_consultado)
             raise ValidationError(_('CNPJ inválido.'), code='invalido')
         return cnpj
+    
+    def clean_nome_fantasia(self):
+        nome_fantasia = self.cleaned_data['nome_fantasia']
+
+        if not self.cnpj_consultado:
+            return nome_fantasia
+        
+        if nome_fantasia and nome_fantasia != self.cnpj_consultado['nome_fantasia']:
+            raise ValidationError(_('Nome da ONG inconsistente.'), code='invalido')
+        return nome_fantasia
+    
+    def clean_razao_social(self):
+        razao_social = self.cleaned_data['razao_social']
+
+        if not self.cnpj_consultado:
+            return razao_social
+
+        if razao_social != self.cnpj_consultado['razao_social']:
+            raise ValidationError(_('Razão social inconsistente.'), code='invalido')
+        return razao_social
     
     def clean_telefone(self):
         telefone = self.cleaned_data['telefone']

@@ -10,7 +10,7 @@ class Ong(models.Model):
     '''Modelo representando uma ONG'''
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     id = models.AutoField(primary_key=True)
-    nome_fantasia = models.CharField(max_length=255)
+    nome_fantasia = models.CharField(max_length=255, blank=True, null=True)
     razao_social = models.CharField(max_length=255, blank=True, null=True)
     cnpj = models.CharField(max_length=14, unique=True)
     telefone = models.CharField(max_length=11, help_text='Contato de um responsável da ONG.')
