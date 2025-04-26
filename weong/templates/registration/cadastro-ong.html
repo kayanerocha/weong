@@ -101,13 +101,11 @@
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="nome_fantasia_visivel" name="nome_fantasia" class="form-control" placeholder=" " disabled>
-                                    <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" placeholder=" " hidden readonly>
+                                    <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" placeholder=" " readonly>
                                     <label for="nome_fantasia">Nome da ONG</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="razao_social_visivel" name="razao_social" class="form-control" placeholder=" " required disabled>
-                                    <input type="text" id="razao_social" name="razao_social" class="form-control" placeholder=" " required hidden readonly>
+                                    <input type="text" id="razao_social" name="razao_social" class="form-control" placeholder=" " required readonly>
                                     <label for="razao_social">Razão Social</label>
                                 </div>
                             </div>
@@ -115,13 +113,11 @@
                             <!-- CEP, Bairro -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="cep_visivel" name="cep" class="form-control" placeholder=" " max="8" required disabled>
-                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required hidden>
+                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required readonly>
                                     <label for="cep">CEP</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="bairro_visivel" name="bairro" class="form-control" placeholder=" " disabled>
-                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " hidden>
+                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " readonly>
                                     <label for="bairro">Bairro</label>
                                 </div>
                             </div>
@@ -129,13 +125,11 @@
                             <!-- Logradouro e Número -->
                             <div class="row mb-3">
                                 <div class="col-md-8 form-group">
-                                    <input type="text" id="logradouro_visivel" name="logradouro" class="form-control" placeholder=" " disabled>
-                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" " hidden>
+                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" " readonly>
                                     <label for="logradouro">Logradouro</label>
                                 </div>
                                 <div class="col-md-4 form-group">
-                                    <input type="text" id="numero_visivel" name="numero" class="form-control" placeholder=" " disabled>
-                                    <input type="text" id="numero" name="numero" class="form-control" placeholder=" " hidden>
+                                    <input type="text" id="numero" name="numero" class="form-control" placeholder=" " readonly>
 
                                     <label for="numero">Número</label>
                                 </div>
@@ -144,27 +138,11 @@
                             <!-- Cidade e Estado -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="cidade_visivel" name="cidade" class="form-control" placeholder=" " disabled>
-                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" " hidden>
+                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" " readonly>
                                     <label for="cidade">Cidade</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <select name="estado" id="estado_visivel" class="form-control" disabled>
-                                        <option value="" disabled selected>Estado</option>
-                                        <option value="SP">São Paulo</option>
-                                        <option value="RJ">Rio de Janeiro</option>
-                                        <option value="MG">Minas Gerais</option>
-                                        <option value="RS">Rio Grande do Sul</option>
-                                        <!-- Adicione os outros estados -->
-                                    </select>
-                                    <select name="estado" id="estado" class="form-control" hidden>
-                                        <option value="">Estado</option>
-                                        <option value="SP">São Paulo</option>
-                                        <option value="RJ">Rio de Janeiro</option>
-                                        <option value="MG">Minas Gerais</option>
-                                        <option value="RS">Rio Grande do Sul</option>
-                                        <!-- Adicione os outros estados -->
-                                    </select>
+                                    {{ form_endereco.estado }}
                                     <label for="estado">Estado</label>
                                 </div>
                             </div>
@@ -234,8 +212,6 @@
         const cnpj = document.getElementById('cnpj');
 
         function setValueInput(idInput, value) {
-            const inputVisivel = document.getElementById(`${idInput}_visivel`);
-            inputVisivel.value = value;
             const inputElement = document.getElementById(idInput);
             inputElement.value = value;
         }
