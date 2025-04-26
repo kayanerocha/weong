@@ -78,6 +78,12 @@ class CadastroEnderecoForm(forms.ModelForm):
         if self.cnpj_consultado and bairro != self.cnpj_consultado['bairro']:
             raise ValidationError(_('Bairro inconsistente.'), code='invalido')
         return bairro
+
+    def clean_complemento(self):
+        complemento = self.cleaned_data['complemento']
+        if self.cnpj_consultado and complemento != self.cnpj_consultado['complemento']:
+            raise ValidationError(_('Complemento inconsistente.'), code='invalido')
+        return complemento
     
     def clean_cidade(self):
         cidade = self.cleaned_data['cidade']

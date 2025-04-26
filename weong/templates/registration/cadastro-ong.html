@@ -110,19 +110,6 @@
                                 </div>
                             </div>
 
-                            <!-- CEP, Bairro -->
-                            <div class="row mb-3">
-                                <div class="col-md-6 form-group">
-                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required readonly>
-                                    <label for="cep">CEP</label>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " readonly>
-                                    <label for="bairro">Bairro</label>
-                                </div>
-                            </div>
-
-                            <!-- Logradouro e Número -->
                             <div class="row mb-3">
                                 <div class="col-md-8 form-group">
                                     <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" " readonly>
@@ -135,7 +122,16 @@
                                 </div>
                             </div>
 
-                            <!-- Cidade e Estado -->
+                            <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " readonly>
+                                    <label for="bairro">Bairro</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="complemento" name="complemento" class="form-control" placeholder=" " readonly>
+                                    <label for="complemento">Complemento</label>
+                                </div>                            
+                            </div>
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
                                     <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" " readonly>
@@ -144,6 +140,12 @@
                                 <div class="col-md-6 form-group">
                                     {{ form_endereco.estado }}
                                     <label for="estado">Estado</label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required readonly>
+                                    <label for="cep">CEP</label>
                                 </div>
                             </div>
 
@@ -231,6 +233,7 @@
                 setValueInput('razao_social', data.razao_social);
                 setValueInput('logradouro', `${data.descricao_tipo_de_logradouro} ${data.logradouro}`);
                 setValueInput('numero', data.numero);
+                setValueInput('complemento', data.complemento);
                 setValueInput('bairro', data.bairro);
                 setValueInput('cidade', data.municipio);
                 setValueInput('estado', data.uf);
