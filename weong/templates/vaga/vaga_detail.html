@@ -5,7 +5,7 @@
         {% now "Y-m-d" as hoje %}
         <h3 class="card-title ml-3 mt-3">Detalhes - Vaga {{ vaga.titulo }}</h3>
         <!-- <p>{{ vaga.created_at }}</p> --><br>
-        <p class=" ml-3">Ong: <a href="{{ vaga.ong.get_absolute_url }}">{{ vaga.ong.nome_fantasia }}</a></p>
+        <p class=" ml-3">Ong: <a href="{{ vaga.ong.get_absolute_url }}">{{ vaga.ong.razao_social }}</a></p>
         <p class=" ml-3">Descrição: {{ vaga.descricao }}</p>
         <p class=" ml-3">Endereço da Vaga: {{ vaga.endereco }}</p>
         <p class=" ml-3">Requisitos da Vaga: {{ vaga.requisitos }}</p>

@@ -85,7 +85,7 @@
                 <div class="card shadow-lg">
                     <div class="card-header">
                         {% load static %}
-                        <img src="{% static 'usuario/logo.png' %}" alt="Logo" class="logo mb-2">
+                        <a href="{% url 'index' %}"><img src="{% static 'usuario/logo.png' %}" alt="Logo" class="logo mb-2"></a>
                         <h3>Cadastro ONG</h3>
                     </div>
                     <div class="card-body">
@@ -94,55 +94,59 @@
 
                             <!-- Nome da ONG e CNPJ -->
                             <div class="row mb-3">
+                                <div class="col-md-12 form-group">
+                                    <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder=" " required>
+                                    <label for="cnpj">CNPJ</label>
+                                    <a href="javascript:pesquisarCnpj()">Pesquisar CNPJ</a>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" placeholder=" " required>
+                                    <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" placeholder=" " readonly>
                                     <label for="nome_fantasia">Nome da ONG</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder=" " required>
-                                    <label for="cnpj">CNPJ</label>
+                                    <input type="text" id="razao_social" name="razao_social" class="form-control" placeholder=" " required readonly>
+                                    <label for="razao_social">Razão Social</label>
                                 </div>
                             </div>
 
-                            <!-- CEP, Bairro -->
-                            <div class="row mb-3">
-                                <div class="col-md-6 form-group">
-                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required>
-                                    <label for="cep">CEP</label>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" ">
-                                    <label for="bairro">Bairro</label>
-                                </div>
-                            </div>
-
-                            <!-- Logradouro e Número -->
                             <div class="row mb-3">
                                 <div class="col-md-8 form-group">
-                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" ">
+                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" " readonly>
                                     <label for="logradouro">Logradouro</label>
                                 </div>
                                 <div class="col-md-4 form-group">
-                                    <input type="text" id="numero" name="numero" class="form-control" placeholder=" ">
+                                    <input type="text" id="numero" name="numero" class="form-control" placeholder=" " readonly>
+
                                     <label for="numero">Número</label>
                                 </div>
                             </div>
 
-                            <!-- Cidade e Estado -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" ">
+                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " readonly>
+                                    <label for="bairro">Bairro</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="complemento" name="complemento" class="form-control" placeholder=" " readonly>
+                                    <label for="complemento">Complemento</label>
+                                </div>                            
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" " readonly>
                                     <label for="cidade">Cidade</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <select name="estado" id="estado" class="form-control">
-                                        <option value="" disabled selected>Estado</option>
-                                        <option value="SP">São Paulo</option>
-                                        <option value="RJ">Rio de Janeiro</option>
-                                        <option value="MG">Minas Gerais</option>
-                                        <!-- Adicione os outros estados -->
-                                    </select>
+                                    {{ form_endereco.estado }}
                                     <label for="estado">Estado</label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required readonly>
+                                    <label for="cep">CEP</label>
                                 </div>
                             </div>
 
@@ -200,12 +204,46 @@
                             {% endfor %}
                         {% endif %}
                         {{ form_usuario.errors }}
-                        {{ form_voluntario.errors }}
+                        {{ form_ong.errors }}
                         {{ form_endereco.errors }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        // const cnpj = document.getElementById('cnpj');
+
+        function setValueInput(idInput, value) {
+            const inputElement = document.getElementById(idInput);
+            inputElement.value = value;
+        }
+        
+        // cnpj.addEventListener('input', getInfoOng);
+        
+        function pesquisarCnpj() {
+            const cep = document.getElementById('cnpj').value;
+            const apiUrl = `https://brasilapi.com.br/api/cnpj/v1/${cep}`;
+            fetch(apiUrl).then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao consultar o CNPJ.')
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                setValueInput('nome_fantasia', data.nome_fantasia);
+                setValueInput('razao_social', data.razao_social);
+                setValueInput('logradouro', `${data.descricao_tipo_de_logradouro} ${data.logradouro}`);
+                setValueInput('numero', data.numero);
+                setValueInput('complemento', data.complemento);
+                setValueInput('bairro', data.bairro);
+                setValueInput('cidade', data.municipio);
+                setValueInput('estado', data.uf);
+                setValueInput('cep', data.cep);
+            }).catch(error => {
+                console.error('Error: ', error);
+            });
+        }
+    </script>
 </body>
 </html>

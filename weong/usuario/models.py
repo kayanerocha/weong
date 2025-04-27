@@ -10,7 +10,7 @@ class Ong(models.Model):
     '''Modelo representando uma ONG'''
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     id = models.AutoField(primary_key=True)
-    nome_fantasia = models.CharField(max_length=255)
+    nome_fantasia = models.CharField(max_length=255, blank=True, null=True)
     razao_social = models.CharField(max_length=255, blank=True, null=True)
     cnpj = models.CharField(max_length=14, unique=True)
     telefone = models.CharField(max_length=11, help_text='Contato de um responsável da ONG.')
@@ -24,6 +24,7 @@ class Ong(models.Model):
     )
 
     status = models.CharField(max_length=50, choices=STATUS_ONG, default='Pendente')
+    status_cnpj = models.CharField(max_length=20, default='Não informado')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT)
