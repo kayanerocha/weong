@@ -24,6 +24,7 @@ class Ong(models.Model):
     )
 
     status = models.CharField(max_length=50, choices=STATUS_ONG, default='Pendente')
+    status_cnpj = models.CharField(max_length=20, default='Não informado')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT)

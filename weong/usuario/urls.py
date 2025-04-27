@@ -9,4 +9,5 @@ urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('detalhe-ong/<int:pk>', DetalheOngView.as_view(), name='detalhe-ong'),
     path('detalhe-voluntario/<int:pk>', DetalheVoluntarioView.as_view(), name='detalhe-voluntario'),
+    path('revalidar-cnpj/<str:cnpj>', revalidar_cnpj, name='revalidar-cnpj'),
 ]

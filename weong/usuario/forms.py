@@ -160,7 +160,8 @@ class CadastroOngForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.data:
+        self.cnpj_consultado = None
+        if 'cnpj' in self.data.keys():
             cnpj = self.data['cnpj']
             self.cnpj_consultado = consultar_cnpj(cnpj)
 
@@ -265,18 +266,10 @@ class EditarUsuarioForm(CadastroUsuarioForm):
 
 class EditarOngForm(CadastroOngForm):
     class Meta(CadastroOngForm.Meta):
-        fields = CadastroOngForm.Meta.fields[:]
-        fields.append('status')
-        widgets = CadastroOngForm.Meta.widgets
-        widgets['status'] = forms.Select(choices=Ong.STATUS_ONG, attrs={'class':'form-control'})
+        fields = ['telefone', 'site']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        self.fields['nome_fantasia'].disabled = True
-        self.fields['razao_social'].disabled = True
-        self.fields['cnpj'].disabled = True
-        self.fields['status'].disabled = True
 
 class EditarVoluntarioForm(CadastroVoluntarioForm):
     class Meta(CadastroVoluntarioForm.Meta):
@@ -290,6 +283,15 @@ class EditarVoluntarioForm(CadastroVoluntarioForm):
         
         self.fields['cpf'].disabled = True
         self.fields['status'].disabled = True
+
+class EditarEnderecoForm(CadastroEnderecoForm):
+    class Meta(CadastroEnderecoForm.Meta):
+        pass
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'cnpj' in self.data:
+            self.fields = []
 
 class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, request = ..., *args, **kwargs):

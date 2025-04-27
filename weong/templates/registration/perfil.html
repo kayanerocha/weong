@@ -2,14 +2,48 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Editar Perfil</h2>
+    <h2 class="mb-4">Perfil</h2>
+
+    {% if ong %}
+    <div class="card mb-4">
+        <div class="card-header">ONG</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="CNPJ">CNPJ:</label>
+                    {{ ong.cnpj }} - <a href="{% url 'revalidar-cnpj' ong.cnpj %}">Revalidar CNPJ</a>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="CNPJ">Situação cadastral do CNPJ:</label>
+                    {{ ong.status_cnpj }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="CNPJ">Nome da ONG:</label>
+                    {{ ong.nome_fantasia }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="CNPJ">Razão social:</label>
+                    {{ ong.razao_social }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="CNPJ">Endereço:</label>
+                    {{ ong.endereco }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="CNPJ">Status:</label>
+                    {{ ong.status }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <form method="POST">
         {% csrf_token %}
 
         <div class="card mb-4">
             <div class="card-header">
-                Informações Pessoais
+                Informações Editáveis
             </div>
             <div class="card-body">
                 <div class="row">
@@ -48,18 +82,6 @@
                             {{ form_usuario.username }}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Nome Fantasia</label>
-                            {{ form_ong.nome_fantasia }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Razão Social</label>
-                            {{ form_ong.razao_social }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>CNPJ</label>
-                            {{ form_ong.cnpj }}
-                        </div>
-                        <div class="col-md-6 mb-3">
                             <label>E-mail</label>
                             {{ form_usuario.email }}
                         </div>
@@ -68,15 +90,15 @@
                             {{ form_ong.telefone }}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Status</label>
-                            {{ form_ong.status }}
+                            <label>Site</label>
+                            {{ form_ong.site }}
                         </div>
                     {% endif %}
                 </div>
             </div>
         </div>
 
-        <div class="card mb-4">
+        <!-- <div class="card mb-4">
             <div class="card-header">
                 Endereço
             </div>
@@ -90,7 +112,7 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <div class="d-flex justify-content-end gap-2">
             <button type="submit" class="btn btn-success">Salvar Alterações</button>

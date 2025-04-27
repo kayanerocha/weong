@@ -212,7 +212,7 @@
         }
 
         function pesquisarCep() {
-            cep = document.getElementById('cep').value;
+            const cep = document.getElementById('cep').value;
             const apiUrl = `https://brasilapi.com.br/api/cep/v2/${cep}`;
             fetch(apiUrl).then(response => {
                 if (!response.ok) {

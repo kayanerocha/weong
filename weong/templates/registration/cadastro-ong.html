@@ -97,6 +97,7 @@
                                 <div class="col-md-12 form-group">
                                     <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder=" " required>
                                     <label for="cnpj">CNPJ</label>
+                                    <a href="javascript:pesquisarCnpj()">Pesquisar CNPJ</a>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -211,17 +212,18 @@
         </div>
     </div>
     <script>
-        const cnpj = document.getElementById('cnpj');
+        // const cnpj = document.getElementById('cnpj');
 
         function setValueInput(idInput, value) {
             const inputElement = document.getElementById(idInput);
             inputElement.value = value;
         }
         
-        cnpj.addEventListener('input', getInfoOng);
+        // cnpj.addEventListener('input', getInfoOng);
         
-        function getInfoOng(e) {
-            const apiUrl = `https://brasilapi.com.br/api/cnpj/v1/${e.target.value}`;
+        function pesquisarCnpj() {
+            const cep = document.getElementById('cnpj').value;
+            const apiUrl = `https://brasilapi.com.br/api/cnpj/v1/${cep}`;
             fetch(apiUrl).then(response => {
                 if (!response.ok) {
                     throw new Error('Erro ao consultar o CNPJ.')

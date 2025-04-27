@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
+from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
@@ -8,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from usuario.forms import *
 from usuario.models import Ong, Voluntario
+from usuario.services import consultar_cnpj
 
 # Create your views here.
 
@@ -21,9 +23,8 @@ def cadastro_ong(request):
         form_ong = CadastroOngForm(request.POST)
         form_endereco = CadastroEnderecoForm(request.POST)
         
-        if form_usuario.is_valid() and form_ong.is_valid() and form_endereco.is_valid():
+        if form_usuario.is_valid() and form_ong.is_valid() and form_endereco.is_valid() and form_endereco.endereco_consultado['descricao_situacao_cadastral'].upper() == 'ATIVA':
             usuario = form_usuario.save(commit=False)
-            print(form_usuario.cleaned_data['password'])
             usuario.set_password(form_usuario.cleaned_data['password'])
             usuario.is_active = False
 
@@ -31,6 +32,7 @@ def cadastro_ong(request):
             usuario.save()
             
             ong = form_ong.save(commit=False)
+            ong.status_cnpj = form_ong.cnpj_consultado['descricao_situacao_cadastral']
             ong.usuario = usuario
             ong.endereco = endereco
             ong.save()
@@ -39,6 +41,8 @@ def cadastro_ong(request):
             return redirect('cadastro-ong')
         else:
             messages.error(request, _('Erro no cadastro. Verifique os dados informados.'))
+            if form_endereco.endereco_consultado['descricao_situacao_cadastral'].upper() != 'ATIVA':
+                messages.error(request, _('Situação cadastral de ONG irregular.'))
     else:
         form_usuario = CadastroUsuarioForm()
         form_ong = CadastroOngForm()
@@ -112,37 +116,46 @@ def perfil_usuario(request):
     form_usuario = EditarUsuarioForm(instance=usuario)
     form_ong = None
     form_voluntario = None
+    endereco_form = None
     if ong:
         form_ong = EditarOngForm(instance=ong)
-        endereco_form = CadastroEnderecoForm(instance=ong.endereco if ong.endereco else None)
+        # endereco_form = EditarEnderecoForm(instance=ong.endereco if ong.endereco else None)
     elif voluntario:
         form_voluntario = EditarVoluntarioForm(instance=voluntario)
-        endereco_form = CadastroEnderecoForm(instance=voluntario.endereco if voluntario.endereco else None)
+        endereco_form = EditarEnderecoForm(instance=voluntario.endereco if voluntario.endereco else None)
 
     # 🔁 Se for submissão de formulário
     if request.method == "POST":
         form_usuario = EditarUsuarioForm(request.POST, instance=usuario)
-        if ong:
-            form_ong = EditarOngForm(request.POST, instance=ong)
-            endereco_form = CadastroEnderecoForm(request.POST, instance=ong.endereco if ong.endereco else None)
-        elif voluntario:
-            form_voluntario = EditarVoluntarioForm(request.POST, instance=voluntario)
-            endereco_form = CadastroEnderecoForm(request.POST, instance=voluntario.endereco if voluntario.endereco else None)
-        
         print(form_usuario.errors)
-        print(form_ong.errors)
-        print(endereco_form.errors)
-        if form_usuario.is_valid() and (form_ong and form_ong.is_valid() or form_voluntario and form_voluntario.is_valid()) and endereco_form.is_valid():
-            usuario = form_usuario.save()
-            endereco = endereco_form.save()
+        if form_usuario.is_valid():
+            if ong:
+                form_ong = EditarOngForm(request.POST, instance=ong)
+                print(form_ong.errors)
+                if form_ong.is_valid():
+                    usuario = form_usuario.save()
+                    perfil = form_ong.save(commit=False)
+                    
+                    perfil.usuario = usuario
+                    perfil.save()
+                    
+                    messages.success(request, "Perfil atualizado com sucesso!")
+                    return redirect('perfil_usuario')
+            elif voluntario:
+                form_voluntario = EditarVoluntarioForm(request.POST, instance=voluntario)
+                endereco_form = EditarEnderecoForm(request.POST, instance=voluntario.endereco if voluntario.endereco else None)
+                print(endereco_form.errors)
+                if form_voluntario.is_valid() and endereco_form.is_valid():
+                    usuario = form_usuario.save()
+                    endereco = endereco_form.save()
+                    perfil = form_voluntario.save(commit=False)
 
-            perfil = form_voluntario.save(commit=False) if form_voluntario else form_ong.save(commit=False)
-            perfil.usuario = usuario
-            perfil.endereco = endereco
-            perfil.save()
+                    perfil.usuario = usuario
+                    perfil.endereco = endereco
+                    perfil.save()
 
-            messages.success(request, "Perfil atualizado com sucesso!")
-            return redirect('perfil_usuario')
+                    messages.success(request, "Perfil atualizado com sucesso!")
+                    return redirect('perfil_usuario')
 
     return render(request, 'registration/perfil.html', {
         'form_ong': form_ong,
@@ -176,3 +189,34 @@ class CustomLoginView(LoginView):
     #             print('não está ativo')
     #             messages.error(self.request, 'Sua conta ainda não está ativa. Aguarde a aprovação ou entre em contato com o administrador.')
     #     return super().get_context_data(**kwargs)
+
+@login_required
+def revalidar_cnpj(request: HttpRequest, cnpj: str):
+    ong = Ong.objects.filter(cnpj=cnpj)
+    if not ong:
+        messages.error(request, _('Não foi possível processar a sua solicitação.'))
+        return redirect('perfil_usuario')
+
+    ong = ong.get()
+    if ong.usuario != request.user:
+        messages.error(request, _('Não foi possível processar a sua solicitação.'))
+        return redirect('perfil_usuario')
+    
+    try:
+        cnpj_consultado = consultar_cnpj(cnpj)
+        ong.nome_fantasia = cnpj_consultado['nome_fantasia']
+        ong.razao_social = cnpj_consultado['razao_social']
+        ong.status_cnpj = cnpj_consultado['descricao_situacao_cadastral']
+        ong.endereco.logradouro = f'{cnpj_consultado["descricao_tipo_de_logradouro"]} {cnpj_consultado["logradouro"]}'
+        ong.endereco.numero = cnpj_consultado['numero']
+        ong.endereco.bairro = cnpj_consultado['bairro']
+        ong.endereco.complemento = cnpj_consultado['complemento']
+        ong.endereco.cidade = cnpj_consultado['municipio']
+        ong.endereco.estado = cnpj_consultado['uf']
+        ong.save()
+    except Exception as e:
+        messages.error(request, _('Erro ao atualizar dados do CNPJ.'))
+        return redirect('perfil_usuario')
+    messages.success(request, _('Dados do CNPJ atualizados com sucesso.'))
+    return redirect('perfil_usuario')
+
