@@ -273,16 +273,10 @@ class EditarOngForm(CadastroOngForm):
 
 class EditarVoluntarioForm(CadastroVoluntarioForm):
     class Meta(CadastroVoluntarioForm.Meta):
-        fields = CadastroVoluntarioForm.Meta.fields[:]
-        fields.append('status')
-        widgets = CadastroVoluntarioForm.Meta.widgets
-        widgets['status'] = forms.Select(choices=Voluntario.STATUS_VOLUNTARIO, attrs={'class':'form-control'})
+        fields = ['nome_completo', 'telefone']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        self.fields['cpf'].disabled = True
-        self.fields['status'].disabled = True
 
 class EditarEnderecoForm(CadastroEnderecoForm):
     class Meta(CadastroEnderecoForm.Meta):

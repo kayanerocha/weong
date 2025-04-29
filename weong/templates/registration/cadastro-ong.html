@@ -92,7 +92,6 @@
                         <form method="post">
                             {% csrf_token %}
 
-                            <!-- Nome da ONG e CNPJ -->
                             <div class="row mb-3">
                                 <div class="col-md-12 form-group">
                                     <input type="text" id="cnpj" name="cnpj" class="form-control" placeholder=" " required>
@@ -150,7 +149,6 @@
                                 </div>
                             </div>
 
-                            <!-- Telefone e Site -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
                                     <input type="text" id="telefone" name="telefone" class="form-control" placeholder=" ">
@@ -173,7 +171,6 @@
                                 </div>
                             </div>
 
-                            <!-- Senha e Confirmar Senha -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
                                     <input type="password" id="password" name="password" class="form-control" placeholder=" ">
@@ -185,7 +182,6 @@
                                 </div>
                             </div>
 
-                            <!-- Informação de segurança -->
                             <div class="password-info mb-3">
                                 <p class="mb-0">Atenção! Para sua segurança, a senha deve conter:</p>
                                 <ul class="mb-0">
@@ -195,7 +191,6 @@
                                 </ul>
                             </div>
 
-                            <!-- Botão de Enviar -->
                             <button type="submit" class="btn btn-submit">Enviar para análise</button>
                         </form>
                         {% if messages %}
@@ -211,39 +206,7 @@
             </div>
         </div>
     </div>
-    <script>
-        // const cnpj = document.getElementById('cnpj');
-
-        function setValueInput(idInput, value) {
-            const inputElement = document.getElementById(idInput);
-            inputElement.value = value;
-        }
-        
-        // cnpj.addEventListener('input', getInfoOng);
-        
-        function pesquisarCnpj() {
-            const cep = document.getElementById('cnpj').value;
-            const apiUrl = `https://brasilapi.com.br/api/cnpj/v1/${cep}`;
-            fetch(apiUrl).then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro ao consultar o CNPJ.')
-                }
-                return response.json();
-            }).then(data => {
-                console.log(data);
-                setValueInput('nome_fantasia', data.nome_fantasia);
-                setValueInput('razao_social', data.razao_social);
-                setValueInput('logradouro', `${data.descricao_tipo_de_logradouro} ${data.logradouro}`);
-                setValueInput('numero', data.numero);
-                setValueInput('complemento', data.complemento);
-                setValueInput('bairro', data.bairro);
-                setValueInput('cidade', data.municipio);
-                setValueInput('estado', data.uf);
-                setValueInput('cep', data.cep);
-            }).catch(error => {
-                console.error('Error: ', error);
-            });
-        }
-    </script>
+    {% load static %}
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

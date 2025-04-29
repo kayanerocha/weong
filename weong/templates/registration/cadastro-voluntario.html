@@ -205,31 +205,7 @@
             </div>
         </div>
     </div>
-    <script>
-        function setValueInput(idInput, value) {
-            const inputElement = document.getElementById(idInput);
-            inputElement.value = value;
-        }
-
-        function pesquisarCep() {
-            const cep = document.getElementById('cep').value;
-            const apiUrl = `https://brasilapi.com.br/api/cep/v2/${cep}`;
-            fetch(apiUrl).then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro ao consultar o CNPJ.')
-                }
-                return response.json();
-            }).then(data => {
-                console.log(data);
-                setValueInput('logradouro', data.street);
-                setValueInput('bairro', data.neighborhood);
-                setValueInput('cidade', data.city);
-                setValueInput('estado', data.state);
-                setValueInput('cep', data.cep);
-            }).catch(error => {
-                console.error('Error: ', error);
-            });
-        }        
-    </script>
+    {% load static %}
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

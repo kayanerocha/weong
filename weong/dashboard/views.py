@@ -25,7 +25,7 @@ def mapa_ongs(request: HttpRequest):
             coordenadas.append((ong.endereco.latitude, ong.endereco.longitude))
     
         for coordenada in coordenadas:
-            folium.Marker(coordenada).add_to(map)
+            folium.Marker(coordenada, popup="<a href=https://fr.wikipedia.org/wiki/Place_Guillaume_II>Place Guillaume II</a>").add_to(map)
     folium.raster_layers.TileLayer(tiles='OpenStreetMap').add_to(map)
     folium.raster_layers.TileLayer(tiles='CartoDB Positron').add_to(map)
     folium.raster_layers.TileLayer(tiles='CartoDB Voyager').add_to(map)
