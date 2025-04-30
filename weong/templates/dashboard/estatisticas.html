@@ -9,10 +9,10 @@
     </form>
     <div class="row">
         <div class="col-6">
-            <canvas id="candidaturasChart"></canvas>
+            <canvas id="vagasMesChart"></canvas>
         </div>
         <div class="col-6">
-            <canvas id="vagasMesChart"></canvas>
+            <canvas id="candidaturasChart"></canvas>
         </div>
         <div class="col-6">
             <canvas id="vagasChart"></canvas>
@@ -25,8 +25,8 @@
         </div>
     </div>
     <script>
-        let candidaturasCtx = document.getElementById('candidaturasChart').getContext('2d');
-        let candidaturasChart = new Chart(candidaturasCtx, {
+        let vagasMesCtx = document.getElementById('vagasMesChart').getContext('2d');
+        let vagasMesChart = new Chart(vagasMesCtx, {
             type: 'bar',
             options: {
                 responsive: true,
@@ -37,8 +37,8 @@
             }
         });
 
-        let vagasMesCtx = document.getElementById('vagasMesChart').getContext('2d');
-        let vagasMesChart = new Chart(vagasMesCtx, {
+        let candidaturasCtx = document.getElementById('candidaturasChart').getContext('2d');
+        let candidaturasChart = new Chart(candidaturasCtx, {
             type: 'bar',
             options: {
                 responsive: true,

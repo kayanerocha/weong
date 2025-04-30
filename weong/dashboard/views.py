@@ -1,4 +1,3 @@
-from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count
 from django.db.models.functions import ExtractYear
 from django.shortcuts import render
@@ -7,25 +6,40 @@ from datetime import datetime
 from pytz import timezone as tz
 import folium
 import folium.raster_layers
-import json
 
 from utils.charts import *
 from usuario.models import Ong, Voluntario
 from vaga.models import Vaga, Candidatura
+from .services import *
 
 sao_paulo = tz('America/Sao_Paulo')
 
 def mapa_ongs(request: HttpRequest):
-    map = folium.Map((-23.5449796, -46.6486328)) # Centro de São Paulo
+    ip_usuario = get_ip_usuario(request)
+    localizacao_usuario = get_localizacao_ip(ip_usuario)
+    
+    # Inicialmente as coordenadas do Centro de São Paulo
+    latitude = -23.5449796
+    longitude = -46.6486328
+    if localizacao_usuario:
+        latitude = localizacao_usuario['latitude']
+        longitude = localizacao_usuario['longitude']
+    print(latitude, longitude)
+    map = folium.Map((latitude, longitude))
     
     ongs = Ong.objects.filter(status='Ativa').all()
     if ongs:
         coordenadas = []
+        dados_ongs = []
         for ong in ongs:
             coordenadas.append((ong.endereco.latitude, ong.endereco.longitude))
-    
-        for coordenada in coordenadas:
-            folium.Marker(coordenada, popup="<a href=https://fr.wikipedia.org/wiki/Place_Guillaume_II>Place Guillaume II</a>").add_to(map)
+            dados_ongs.append({
+                'nome': ong.razao_social
+            })
+
+        for i, coordenada in enumerate(coordenadas):
+            print(ongs[i].get_absolute_url())
+            folium.Marker(coordenada, popup=f'<a href={ongs[i].get_absolute_url()} target="_blank">Acessar perfil</a>', tooltip=f'{ongs[i].razao_social}').add_to(map)
     folium.raster_layers.TileLayer(tiles='OpenStreetMap').add_to(map)
     folium.raster_layers.TileLayer(tiles='CartoDB Positron').add_to(map)
     folium.raster_layers.TileLayer(tiles='CartoDB Voyager').add_to(map)
@@ -77,8 +91,8 @@ def get_vagas_data(request: HttpRequest, ano: int):
             'labels': ['Abertas', 'Preenchidas'],
             'datasets': [{
                 'label': 'Vagas',
-                'backgroundColor': [cor_vagas_abertas, cor_sucesso],
-                'borderColor': [cor_vagas_abertas, cor_sucesso],
+                'backgroundColor': ['#97db4f', '#277348'],
+                'borderColor': ['#97db4f', '#277348'],
                 'data': [
                     vagas.filter(preenchida=1).count(),
                     vagas.filter(preenchida=0, fim_candidaturas__gte=datetime.now().date()).count(),
@@ -97,8 +111,8 @@ def get_usuarios_data(request: HttpRequest, ano: int):
             'labels': ['ONGs', 'Voluntários'],
             'datasets': [{
                 'label': 'Usuários',
-                'backgroundColor': [cor_ongs, cor_voluntarios],
-                'borderColor': [cor_ongs, cor_voluntarios],
+                'backgroundColor': [cor_primaria, '#547792'],
+                'borderColor': [cor_primaria, '#547792'],
                 'data': [
                     ongs,
                     voluntarios

@@ -7,7 +7,7 @@ meses = [
 
 paleta_cores = ['#55efc4', '#81ecec', '#a29bfe', '#ffeaa7', '#fab1a0', '#ff7675', '#fd79a8']
 cor_primaria, cor_sucesso, cor_vagas_abertas, cor_ongs, cor_voluntarios = '#79aec8', paleta_cores[0], paleta_cores[3], paleta_cores[1], paleta_cores[4]
-cores_areas = ['#3A59D1', '#3D90D7', '#7AC6D2', '#B5FCCD', '#9FB3DF', '#9EC6F3', '#BDDDE4', '#FFF1D5', '#F6F1DE', '#3E3F5B', '#8AB2A6', '#8AB2A6', '#ACD3A8']
+cores_areas = ['#3A59D1', '#3D90D7', '#7AC6D2', '#B5FCCD', '#9FB3DF', '#9EC6F3', '#BDDDE4', '#FFF1D5', '#F6F1DE', '#3E3F5B', '#8AB2A6', '#8AB2A6', '#ACD3A8', '#94B4C1']
 
 def get_meses():
     ano = {}
