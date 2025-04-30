@@ -1,6 +1,7 @@
 from datetime import date
 from django import forms
 from django.contrib import messages
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -286,13 +287,5 @@ class EditarEnderecoForm(CadastroEnderecoForm):
         super().__init__(*args, **kwargs)
         if 'cnpj' in self.data:
             self.fields = []
-
-class CustomAuthenticationForm(AuthenticationForm):
-    def __init__(self, request = ..., *args, **kwargs):
-        super().__init__(request, *args, **kwargs)
-
-        if request.method == 'POST':
-            if not request.user.is_active:
-                messages.error(request, 'Usuário inativo ou senha incorreta. Aguarde a aprovação ou altere a sua senha.')
             
         

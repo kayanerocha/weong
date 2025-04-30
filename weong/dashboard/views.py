@@ -24,7 +24,7 @@ def mapa_ongs(request: HttpRequest):
     if localizacao_usuario:
         latitude = localizacao_usuario['latitude']
         longitude = localizacao_usuario['longitude']
-    print(latitude, longitude)
+
     map = folium.Map((latitude, longitude))
     
     ongs = Ong.objects.filter(status='Ativa').all()
@@ -38,7 +38,6 @@ def mapa_ongs(request: HttpRequest):
             })
 
         for i, coordenada in enumerate(coordenadas):
-            print(ongs[i].get_absolute_url())
             folium.Marker(coordenada, popup=f'<a href={ongs[i].get_absolute_url()} target="_blank">Acessar perfil</a>', tooltip=f'{ongs[i].razao_social}').add_to(map)
     folium.raster_layers.TileLayer(tiles='OpenStreetMap').add_to(map)
     folium.raster_layers.TileLayer(tiles='CartoDB Positron').add_to(map)
