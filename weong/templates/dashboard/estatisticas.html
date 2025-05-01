@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <form id="filtro">
+        <label for="Escolha um ano:"></label>
+        <select name="ano" id="ano"></select>
+        <input type="submit" value="Carregar" name="_carregar">
+    </form>
+    <div class="row">
+        <div class="col-6">
+            <canvas id="vagasMesChart"></canvas>
+        </div>
+        <div class="col-6">
+            <canvas id="candidaturasChart"></canvas>
+        </div>
+        <div class="col-6">
+            <canvas id="vagasChart"></canvas>
+        </div>
+        <div class="col-6">
+            <canvas id="usuariosChart"></canvas>
+        </div>
+        <div class="col-6">
+            <canvas id="vagasAreaChart"></canvas>
+        </div>
+    </div>
+    <script>
+        let vagasMesCtx = document.getElementById('vagasMesChart').getContext('2d');
+        let vagasMesChart = new Chart(vagasMesCtx, {
+            type: 'bar',
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: ''
+                }
+            }
+        });
+
+        let candidaturasCtx = document.getElementById('candidaturasChart').getContext('2d');
+        let candidaturasChart = new Chart(candidaturasCtx, {
+            type: 'bar',
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: ''
+                }
+            }
+        });
+
+        let vagasCtx = document.getElementById('vagasChart').getContext('2d');
+        let vagasChart = new Chart(vagasCtx, {
+            type: 'pie',
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: ''
+                }
+            }
+        });
+
+        let usuariosCtx = document.getElementById('usuariosChart').getContext('2d');
+        let usuariosChart = new Chart(usuariosCtx, {
+            type: 'pie',
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: ''
+                }
+            }
+        });
+
+        let vagasAreaCtx = document.getElementById('vagasAreaChart').getContext('2d');
+        let vagasAreaChart = new Chart(vagasAreaCtx, {
+            type: 'pie',
+            options: {
+                responsive: true,
+                title: {
+                    display: false,
+                    text: ''
+                }
+            }
+        });
+    </script>
+</div>
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            url: '/dashboard/opcoes/',
+            type: 'GET',
+            dataType: 'json',
+            success: (jsonResponse) => {
+                jsonResponse.opcoes.forEach(opcao => {
+                    $('#ano').append(new Option(opcao, opcao));
+                });
+                loadAllCharts($('#ano').children().first().val());
+            },
+            error: () => console.log('Falha ao filtrar as opções!')
+        });
+    });
+
+    $('#filtro').on('submit', (event) => {
+        event.preventDefault();
+
+        const ano = $('#ano').val();
+        loadAllCharts(ano)
+    });
+
+    function loadChart(chart, endpoint) {
+        $.ajax({
+            url: endpoint,
+            type: 'GET',
+            dataType: 'json',
+            success: (jsonResponse) => {
+                const title = jsonResponse.title;
+                const labels = jsonResponse.data.labels;
+                const datasets = jsonResponse.data.datasets;
+
+                chart.data.datasets = [];
+                chart.data.labels = [];
+
+                chart.options.title.text = title;
+                chart.options.title.display = true;
+                chart.data.labels = labels;
+                datasets.forEach(dataset => {
+                    chart.data.datasets.push(dataset);
+                });
+                chart.update();
+            },
+            error: () => console.log('Falha ao carregar o chart de ' + endpoint + '!')
+        });
+    }
+
+    function loadAllCharts(ano) {
+        loadChart(candidaturasChart, `/dashboard/candidaturas-chart/${ano}/`);
+        loadChart(vagasChart, `/dashboard/vagas-chart/${ano}/`);
+        loadChart(usuariosChart, `/dashboard/usuarios-chart/${ano}/`);
+        loadChart(vagasAreaChart, `/dashboard/vagas-area-chart/${ano}/`);
+        loadChart(vagasMesChart, `/dashboard/vagas-mes-chart/${ano}/`);
+    }
+</script>
+{% endblock %}

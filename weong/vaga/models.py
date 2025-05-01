@@ -1,6 +1,9 @@
+from decouple import config
 from django.db import models
 from django.db.models.signals import post_save
 from django.urls import reverse
+from django.utils import timezone
+from opencage.geocoder import OpenCageGeocode
 
 # Create your models here.
 
@@ -45,6 +48,8 @@ class Endereco(models.Model):
 
     estado = models.CharField(max_length=2, choices=ESTADOS)
     cep = models.CharField(max_length=10)
+    latitude = models.FloatField(max_length=20, blank=True, null=True)
+    longitude = models.FloatField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -56,6 +61,15 @@ class Endereco(models.Model):
     
     def get_absolute_url(self):
         return reverse('detalhe-endereco', args=[str(self.id)])
+    
+    def save(self, *args, **kwargs):
+        geocoder = OpenCageGeocode(config('GEOCODER_API_KEY'))
+        result = geocoder.geocode(self.__str__())
+        if result:
+            self.latitude = result[0]['geometry']['lat']
+            self.longitude = result[0]['geometry']['lng']
+        super().save(*args, **kwargs)
+
 
 class Vaga(models.Model):
     '''Modelo representando uma vaga'''
@@ -70,6 +84,24 @@ class Vaga(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.CASCADE, null=True)
     ong = models.ForeignKey('usuario.Ong', on_delete=models.CASCADE, null=True)
+
+    AREAS = (
+        ('Animais', 'Animais'),
+        ('Apoio Psicológico', 'Apoio Psicológico'),
+        ('Assistência Social', 'Assistência Social'),
+        ('Captação de Recursos / Marketing Social', 'Captação de Recursos / Marketing Social'),
+        ('Cultura e Arte', 'Cultura e Arte'),
+        ('Direiros Humanos', 'Direiros Humanos'),
+        ('Educação', 'Educação'),
+        ('Esporte e Lazer', 'Esporte e Lazer'),
+        ('Inclusão Social', 'Inclusão Social'),
+        ('Meio Ambiente', 'Meio Ambiente'),
+        ('Outros', 'Outros'),
+        ('Saúde', 'Saúde'),
+        ('Tecnologia', 'Tecnologia'),
+    )
+
+    area = models.CharField(max_length=50, choices=AREAS, default='Outros')
 
     class Meta:
         db_table = 'vagas'

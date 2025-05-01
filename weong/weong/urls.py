@@ -27,5 +27,6 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('vagas/', include('vaga.urls')),
     path('usuario/', include('usuario.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('', RedirectView.as_view(url='/vagas/', permanent=True)),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

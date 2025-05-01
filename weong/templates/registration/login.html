@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center form_container">
-                <form method="post">
+                <form method="post" >
                     {% csrf_token %}
                     <div class="input-group mb-3">
                         <div class="input-group-append">
@@ -48,6 +48,10 @@
                     Não possui uma conta? <a href="{% url 'cadastro-voluntario' %}" class="ml-2">Cadastrar conta</a>
                 </div>
             </div>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+            {{ form.non_field_errors }}
         </div>
     </div>
 </div>
