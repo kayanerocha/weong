@@ -7,7 +7,6 @@ from pytz import timezone as tz
 import folium
 import folium.raster_layers
 
-from utils.charts import *
 from usuario.models import Ong, Voluntario
 from vaga.models import Vaga, Candidatura
 from .services import *
