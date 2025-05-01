@@ -114,7 +114,7 @@ Comandos úteis:
 
 **Front-end:** JavaScript, Bootstrap e Chart.js
 
-**Back-end:** 
+**Back-end:** Django
 
 ## Documentação
 A documentação deste projeto pode ser encontrada no arquivo [WeOng - Documentação](<docs/WeOng - Documentacao.pdf>).
