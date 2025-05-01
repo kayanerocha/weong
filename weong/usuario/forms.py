@@ -17,6 +17,7 @@ from .models import Ong, Voluntario
 from .services import *
 from vaga.models import Endereco
 from vaga.services import possui_candidatura
+from utils.utils import string_simples
 
 client = BrasilAPI()
 
@@ -71,7 +72,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if logradouro != f'{self.endereco_consultado['descricao_tipo_de_logradouro']} {self.endereco_consultado['logradouro']}':
                     raise ValidationError(_('Logradouro inconsistente.'), code='invalido')
             else:
-                if logradouro != self.endereco_consultado['street']:
+                if string_simples(logradouro) != string_simples(self.endereco_consultado['street']):
                     raise ValidationError(_('Logradouro inconsistente.'), code='invalido')
             
         return logradouro
@@ -89,7 +90,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if bairro != self.endereco_consultado['bairro']:
                     raise ValidationError(_('Bairro inconsistente.'), code='invalido')
             else:
-                if bairro != self.endereco_consultado['neighborhood']:
+                if string_simples(bairro) != string_simples(self.endereco_consultado['neighborhood']):
                     raise ValidationError(_('Bairro inconsistente.'), code='invalido')
         return bairro
 
@@ -106,7 +107,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if cidade != self.endereco_consultado['municipio']:
                     raise ValidationError(_('Município inconsistente.'), code='invalido')
             else:
-                if cidade != self.endereco_consultado['city']:
+                if string_simples(cidade) != string_simples(self.endereco_consultado['city']):
                     raise ValidationError(_('Município inconsistente.'), code='invalido')
         return cidade
     
@@ -117,7 +118,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if estado != self.endereco_consultado['uf']:
                     raise ValidationError(_('Estado inconsistente.'), code='invalido')
             else:
-                if estado != self.endereco_consultado['state']:
+                if string_simples(estado) != string_simples(self.endereco_consultado['state']):
                     raise ValidationError(_('Estado inconsistente.'), code='invalido')
         return estado
     
@@ -138,7 +139,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if cep != self.endereco_consultado['cep']:
                     raise ValidationError(_('CEP inconsistente.'), code='invalido')
             else:
-                if logradouro != self.endereco_consultado['street']:
+                if string_simples(logradouro) != string_simples(self.endereco_consultado['street']):
                     raise ValidationError(_('CEP inconsistente.'), code='invalido')
         return cep
 

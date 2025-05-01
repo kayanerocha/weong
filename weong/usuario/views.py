@@ -202,6 +202,8 @@ def revalidar_cnpj(request: HttpRequest, cnpj: str):
         ong.endereco.complemento = cnpj_consultado['complemento']
         ong.endereco.cidade = cnpj_consultado['municipio']
         ong.endereco.estado = cnpj_consultado['uf']
+        ong.endereco.cep = cnpj_consultado['cep']
+        ong.endereco.save()
         ong.save()
     except Exception as e:
         messages.error(request, _('Erro ao atualizar dados do CNPJ.'))

@@ -20,6 +20,7 @@ idna==3.10
 Jinja2==3.1.6
 Js2Py==0.74
 MarkupSafe==3.0.2
+maxminddb==2.6.3
 multidict==6.3.1
 mysqlclient==2.2.6
 numpy==2.2.4
@@ -40,6 +41,7 @@ tqdm==4.67.1
 typing_extensions==4.12.2
 tzdata==2024.2
 tzlocal==5.3.1
+Unidecode==1.4.0
 urllib3==2.3.0
 validate-docbr==1.10.0
 xyzservices==2025.1.0

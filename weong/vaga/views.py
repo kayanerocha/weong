@@ -64,6 +64,7 @@ class DetalheVagaView(generic.DetailView):
 @login_required
 @permission_required(['vaga.add_vaga'], login_url='lista-vagas')
 def cadastrar_vaga(request: HttpRequest):
+    endereco_ong = Ong.objects.filter(usuario=request.user).get().endereco
     if request.method == 'POST':
         form_vaga = VagaForm(request.POST)
         form_endereco = CadastroEnderecoForm(request.POST)
@@ -77,7 +78,7 @@ def cadastrar_vaga(request: HttpRequest):
             return redirect('minhas-vagas')
     else:
         form_vaga = VagaForm()
-        form_endereco = CadastroEnderecoForm()
+        form_endereco = CadastroEnderecoForm(instance=endereco_ong)
     return render(request, 'vaga/cadastro.html', {
         'form': form_vaga,
         'form_endereco': form_endereco
@@ -107,8 +108,7 @@ def editar_vaga(request: HttpRequest, pk):
     else:
         vaga = Vaga.objects.filter(id=pk).first()
         endereco = Endereco.objects.filter(id=vaga.endereco.id).first()
-        print(vaga)
-        print(endereco)
+
         form_vaga = VagaForm(instance=vaga)
         form_endereco = CadastroEnderecoForm(instance=endereco)
     return render(request, 'vaga/vaga_edit.html', {
@@ -136,12 +136,12 @@ class VagaUpdate(PermissionRequiredMixin, UpdateView):
         if possui_candidatura(id_vaga):
             for campo in endereco_form.fields:
                 endereco_form.fields[campo].disabled = True
-        context['endereco_form'] = endereco_form
+        context['form_endereco'] = endereco_form
         return context
     
     def form_valid(self, form):
         context = self.get_context_data()
-        endereco_form = context['endereco_form']
+        endereco_form = context['form_endereco']
 
         if form.is_valid() and endereco_form.is_valid():
             endereco = endereco_form.save()
