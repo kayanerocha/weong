@@ -13,7 +13,7 @@ class OngInline(admin.StackedInline):
 
 @admin.register(Ong)
 class OngAdmin(admin.ModelAdmin):
-    list_display = ('nome_fantasia', 'razao_social', 'cnpj', 'telefone', 'status')
+    list_display = ('nome_fantasia', 'razao_social', 'cnpj', 'resumo', 'telefone', 'status')
     list_filter = ('status',)
 
 class UserAdmin(BaseUserAdmin):
@@ -21,5 +21,5 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(Voluntario)
 class VoluntarioAdmin(admin.ModelAdmin):
-    list_display = ('nome_completo', 'telefone', 'data_nascimento', 'cpf', 'status')
+    list_display = ('nome_completo', 'telefone', 'data_nascimento', 'cpf', 'resumo', 'status')
     list_filter = ('status',)

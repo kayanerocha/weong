@@ -15,6 +15,7 @@ class Ong(models.Model):
     cnpj = models.CharField(max_length=14, unique=True)
     telefone = models.CharField(max_length=11, help_text='Contato de um responsável da ONG.')
     site = models.URLField(max_length=255, blank=True, null=True)
+    resumo = models.TextField(max_length=5000, default=' ')
 
     STATUS_ONG = (
         ('Pendente', 'Pendente'),
@@ -33,7 +34,7 @@ class Ong(models.Model):
         db_table = 'ongs'
     
     def __str__(self):
-        return self.nome_fantasia
+        return self.razao_social or ' '
     
     def get_absolute_url(self):
         return reverse('detalhe-ong', args=[str(self.id)])
@@ -47,6 +48,7 @@ class Voluntario(models.Model):
     telefone = models.CharField(max_length=15)
     data_nascimento = models.DateField()
     cpf = models.CharField(max_length=11, unique=True)
+    resumo = models.TextField(max_length=5000, default='')
     
     STATUS_VOLUNTARIO = (
         ('Pendente', 'Pendente'),

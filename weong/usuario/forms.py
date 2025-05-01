@@ -151,11 +151,12 @@ class EditarEnderecoForm(CadastroEnderecoForm):
 class CadastroOngForm(forms.ModelForm):
     class Meta:
         model = Ong
-        fields = ['nome_fantasia', 'razao_social', 'cnpj', 'telefone', 'site']
+        fields = ['nome_fantasia', 'razao_social', 'cnpj', 'resumo', 'telefone', 'site']
         widgets = {
             'cnpj': forms.TextInput(attrs={'type': 'text', 'min_length': 14, 'max_length': 14, 'class':'form-control'}),
             'nome_fantasia': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
             'razao_social': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
+            'resumo': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
             'telefone': forms.TextInput(attrs={'type': 'text', 'min_length': 11, 'max_length': 11, 'class':'form-control'}),
             'site': forms.URLInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
         }
@@ -210,12 +211,14 @@ class CadastroVoluntarioForm(forms.ModelForm):
             'telefone',
             'cpf',
             'data_nascimento',
+            'resumo',
         ]
         widgets = {
             'nome_completo': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
             'telefone': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
             'cpf': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
             'data_nascimento': forms.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+            'resumo': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
         }
 
     def clean_cpf(self):
@@ -268,14 +271,14 @@ class EditarUsuarioForm(CadastroUsuarioForm):
 
 class EditarOngForm(CadastroOngForm):
     class Meta(CadastroOngForm.Meta):
-        fields = ['telefone', 'site']
+        fields = ['telefone', 'site', 'resumo']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 class EditarVoluntarioForm(CadastroVoluntarioForm):
     class Meta(CadastroVoluntarioForm.Meta):
-        fields = ['nome_completo', 'telefone']
+        fields = ['nome_completo', 'telefone', 'resumo']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

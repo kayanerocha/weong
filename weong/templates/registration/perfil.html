@@ -78,6 +78,10 @@
                         {{ form_voluntario.telefone }}
                     </div>
                     <div class="col-md-6 mb-3">
+                        <label>Resumo</label>
+                        {{ form_voluntario.resumo }}
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <label for="cep">CEP</label>
                         <input type="text" id="cep" name="cep" class="form-control" max="8" value="{{ endereco_form.cep.value }}" required >
                         <a href="javascript:pesquisarCep()">Pesquisar CEP</a>
@@ -108,22 +112,26 @@
                         {{ endereco_form.estado }}
                     </div>
                     {% elif ong %}
-                        <div class="col-md-6 mb-3">
-                            <label>Usuário</label>
-                            {{ form_usuario.username }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>E-mail</label>
-                            {{ form_usuario.email }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Telefone</label>
-                            {{ form_ong.telefone }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Site</label>
-                            {{ form_ong.site }}
-                        </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Usuário</label>
+                        {{ form_usuario.username }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>E-mail</label>
+                        {{ form_usuario.email }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Telefone</label>
+                        {{ form_ong.telefone }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Site</label>
+                        {{ form_ong.site }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Resumo</label>
+                        {{ form_ong.resumo }}
+                    </div>
                     {% endif %}
                 </div>
             </div>
