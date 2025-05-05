@@ -2,7 +2,7 @@ from datetime import date
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator, URLValidator
@@ -24,7 +24,7 @@ client = BrasilAPI()
 class CadastroUsuarioForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['email', 'password']
         widgets = {
             'username': forms.TextInput(attrs={'type': 'text', 'min_length': 3, 'max_length': 150, 'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'type': 'email', 'max_length': 255, 'class': 'form-control'}),
@@ -43,6 +43,20 @@ class CadastroUsuarioForm(forms.ModelForm):
             self.add_error('password_confirm', 'Senhas divergentes.')
         
         return password
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            self.add_error('email', 'Esse e-mail já está cadastrado.')
+        return email
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.username = self.cleaned_data['email']
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+        return user
 
 class CadastroEnderecoForm(forms.ModelForm):
     logradouro = forms.CharField(max_length=255, label='Logradouro', widget=forms.TextInput(attrs={'class':'form-control'}))
