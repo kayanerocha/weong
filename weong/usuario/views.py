@@ -1,19 +1,18 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
-from django.contrib.auth import get_user
-from django.contrib.auth.decorators import login_required
+from verify_email.email_handler import TokenManager, ActivationMailManager
 
 from usuario.forms import *
 from usuario.models import Ong, Voluntario
 from usuario.services import consultar_cnpj
 
 # Create your views here.
-
 
 def cadastro_ong(request):
     if request.user.is_authenticated:
@@ -27,14 +26,13 @@ def cadastro_ong(request):
         if form_usuario.is_valid() and form_ong.is_valid() and form_endereco.is_valid() and form_endereco.endereco_consultado['descricao_situacao_cadastral'].upper() == 'ATIVA':
             usuario = form_usuario.save(commit=False)
             usuario.set_password(form_usuario.cleaned_data['password'])
-            usuario.is_active = False
+            usuario_inativo = ActivationMailManager().send_verification_link(inactive_user=usuario, form=form_usuario, request=request)
 
             endereco = form_endereco.save()
-            usuario.save()
             
             ong = form_ong.save(commit=False)
             ong.status_cnpj = form_ong.cnpj_consultado['descricao_situacao_cadastral']
-            ong.usuario = usuario
+            ong.usuario = usuario_inativo
             ong.endereco = endereco
             ong.save()
 

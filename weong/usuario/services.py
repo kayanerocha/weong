@@ -12,6 +12,7 @@ def cnpj_valido(cnpj: str) -> bool:
 
 def consultar_cnpj(cnpj: str):
     if not cnpj_valido(cnpj):
+        print('entrou no inválido')
         return None
 
     cache_data = cache.get(cnpj)
@@ -20,7 +21,8 @@ def consultar_cnpj(cnpj: str):
     
     try:
         response = requests.get(f'{config("URL_BRASIL_API")}cnpj/v1/{cnpj}')
-    except Exception:
+    except Exception as e:
+        print(e)
         return None
     else:
         if response.status_code == 200:
