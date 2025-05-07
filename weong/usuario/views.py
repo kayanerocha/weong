@@ -1,9 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetCompleteView
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from verify_email.email_handler import TokenManager, ActivationMailManager
@@ -209,3 +210,9 @@ def revalidar_cnpj(request: HttpRequest, cnpj: str):
     messages.success(request, _('Dados do CNPJ atualizados com sucesso.'))
     return redirect('perfil_usuario')
 
+class CustomPasswordChangeView(PasswordChangeView):
+    success_url = reverse_lazy('perfil_usuario')
+
+    def form_valid(self, form):
+        messages.success(request=self.request, message='Senha alterada com sucesso!')
+        return super().form_valid(form)
