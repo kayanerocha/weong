@@ -1,5 +1,7 @@
 from decouple import config
 from django.core.cache import cache
+from django.core.mail import send_mail
+from django.template import loader
 from time import sleep
 from validate_docbr import CNPJ
 import requests
@@ -48,3 +50,14 @@ def consultar_cep(cep: str):
         if response.status_code == 429:
             sleep(10)
             consultar_cep(cep)
+
+def enviar_resultado_analise(status: str, destinatario: str):
+    resultado = 'aprovado' if status == 'Ativa' else 'reprovado'
+    send_mail(
+            'Resultado da Análise de Perfil',
+            f'Seu perfil foi {resultado}',
+            'kayanerocha.ti@gmail.com',
+            [destinatario],
+            fail_silently=False,
+            # html_message=loader.render_to_string('emails/analise_perfil.html', {'resultado': resultado})
+        )

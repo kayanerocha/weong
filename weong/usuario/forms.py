@@ -46,7 +46,7 @@ class CadastroUsuarioForm(forms.ModelForm):
     
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists() and not self.instance:
             self.add_error('email', 'Esse e-mail já está cadastrado.')
         return email
     
