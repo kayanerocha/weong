@@ -1,13 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetCompleteView
+from django.contrib.auth.views import PasswordChangeView
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
-from verify_email.email_handler import TokenManager, ActivationMailManager
+from verify_email.email_handler import ActivationMailManager
 
 from usuario.forms import *
 from usuario.models import Ong, Voluntario
