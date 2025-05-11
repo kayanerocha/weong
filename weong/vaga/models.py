@@ -141,7 +141,7 @@ class Candidatura(models.Model):
 
     def __str__(self):
         '''String representando um objeto'''
-        return f'{self.id} - {self.vaga.titulo}: {self.candidato.nome_completo}'
+        return f'{self.id} - {self.vaga.titulo}: {self.voluntario.nome_completo}'
     
     def get_absolute_url(self):
         '''Retorna a URL para acessar detalhes de uma inscrição'''

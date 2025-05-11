@@ -9,7 +9,7 @@
     <h1 class="display-1">{{ titulo }}</h1>
     {% if user.is_authenticated %}
         Oi {{ user.username }}!
-        <p><a href="{% url 'password_change' %}">Alterar Senha</a></p>
+        <p><a href="{% url 'alterar-senha' %}">Alterar Senha</a></p>
     {% else %}
         <p>Você não está logado</p>
         <a href="{% url 'login' %}">Login</a>

@@ -17,12 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
-from django.urls import path, include as inc, reverse_lazy
+from django.urls import path
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
-
-from usuario.views import LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
