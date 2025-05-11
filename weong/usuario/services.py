@@ -53,11 +53,14 @@ def consultar_cep(cep: str):
 
 def enviar_resultado_analise(status: str, destinatario: str):
     resultado = 'aprovado' if status == 'Ativa' else 'reprovado'
-    send_mail(
-            'Resultado da Análise de Perfil',
-            f'Seu perfil foi {resultado}',
-            'kayanerocha.ti@gmail.com',
-            [destinatario],
-            fail_silently=False,
-            # html_message=loader.render_to_string('emails/analise_perfil.html', {'resultado': resultado})
-        )
+    try:
+        send_mail(
+                'Resultado da Análise de Perfil',
+                f'Seu perfil foi {resultado}',
+                'kayanerocha.ti@gmail.com',
+                [destinatario],
+                fail_silently=False,
+                # html_message=loader.render_to_string('emails/analise_perfil.html', {'resultado': resultado})
+            )
+    except Exception:
+        pass
