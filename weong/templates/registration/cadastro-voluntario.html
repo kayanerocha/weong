@@ -104,6 +104,13 @@
                                 </div>
                             </div>
 
+                            <div class="row mb3">
+                                <div class="col-md-12 form-group">
+                                    <textarea name="resumo" id="resumo" class="form-control" rows="10"></textarea>
+                                    <label for="resumo">Resumo</label>
+                                </div>
+                            </div>
+
                             <div class="row mb-3">
                                 <div class="col-md-12 form-group">
                                     <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required>
@@ -158,10 +165,6 @@
 
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="username" name="username" class="form-control" placeholder=" ">
-                                    <label for="username">Usuário</label>
-                                </div>
-                                <div class="col-md-6 form-group">
                                     <input type="date" id="data_nascimento" name="data_nascimento" class="form-control" placeholder=" ">
                                     <label for="data_nascimento">Data de nascimento</label>
                                 </div>
@@ -205,31 +208,7 @@
             </div>
         </div>
     </div>
-    <script>
-        function setValueInput(idInput, value) {
-            const inputElement = document.getElementById(idInput);
-            inputElement.value = value;
-        }
-
-        function pesquisarCep() {
-            const cep = document.getElementById('cep').value;
-            const apiUrl = `https://brasilapi.com.br/api/cep/v2/${cep}`;
-            fetch(apiUrl).then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro ao consultar o CNPJ.')
-                }
-                return response.json();
-            }).then(data => {
-                console.log(data);
-                setValueInput('logradouro', data.street);
-                setValueInput('bairro', data.neighborhood);
-                setValueInput('cidade', data.city);
-                setValueInput('estado', data.state);
-                setValueInput('cep', data.cep);
-            }).catch(error => {
-                console.error('Error: ', error);
-            });
-        }        
-    </script>
+    {% load static %}
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

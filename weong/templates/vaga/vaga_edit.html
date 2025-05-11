@@ -42,35 +42,36 @@
                 <div class="form-group row">
                     <div class="form-group col-6">
                         <label for="logradouro">Logradouro</label>
-                        {{ endereco_form.logradouro }}
+                        <input type="text" id="logradouro" name="logradouro" class="form-control" value="{{ form_endereco.logradouro.value }}" readonly>
                     </div>
                     <div class="form-group col-3">
                         <label for="numero">Numero</label>
-                        {{ endereco_form.numero }}
+                        <input type="text" id="numero" name="numero" class="form-control" value="{{ form_endereco.numero.value }}">
                     </div>
                     <div class="form-group col-3">
                         <label for="complemento">Complemento</label>
-                        {{ endereco_form.complemento }}
+                        <input type="text" id="complemento" name="complemento" class="form-control" value="{{ form_endereco.complemento.value }}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="form-group col-6">
                         <label for="bairro">Bairro</label>
-                        {{ endereco_form.bairro }}
+                        <input type="text" id="bairro" name="bairro" class="form-control" value="{{ form_endereco.bairro.value }}" readonly>
                     </div>
                     <div class="form-group col-6">
                         <label for="cep">CEP</label>
-                        {{ endereco_form.cep }}
+                        <input type="text" id="cep" name="cep" class="form-control" value="{{ form_endereco.cep.value }}" required>
+                        <a href="javascript:pesquisarCep()">Pesquisar CEP</a>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="form-group col-6">
                         <label for="cidade">Cidade</label>
-                        {{ endereco_form.cidade }}
+                        <input type="text" id="cidade" name="cidade" class="form-control" value="{{ form_endereco.cidade.value }}" readonly>
                     </div>
                     <div class="form-group col-6">
                         <label for="estado">Estado</label>
-                        {{ endereco_form.estado }}
+                        {{ form_endereco.estado }}
                     </div>
                 </div>
                 

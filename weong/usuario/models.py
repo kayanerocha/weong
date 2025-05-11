@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from vaga.models import Endereco
+from .services import enviar_resultado_analise
 
 # Create your models here.
 
@@ -15,6 +16,7 @@ class Ong(models.Model):
     cnpj = models.CharField(max_length=14, unique=True)
     telefone = models.CharField(max_length=11, help_text='Contato de um responsável da ONG.')
     site = models.URLField(max_length=255, blank=True, null=True)
+    resumo = models.TextField(max_length=5000, default=' ')
 
     STATUS_ONG = (
         ('Pendente', 'Pendente'),
@@ -33,10 +35,17 @@ class Ong(models.Model):
         db_table = 'ongs'
     
     def __str__(self):
-        return self.nome_fantasia
+        return self.razao_social or ' '
     
     def get_absolute_url(self):
         return reverse('detalhe-ong', args=[str(self.id)])
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_status_ong = Ong.objects.get(pk=self.pk).status
+            if old_status_ong != 'Ativa' and self.status == 'Ativa' or old_status_ong != 'Inativa' and self.status == 'Inativa':
+                enviar_resultado_analise(self.status, self.usuario.email)
+        return super().save(**kwargs)
 
 
 class Voluntario(models.Model):
@@ -47,6 +56,7 @@ class Voluntario(models.Model):
     telefone = models.CharField(max_length=15)
     data_nascimento = models.DateField()
     cpf = models.CharField(max_length=11, unique=True)
+    resumo = models.TextField(max_length=5000, default='')
     
     STATUS_VOLUNTARIO = (
         ('Pendente', 'Pendente'),

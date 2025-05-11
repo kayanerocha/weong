@@ -79,17 +79,18 @@
             <a class="nav-link" style="color: white;" href="{% url 'cadastro-voluntario' %}">Cadastro de Voluntário</a>
             <a class="nav-link" style="color: white;" href="{% url 'login' %}">Login</a>
         {% else %}
-            <!-- <form action="{% url 'logout' %}" method="post" class="d-inline mr-2">
+            <a class="nav-link" style="color: white;" href="{% url 'perfil_usuario' %}">Meu Perfil</a>
+            <form action="{% url 'logout' %}" method="post" class="d-inline mr-2">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger btn-sm">Logout</button>
-            </form> -->
+            </form> 
         {% endif %}
-        <form class="form-inline">
+        <!-- <form class="form-inline">
             <input class="form-control" type="search" placeholder="Pesquisar" aria-label="Search">
             <button class="btn" type="submit" style="background-color: #5d7398; border: 1px solid #5d7398;">
                 <i class="fa fa-search" style="font-size:24px; color: white; background-color: #5d7398;"></i>
             </button>
-        </form>
+        </form> -->
     </div>
     {% endblock %}
   </nav>

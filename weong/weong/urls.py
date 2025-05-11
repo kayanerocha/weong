@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
-from django.urls import path, include as inc
+from django.urls import path
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -29,4 +29,5 @@ urlpatterns = [
     path('usuario/', include('usuario.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('', RedirectView.as_view(url='/vagas/', permanent=True)),
+    path('verification/', include('verify_email.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -17,22 +17,15 @@ from usuario.forms import CadastroEnderecoForm, EditarEnderecoForm
 from usuario.models import Ong, Voluntario, Endereco
 from .services import candidatos_selecionados, candidatura_existe, possui_candidatura
 
-class ListaVagasView(generic.ListView):
-    model = Vaga
-    context_object_name = 'lista_vagas'
-
-    def get_queryset(self):
-        return Vaga.objects.filter(preenchida__exact=0, ong__status__exact='Inativa')
-    
-    def get_context_data(self, **kwargs):
-        context = super(ListaVagasView, self).get_context_data(**kwargs)
-        context['titulo'] = 'Vagas Abertas'
-        return context
-    
-    template_name = 'vagas/lista.html'
-
 class DetalheVagaView(generic.DetailView):
     model = Vaga
+    
+    def get(self, request, *args, **kwargs):
+        vaga = Vaga.objects.filter(id=self.get_object().pk).get()
+        ong = vaga.ong
+        if ong.usuario.id != request.user.id and vaga.fim_candidaturas <= datetime.date.today():
+            return redirect('lista-vagas')
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -64,6 +57,7 @@ class DetalheVagaView(generic.DetailView):
 @login_required
 @permission_required(['vaga.add_vaga'], login_url='lista-vagas')
 def cadastrar_vaga(request: HttpRequest):
+    endereco_ong = Ong.objects.filter(usuario=request.user).get().endereco
     if request.method == 'POST':
         form_vaga = VagaForm(request.POST)
         form_endereco = CadastroEnderecoForm(request.POST)
@@ -77,7 +71,7 @@ def cadastrar_vaga(request: HttpRequest):
             return redirect('minhas-vagas')
     else:
         form_vaga = VagaForm()
-        form_endereco = CadastroEnderecoForm()
+        form_endereco = CadastroEnderecoForm(instance=endereco_ong)
     return render(request, 'vaga/cadastro.html', {
         'form': form_vaga,
         'form_endereco': form_endereco
@@ -90,38 +84,18 @@ class VagaList(ListView):
     def get_queryset(self):
         return Vaga.objects.filter(preenchida__exact=0, ong__status__exact='Ativa', fim_candidaturas__gte=datetime.datetime.now().date())
 
-@login_required
-@permission_required(['vaga.add_vaga'], login_url='lista-vagas')
-def editar_vaga(request: HttpRequest, pk):
-    if request.method == 'POST':
-        form_vaga = VagaForm(request.POST)
-        form_endereco = CadastroEnderecoForm(request.POST)
-
-        if form_vaga.is_valid() and form_endereco.is_valid():
-            endereco = form_endereco.save()
-            vaga = form_vaga.save(commit=False)
-            vaga.endereco = endereco
-            vaga.ong = request.user.ong
-            vaga.save()
-            return redirect('minhas-vagas')
-    else:
-        vaga = Vaga.objects.filter(id=pk).first()
-        endereco = Endereco.objects.filter(id=vaga.endereco.id).first()
-        print(vaga)
-        print(endereco)
-        form_vaga = VagaForm(instance=vaga)
-        form_endereco = CadastroEnderecoForm(instance=endereco)
-    return render(request, 'vaga/vaga_edit.html', {
-        'form': form_vaga,
-        'form_endereco': form_endereco
-    })
-
 class VagaUpdate(PermissionRequiredMixin, UpdateView):
     permission_required = 'vaga.change_vaga'
     model = Vaga
     form_class = EditarVagaForm
     template_name = 'vaga/vaga_edit.html'
     success_url = reverse_lazy('minhas-vagas')
+
+    def get(self, request, *args, **kwargs):
+        ong = Vaga.objects.filter(id=self.get_object().pk).get().ong
+        if ong.usuario.id != request.user.id:
+            return redirect('lista-vagas')
+        return super().get(request, *args, **kwargs)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -136,12 +110,12 @@ class VagaUpdate(PermissionRequiredMixin, UpdateView):
         if possui_candidatura(id_vaga):
             for campo in endereco_form.fields:
                 endereco_form.fields[campo].disabled = True
-        context['endereco_form'] = endereco_form
+        context['form_endereco'] = endereco_form
         return context
     
     def form_valid(self, form):
         context = self.get_context_data()
-        endereco_form = context['endereco_form']
+        endereco_form = context['form_endereco']
 
         if form.is_valid() and endereco_form.is_valid():
             endereco = endereco_form.save()
@@ -159,6 +133,19 @@ class VagaDelete(PermissionRequiredMixin, DeleteView):
     template_name = 'vaga/vaga_delete.html'
     success_url = reverse_lazy('minhas-vagas')
 
+    def get(self, request, *args, **kwargs):
+        ong = Vaga.objects.filter(id=self.get_object().pk).get().ong
+        if ong.usuario.id != request.user.id:
+            return redirect('lista-vagas')
+
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        ong = Vaga.objects.filter(id=self.get_object().pk).get().ong
+        if ong.usuario.id != request.user.id:
+            return redirect('lista-vagas')
+        return super().post(request, *args, **kwargs)
+
 class MinhasVagasList(PermissionRequiredMixin, VagaList):
     permission_required = 'vaga.visualizar_minhas_vagas'
 
@@ -169,9 +156,13 @@ class MinhasVagasList(PermissionRequiredMixin, VagaList):
 @login_required
 @permission_required(['vaga.change_vaga'], login_url='lista-vagas')
 def preencher_vaga(request: HttpRequest, pk: int):
+    vaga = Vaga.objects.filter(id=pk)
+    if vaga.get().ong.usuario.id != request.user.id:
+        return redirect('lista-vagas')
+    
     if request.method == 'POST':
         try:
-            Vaga.objects.filter(id=pk).update(preenchida=1)
+            vaga.update(id=pk).update(preenchida=1)
         except Exception as e:
             messages.error(request, _('Erro ao preencher vaga, entre em contato com o administrador do sistema.'))
         else:

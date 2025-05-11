@@ -1,5 +1,4 @@
-from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.db.models.functions import ExtractYear
 from django.shortcuts import render
 from django.http import HttpRequest, JsonResponse
@@ -7,25 +6,38 @@ from datetime import datetime
 from pytz import timezone as tz
 import folium
 import folium.raster_layers
-import json
 
-from utils.charts import *
 from usuario.models import Ong, Voluntario
 from vaga.models import Vaga, Candidatura
+from .services import *
 
 sao_paulo = tz('America/Sao_Paulo')
 
 def mapa_ongs(request: HttpRequest):
-    map = folium.Map((-23.5449796, -46.6486328)) # Centro de São Paulo
+    ip_usuario = get_ip_usuario(request)
+    localizacao_usuario = get_localizacao_ip(ip_usuario)
+    
+    # Inicialmente as coordenadas do Centro de São Paulo
+    latitude = -23.5449796
+    longitude = -46.6486328
+    if localizacao_usuario:
+        latitude = localizacao_usuario['latitude']
+        longitude = localizacao_usuario['longitude']
+
+    map = folium.Map((latitude, longitude))
     
     ongs = Ong.objects.filter(status='Ativa').all()
     if ongs:
         coordenadas = []
+        dados_ongs = []
         for ong in ongs:
             coordenadas.append((ong.endereco.latitude, ong.endereco.longitude))
-    
-        for coordenada in coordenadas:
-            folium.Marker(coordenada).add_to(map)
+            dados_ongs.append({
+                'nome': ong.razao_social
+            })
+
+        for i, coordenada in enumerate(coordenadas):
+            folium.Marker(coordenada, popup=f'<a href={ongs[i].get_absolute_url()} target="_blank">Acessar perfil</a>', tooltip=f'{ongs[i].razao_social}').add_to(map)
     folium.raster_layers.TileLayer(tiles='OpenStreetMap').add_to(map)
     folium.raster_layers.TileLayer(tiles='CartoDB Positron').add_to(map)
     folium.raster_layers.TileLayer(tiles='CartoDB Voyager').add_to(map)
@@ -70,6 +82,14 @@ def estatisticas(request: HttpRequest):
 
 def get_vagas_data(request: HttpRequest, ano: int):
     vagas = Vaga.objects.filter(created_at__date__year=ano)
+    abertas = vagas.filter(preenchida=0, fim_candidaturas__gte=datetime.now().date())
+    total_abertas = 0
+    for vaga in abertas:
+        total_abertas += vaga.quantidade_vagas
+    fechadas = vagas.filter(preenchida=1)
+    total_fechadas = 0
+    for vaga in fechadas:
+        total_fechadas += vaga.quantidade_vagas
 
     return JsonResponse({
         'title': f'Vagas cadastradas em {ano}',
@@ -77,11 +97,11 @@ def get_vagas_data(request: HttpRequest, ano: int):
             'labels': ['Abertas', 'Preenchidas'],
             'datasets': [{
                 'label': 'Vagas',
-                'backgroundColor': [cor_vagas_abertas, cor_sucesso],
-                'borderColor': [cor_vagas_abertas, cor_sucesso],
+                'backgroundColor': ['#97db4f', '#277348'],
+                'borderColor': ['#97db4f', '#277348'],
                 'data': [
-                    vagas.filter(preenchida=1).count(),
-                    vagas.filter(preenchida=0, fim_candidaturas__gte=datetime.now().date()).count(),
+                    total_abertas,
+                    total_fechadas,
                 ],
             }]
         },
@@ -97,8 +117,8 @@ def get_usuarios_data(request: HttpRequest, ano: int):
             'labels': ['ONGs', 'Voluntários'],
             'datasets': [{
                 'label': 'Usuários',
-                'backgroundColor': [cor_ongs, cor_voluntarios],
-                'borderColor': [cor_ongs, cor_voluntarios],
+                'backgroundColor': [cor_primaria, '#547792'],
+                'borderColor': [cor_primaria, '#547792'],
                 'data': [
                     ongs,
                     voluntarios
@@ -108,7 +128,7 @@ def get_usuarios_data(request: HttpRequest, ano: int):
     })
 
 def get_vagas_area_data(request: HttpRequest, ano: int):
-    vagas_area = Vaga.objects.filter(created_at__date__year=ano).values('area').annotate(quantidade=Count('area')).order_by()
+    vagas_area = Vaga.objects.filter(created_at__date__year=ano).values('area').annotate(qnt_area=Count('area')).order_by().annotate(quantidade=Sum('quantidade_vagas'))
 
     areas_dict = get_areas()
     
@@ -129,12 +149,12 @@ def get_vagas_area_data(request: HttpRequest, ano: int):
     })
 
 def get_vagas_mes_data(request: HttpRequest, ano: int):
-    vagas_mes = Vaga.objects.filter(created_at__date__year=ano).values('created_at__date__month').annotate(num_vagas=Count('created_at__date__month')).order_by()
+    vagas_mes = Vaga.objects.filter(created_at__date__year=ano).values('created_at__date__month').annotate(meses=Count('created_at__date__month')).order_by().annotate(quantidade_vagas=Sum('quantidade_vagas'))
 
     meses_dict = get_meses()
 
     for vaga in vagas_mes:
-        meses_dict[meses[vaga['created_at__date__month']-1]] = vaga['num_vagas']
+        meses_dict[meses[vaga['created_at__date__month']-1]] = vaga['quantidade_vagas']
     
     return JsonResponse({
         'title': f'Vagas criadas em {ano}',

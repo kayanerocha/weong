@@ -1,7 +1,8 @@
 from datetime import date
 from django import forms
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator, URLValidator
@@ -16,13 +17,14 @@ from .models import Ong, Voluntario
 from .services import *
 from vaga.models import Endereco
 from vaga.services import possui_candidatura
+from utils.utils import string_simples
 
 client = BrasilAPI()
 
 class CadastroUsuarioForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['email', 'password']
         widgets = {
             'username': forms.TextInput(attrs={'type': 'text', 'min_length': 3, 'max_length': 150, 'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'type': 'email', 'max_length': 255, 'class': 'form-control'}),
@@ -41,6 +43,20 @@ class CadastroUsuarioForm(forms.ModelForm):
             self.add_error('password_confirm', 'Senhas divergentes.')
         
         return password
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists() and not self.instance:
+            self.add_error('email', 'Esse e-mail já está cadastrado.')
+        return email
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.username = self.cleaned_data['email']
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+        return user
 
 class CadastroEnderecoForm(forms.ModelForm):
     logradouro = forms.CharField(max_length=255, label='Logradouro', widget=forms.TextInput(attrs={'class':'form-control'}))
@@ -70,7 +86,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if logradouro != f'{self.endereco_consultado['descricao_tipo_de_logradouro']} {self.endereco_consultado['logradouro']}':
                     raise ValidationError(_('Logradouro inconsistente.'), code='invalido')
             else:
-                if logradouro != self.endereco_consultado['street']:
+                if string_simples(logradouro) != string_simples(self.endereco_consultado['street']):
                     raise ValidationError(_('Logradouro inconsistente.'), code='invalido')
             
         return logradouro
@@ -88,7 +104,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if bairro != self.endereco_consultado['bairro']:
                     raise ValidationError(_('Bairro inconsistente.'), code='invalido')
             else:
-                if bairro != self.endereco_consultado['neighborhood']:
+                if string_simples(bairro) != string_simples(self.endereco_consultado['neighborhood']):
                     raise ValidationError(_('Bairro inconsistente.'), code='invalido')
         return bairro
 
@@ -105,7 +121,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if cidade != self.endereco_consultado['municipio']:
                     raise ValidationError(_('Município inconsistente.'), code='invalido')
             else:
-                if cidade != self.endereco_consultado['city']:
+                if string_simples(cidade) != string_simples(self.endereco_consultado['city']):
                     raise ValidationError(_('Município inconsistente.'), code='invalido')
         return cidade
     
@@ -116,7 +132,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if estado != self.endereco_consultado['uf']:
                     raise ValidationError(_('Estado inconsistente.'), code='invalido')
             else:
-                if estado != self.endereco_consultado['state']:
+                if string_simples(estado) != string_simples(self.endereco_consultado['state']):
                     raise ValidationError(_('Estado inconsistente.'), code='invalido')
         return estado
     
@@ -137,7 +153,7 @@ class CadastroEnderecoForm(forms.ModelForm):
                 if cep != self.endereco_consultado['cep']:
                     raise ValidationError(_('CEP inconsistente.'), code='invalido')
             else:
-                if logradouro != self.endereco_consultado['street']:
+                if string_simples(logradouro) != string_simples(self.endereco_consultado['street']):
                     raise ValidationError(_('CEP inconsistente.'), code='invalido')
         return cep
 
@@ -149,11 +165,12 @@ class EditarEnderecoForm(CadastroEnderecoForm):
 class CadastroOngForm(forms.ModelForm):
     class Meta:
         model = Ong
-        fields = ['nome_fantasia', 'razao_social', 'cnpj', 'telefone', 'site']
+        fields = ['nome_fantasia', 'razao_social', 'cnpj', 'resumo', 'telefone', 'site']
         widgets = {
             'cnpj': forms.TextInput(attrs={'type': 'text', 'min_length': 14, 'max_length': 14, 'class':'form-control'}),
             'nome_fantasia': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
             'razao_social': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
+            'resumo': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
             'telefone': forms.TextInput(attrs={'type': 'text', 'min_length': 11, 'max_length': 11, 'class':'form-control'}),
             'site': forms.URLInput(attrs={'type': 'text', 'max_length': 255, 'required': False, 'class':'form-control'}),
         }
@@ -208,12 +225,14 @@ class CadastroVoluntarioForm(forms.ModelForm):
             'telefone',
             'cpf',
             'data_nascimento',
+            'resumo',
         ]
         widgets = {
             'nome_completo': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
             'telefone': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
             'cpf': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
             'data_nascimento': forms.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+            'resumo': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
         }
 
     def clean_cpf(self):
@@ -266,23 +285,17 @@ class EditarUsuarioForm(CadastroUsuarioForm):
 
 class EditarOngForm(CadastroOngForm):
     class Meta(CadastroOngForm.Meta):
-        fields = ['telefone', 'site']
+        fields = ['telefone', 'site', 'resumo']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 class EditarVoluntarioForm(CadastroVoluntarioForm):
     class Meta(CadastroVoluntarioForm.Meta):
-        fields = CadastroVoluntarioForm.Meta.fields[:]
-        fields.append('status')
-        widgets = CadastroVoluntarioForm.Meta.widgets
-        widgets['status'] = forms.Select(choices=Voluntario.STATUS_VOLUNTARIO, attrs={'class':'form-control'})
+        fields = ['nome_completo', 'telefone', 'resumo']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        self.fields['cpf'].disabled = True
-        self.fields['status'].disabled = True
 
 class EditarEnderecoForm(CadastroEnderecoForm):
     class Meta(CadastroEnderecoForm.Meta):
@@ -292,13 +305,5 @@ class EditarEnderecoForm(CadastroEnderecoForm):
         super().__init__(*args, **kwargs)
         if 'cnpj' in self.data:
             self.fields = []
-
-class CustomAuthenticationForm(AuthenticationForm):
-    def __init__(self, request = ..., *args, **kwargs):
-        super().__init__(request, *args, **kwargs)
-
-        if request.method == 'POST':
-            if not request.user.is_active:
-                messages.error(request, 'Usuário inativo ou senha incorreta. Aguarde a aprovação ou altere a sua senha.')
             
         
