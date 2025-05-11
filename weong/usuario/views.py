@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
@@ -11,6 +12,7 @@ from verify_email.email_handler import ActivationMailManager
 from usuario.forms import *
 from usuario.models import Ong, Voluntario
 from usuario.services import consultar_cnpj
+from vaga.models import Candidatura, Vaga
 
 # Create your views here.
 
@@ -26,13 +28,18 @@ def cadastro_ong(request):
         if form_usuario.is_valid() and form_ong.is_valid() and form_endereco.is_valid() and form_endereco.endereco_consultado['descricao_situacao_cadastral'].upper() == 'ATIVA':
             usuario = form_usuario.save(commit=False)
             usuario.set_password(form_usuario.cleaned_data['password'])
-            usuario_inativo = ActivationMailManager().send_verification_link(inactive_user=usuario, form=form_usuario, request=request)
+
+            try:
+                usuario = ActivationMailManager().send_verification_link(inactive_user=usuario, form=form_usuario, request=request)
+            except Exception: # O servidor de email pode ficar indisponível por ser de teste
+                usuario.is_active = False
+                usuario.save()
 
             endereco = form_endereco.save()
             
             ong = form_ong.save(commit=False)
             ong.status_cnpj = form_ong.cnpj_consultado['descricao_situacao_cadastral']
-            ong.usuario = usuario_inativo
+            ong.usuario = usuario
             ong.endereco = endereco
             ong.save()
 
@@ -52,10 +59,6 @@ def cadastro_ong(request):
         'form_endereco': form_endereco,
     })
 
-class CadastroOngView(generic.CreateView):
-    model = Ong
-    form_class = CadastroOngForm
-
 def cadastro_voluntario(request):
     if request.user.is_authenticated:
         return redirect('/')
@@ -69,8 +72,12 @@ def cadastro_voluntario(request):
             # Criar o usuário
             usuario = form_usuario.save(commit=False)
             usuario.set_password(form_usuario.cleaned_data['password'])
-            usuario.is_active = False
-            usuario.save()
+            
+            try:
+                usuario = ActivationMailManager().send_verification_link(inactive_user=usuario, form=form_usuario, request=request)
+            except Exception: # O servidor de email pode ficar indisponível por ser de teste
+                usuario.is_active = False
+                usuario.save()
 
             # Criar o endereço
             endereco = form_endereco.save()
@@ -96,10 +103,6 @@ def cadastro_voluntario(request):
         'form_voluntario': form_voluntario,
         'form_endereco': form_endereco,
     })
-
-class CadastroVoluntaioView(generic.CreateView):
-    model = Voluntario
-    form_class = CadastroVoluntarioForm
 
 @login_required
 def perfil_usuario(request):
@@ -171,8 +174,19 @@ class DetalheOngView(generic.DetailView):
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs)
 
-class DetalheVoluntarioView(generic.DetailView):
+class DetalheVoluntarioView(PermissionRequiredMixin, generic.DetailView):
+    permission_required = 'usuario.view_voluntario'
     model = Voluntario
+
+    def get(self, request, *args, **kwargs):
+        id_voluntario = kwargs.get('pk')
+        vagas_ong = Vaga.objects.filter(ong_id=request.user.id).all()
+        for vaga in vagas_ong:
+            candidaturas = Candidatura.objects.filter(vaga_id=vaga.id).all()
+            for candidatura in candidaturas:
+                if candidatura.voluntario.id == id_voluntario:
+                    return super().get(request, *args, **kwargs)
+        return redirect('minhas-vagas')
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs)
