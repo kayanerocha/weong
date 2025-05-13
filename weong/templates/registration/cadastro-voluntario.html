@@ -85,7 +85,7 @@
                 <div class="card shadow-lg">
                     <div class="card-header">
                         {% load static %}
-                        <img src="{% static 'usuario/logo.png' %}" alt="Logo" class="logo mb-2">
+                        <a href="{% url 'index' %}"><img src="{% static 'usuario/logo.png' %}" alt="Logo" class="logo mb-2"></a>
                         <h3>Cadastro Voluntário</h3>
                     </div>
                     <div class="card-body">
@@ -104,22 +104,24 @@
                                 </div>
                             </div>
 
-                            <!-- CEP, Bairro -->
-                            <div class="row mb-3">
-                                <div class="col-md-6 form-group">
-                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required>
-                                    <label for="cep">CEP</label>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" ">
-                                    <label for="bairro">Bairro</label>
+                            <div class="row mb3">
+                                <div class="col-md-12 form-group">
+                                    <textarea name="resumo" id="resumo" class="form-control" rows="10"></textarea>
+                                    <label for="resumo">Resumo</label>
                                 </div>
                             </div>
 
-                            <!-- Logradouro e Número -->
+                            <div class="row mb-3">
+                                <div class="col-md-12 form-group">
+                                    <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required>
+                                    <label for="cep">CEP</label>
+                                    <a href="javascript:pesquisarCep()">Pesquisar CEP</a>
+                                </div>
+                            </div>
+
                             <div class="row mb-3">
                                 <div class="col-md-8 form-group">
-                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" ">
+                                    <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" " readonly>
                                     <label for="logradouro">Logradouro</label>
                                 </div>
                                 <div class="col-md-4 form-group">
@@ -128,43 +130,23 @@
                                 </div>
                             </div>
 
-                            <!-- Cidade e Estado -->
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" ">
+                                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " readonly>
+                                    <label for="bairro">Bairro</label>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="complemento" name="complemento" class="form-control" placeholder=" ">
+                                    <label for="complemento">Complemento</label>
+                                </div>                            
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" " readonly>
                                     <label for="cidade">Cidade</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <select name="estado" id="estado" class="form-control">
-                                        <option value="" disabled selected>Estado</option>
-                                        <option value="AC">Acre</option>
-                                        <option value="AL">Alagoas</option>
-                                        <option value="AP">Amapá</option>
-                                        <option value="AM">Amazonas</option>
-                                        <option value="BA">Bahia</option>
-                                        <option value="CE">Ceará</option>
-                                        <option value="ES">Espirito Santo</option>
-                                        <option value="GO">Goiás</option>
-                                        <option value="MA">Maranhão</option>
-                                        <option value="MT">Mato Grosso</option>
-                                        <option value="MS">Mato Grosso do Sul</option>
-                                        <option value="MG">Minas Gerais</option>
-                                        <option value="PA">Pará</option>
-                                        <option value="PB">Paraíba</option>
-                                        <option value="PR">Paraná</option>
-                                        <option value="PE">Pernambuco</option>
-                                        <option value="PI">Piauí</option>
-                                        <option value="RJ">Rio de Janeiro</option>
-                                        <option value="RN">Rio Grande do Norte</option>
-                                        <option value="RS">Rio Grande do Sul</option>
-                                        <option value="RO">Rondônia</option>
-                                        <option value="RR">Roraima</option>
-                                        <option value="SC">Santa Catarina</option>
-                                        <option value="SP">São Paulo</option>
-                                        <option value="SE">Sergipe</option>
-                                        <option value="TO">Tocantins</option>
-                                        <!-- Adicione os outros estados -->
-                                    </select>
+                                    {{ form_endereco.estado }}
                                     <label for="estado">Estado</label>
                                 </div>
                             </div>
@@ -230,5 +212,7 @@
             </div>
         </div>
     </div>
+    {% load static %}
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

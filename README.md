@@ -7,6 +7,28 @@ Este projeto tem como objetivo conectar ONGs e voluntários que gostariam de con
 
 A apresentação desse projeto pode ser acessada em: https://drive.google.com/file/d/1xJiKZBULdZC8UjwYYJ28h9X2hVwcRS1V/view?usp=sharing
 
+## Deploy
+
+A aplicação Web deste projeto está hospedada no Render e o banco de dados na AWS por meio do serviço Amazon RDS.
+
+A versão 1 deste projeto pode ser acessada online em [WeOng](https://weong.onrender.com/vagas/).
+
+## Funcionalidades
+- Cadastro de ONG;
+- Cadastro de voluntário;
+- Acesso e edição de perfil;
+- Listagem de vagas abertas;
+- Visualização de mapa de ONGs;
+- Visualização de métricas do projeto;
+- ONGs:
+  - Cadastro, visualização, edição e exclusão de vaga;
+  - Listagem de candidatos;
+  - Aprovação/Reprovação de candidato.
+- Voluntários:
+  - Candidatura à vagas;
+  - Cancelamento de candidatura;
+  - Visualização de candidaturas.
+
 ## Rodando Localmente
 
 Clone o projeto
@@ -41,7 +63,7 @@ Instale as bibliotecas
 
 ### Variáveis de Ambiente
 
-Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env (renomear .env.exemple para .env)
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env (criar uma cópia do .env.exemple e renomear para .env)
 
 `DB_HOST`
 
@@ -52,6 +74,8 @@ Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de
 `DB_PASSWORD`
 
 `DB_PORT`
+
+`GEOCODER_API_KEY`
 
 Aplique as migrações (precisa de um banco de dados MySQL chamado weong)
 
@@ -71,19 +95,10 @@ Crie um usuário administrador
   python weong\\manage.py createsuperuser
 ```
 
-### Permissões
-
-Para restringir o que ONGs e voluntários podem fazer basta criar dois grupos do painel de administração, adicionar as permissões e adicionar os usuários aos seus respectivos grupos. Abaixo a configuração atual das permissões:
-#### ONGs
-![alt text](docs/permissoes-ongs.png)
-
-#### Voluntários
-![alt text](docs/permissoes-voluntarios.png)
-
 
 ## Contribuindo
 
-Sempre que for iniciar qualquer desenvolvimento criar uma nova branch com base na branch `main` e nomear a branch com base no que está sendo feito. Após o desenvolvimento e tudo funcionando fazer o merge com a branch `main`.
+Sempre que for iniciar qualquer desenvolvimento criar uma nova branch com base na branch `develop` e nomear a branch com base no que está sendo feito. Após o desenvolvimento e tudo funcionando fazer o merge com a branch `develop`.
 
 De preferência seguir os padrões explicados no artigo [Padrões e Nomenclaturas no Git](https://www.brunodulcetti.com/padroes-e-nomenclaturas-no-git/).
 
@@ -101,16 +116,20 @@ Comandos úteis:
 
 ## Stack Utilizada
 
-**Front-end:** Bootstrap
+**Front-end:** JavaScript, Bootstrap e Chart.js
 
 **Back-end:** Django
+
+## Documentação
+A documentação deste projeto pode ser encontrada no arquivo [WeOng - Documentação](<docs/WeOng - Documentacao.pdf>).
 
 
 ## Autores
 
-- [@nana-marques](https://github.com/nana-marques)
-- [@HeitorExp](https://github.com/HeitorExp)
 - [@ellensolv](https://github.com/ellensolv)
+- [@HeitorExp](https://github.com/HeitorExp)
 - [@kayanerocha](https://github.com/kayanerocha)
+- [@nana-marques](https://github.com/nana-marques)
+- [@Natan-Souz](https://github.com/Natan-Souz)
 - [@prazeresmath](https://github.com/prazeresmath)
 
