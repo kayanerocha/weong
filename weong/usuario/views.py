@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.views.generic import CreateView
 from django.contrib.auth.views import PasswordChangeView
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
@@ -229,3 +230,10 @@ class CustomPasswordChangeView(PasswordChangeView):
     def form_valid(self, form):
         messages.success(request=self.request, message='Senha alterada com sucesso!')
         return super().form_valid(form)
+
+class CadastroCoordenadorView(PermissionRequiredMixin, CreateView):
+    permission_required = 'usuario.add_coordenador'
+    template_name = 'cadastro_coordenador.html'
+    model = Coordenador
+
+

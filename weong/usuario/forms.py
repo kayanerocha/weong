@@ -1,22 +1,16 @@
 from datetime import date
 from django import forms
-from django.contrib import messages
-from django.contrib.auth import authenticate
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import EmailValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 from brasilapy import BrasilAPI
 from brasilapy.constants import APIVersion
-from brasilapy.models.cnpj import CNPJ as Cnpj
 from brasilapy.exceptions import ProcessorException
-from validate_docbr import CNPJ, CPF
+from validate_docbr import CPF
 
-from .models import Ong, Voluntario
+from .models import *
 from .services import *
 from vaga.models import Endereco
-from vaga.services import possui_candidatura
 from utils.utils import string_simples
 
 client = BrasilAPI()
@@ -217,23 +211,23 @@ class CadastroOngForm(forms.ModelForm):
             raise ValidationError(_('Número de telefone inválido.'), code='invalido')
         return telefone
 
-class CadastroVoluntarioForm(forms.ModelForm):
-    class Meta:
-        model = Voluntario
-        fields = [
-            'nome_completo',
-            'telefone',
-            'cpf',
-            'data_nascimento',
-            'resumo',
-        ]
-        widgets = {
-            'nome_completo': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
-            'telefone': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
-            'cpf': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
-            'data_nascimento': forms.DateInput(attrs={'type': 'date', 'class':'form-control'}),
-            'resumo': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
-        }
+class CadastroUsuarioComumForm(forms.ModelForm):
+    # class Meta:
+    #     model = Voluntario
+    #     fields = [
+    #         'nome_completo',
+    #         'telefone',
+    #         'cpf',
+    #         'data_nascimento',
+    #         'resumo',
+    #     ]
+    #     widgets = {
+    #         'nome_completo': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
+    #         'telefone': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
+    #         'cpf': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
+    #         'data_nascimento': forms.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+    #         'resumo': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
+    #     }
 
     def clean_cpf(self):
         cpf = self.cleaned_data['cpf']
@@ -273,6 +267,24 @@ class CadastroVoluntarioForm(forms.ModelForm):
         except Exception as e:
             raise ValidationError(_('Erro ao validar a data de nascimento. Tente novamente.'), code='erro_interno')
 
+class CadastroVoluntarioForm(CadastroUsuarioComumForm):
+    class Meta:
+        model = Voluntario
+        fields = [
+            'nome_completo',
+            'telefone',
+            'cpf',
+            'data_nascimento',
+            'resumo',
+        ]
+        widgets = {
+            'nome_completo': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
+            'telefone': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
+            'cpf': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
+            'data_nascimento': forms.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+            'resumo': forms.Textarea(attrs={'class': 'form-control', 'max_length': 5000}),
+        }
+
 class EditarUsuarioForm(CadastroUsuarioForm):
     class Meta(CadastroUsuarioForm.Meta):
         fields = ['username', 'email']
@@ -306,4 +318,18 @@ class EditarEnderecoForm(CadastroEnderecoForm):
         if 'cnpj' in self.data:
             self.fields = []
             
-        
+class CadastroCoordenadorForm(CadastroUsuarioComumForm):
+    class Meta:
+        model = Coordenador
+        fields = [
+            'nome_completo',
+            'telefone',
+            'cpf',
+            'data_nascimento',
+        ]
+        widgets = {
+            'nome_completo': forms.TextInput(attrs={'type': 'text', 'max_length': 255, 'class':'form-control'}),
+            'telefone': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
+            'cpf': forms.TextInput(attrs={'type': 'text', 'max_length': 11, 'class':'form-control'}),
+            'data_nascimento': forms.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+        }

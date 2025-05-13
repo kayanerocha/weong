@@ -47,7 +47,6 @@ class Ong(models.Model):
                 enviar_resultado_analise(self.status, self.usuario.email)
         return super().save(**kwargs)
 
-
 class Voluntario(models.Model):
     '''Modelo representando um Voluntário'''
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -70,7 +69,6 @@ class Voluntario(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     endereco = models.ForeignKey(Endereco, on_delete=models.PROTECT)
 
-
     class Meta:
         db_table = 'voluntarios'
 
@@ -79,3 +77,29 @@ class Voluntario(models.Model):
 
     def get_absolute_url(self):
         return reverse('detalhe-voluntario', args=[str(self.id)])
+
+class Coordenador(models.Model):
+    '''Modelo representando um coordenador de ONG.'''
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    id = models.AutoField(primary_key=True)
+    nome_completo = models.CharField(max_length=255)
+    telefone = models.CharField(max_length=15)
+    data_nascimento = models.DateField()
+    cpf = models.CharField(max_length=11, unique=True)
+    ong = models.OneToOneField(Ong, on_delete=models.CASCADE)
+
+    STATUS_COORDENADOR = (
+        ('Ativo', 'Ativo'),
+        ('Inativo', 'Inativo')
+    )
+
+    status = models.CharField(max_length=20, choices=STATUS_COORDENADOR, default='Inativo')
+
+    class Meta:
+        db_table = 'coordenadores'
+    
+    def __str__(self):
+        return self.nome_completo
+    
+    def get_absolute_url(self):
+        return reverse('detalhe-coordenador', args=[str(self.id)])

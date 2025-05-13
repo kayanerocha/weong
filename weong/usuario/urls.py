@@ -6,6 +6,7 @@ from usuario.views import *
 urlpatterns = [
     path('cadastro-ong/', views.cadastro_ong, name='cadastro-ong'),
     path('cadastro-voluntario/', cadastro_voluntario, name='cadastro-voluntario'),
+    path('cadastro-coordenador/', CadastroCoordenadorView.as_view(), name='cadastro-coordenador'),
     path('perfil/', perfil_usuario, name='perfil_usuario'),
     path('login/', LoginView.as_view(), name='login'),
     path('alterar-senha/', CustomPasswordChangeView.as_view(), name='alterar-senha'),
