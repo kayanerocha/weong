@@ -3,8 +3,9 @@
 
 Este projeto tem como objetivo conectar ONGs e voluntários que gostariam de contribuir positivamente com o seu trabalho de forma voluntária. Este sistema está sendo criado para o Trabalho de Conclusão de Curso do curso de Ciência da Computação pela Universidade Paulista.
 
+## Apresentação em Vídeo
 
-
+A apresentação desse projeto pode ser acessada em: https://drive.google.com/file/d/1xJiKZBULdZC8UjwYYJ28h9X2hVwcRS1V/view?usp=sharing
 
 ## Rodando Localmente
 
