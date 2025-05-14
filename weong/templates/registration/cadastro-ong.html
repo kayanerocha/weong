@@ -117,38 +117,37 @@
                             </div>
 
                             <div class="row mb-3">
-                                <div class="col-md-8 form-group">
+                                <div class="col-md-12 form-group">
                                     <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder=" " readonly>
                                     <label for="logradouro">Logradouro</label>
                                 </div>
-                                <div class="col-md-4 form-group">
-                                    <input type="text" id="numero" name="numero" class="form-control" placeholder=" " readonly>
-
-                                    <label for="numero">Número</label>
-                                </div>
                             </div>
 
                             <div class="row mb-3">
+                                <div class="col-md-6 form-group">
+                                    <input type="text" id="numero" name="numero" class="form-control" placeholder=" " readonly>
+                                    <label for="numero">Número</label>
+                                </div>
                                 <div class="col-md-6 form-group">
                                     <input type="text" id="bairro" name="bairro" class="form-control" placeholder=" " readonly>
                                     <label for="bairro">Bairro</label>
-                                </div>
+                                </div>                           
+                            </div>
+                            <div class="row mb-3">
                                 <div class="col-md-6 form-group">
                                     <input type="text" id="complemento" name="complemento" class="form-control" placeholder=" " readonly>
                                     <label for="complemento">Complemento</label>
-                                </div>                            
-                            </div>
-                            <div class="row mb-3">
+                                </div> 
                                 <div class="col-md-6 form-group">
                                     <input type="text" id="cidade" name="cidade" class="form-control" placeholder=" " readonly>
                                     <label for="cidade">Cidade</label>
                                 </div>
+                            </div>
+                            <div class="row mb-3">
                                 <div class="col-md-6 form-group">
                                     {{ form_endereco.estado }}
                                     <label for="estado">Estado</label>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
                                 <div class="col-md-6 form-group">
                                     <input type="text" id="cep" name="cep" class="form-control" placeholder=" " max="8" required readonly>
                                     <label for="cep">CEP</label>
@@ -161,19 +160,15 @@
                                     <label for="telefone">Telefone</label>
                                 </div>
                                 <div class="col-md-6 form-group">
-                                    <input type="url" id="site" name="site" class="form-control" placeholder=" ">
-                                    <label for="site">Site</label>
+                                    <input type="email" id="email" name="email" class="form-control" placeholder=" ">
+                                    <label for="email">E-mail</label>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-md-6 form-group">
-                                    <input type="email" id="email" name="email" class="form-control" placeholder=" ">
-                                    <label for="email">E-mail</label>
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <input type="text" id="username" name="username" class="form-control" placeholder=" ">
-                                    <label for="username">Usuário</label>
+                                    <input type="url" id="site" name="site" class="form-control" placeholder=" ">
+                                    <label for="site">Site</label>
                                 </div>
                             </div>
 

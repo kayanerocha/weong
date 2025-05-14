@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    
+    <title>Verificar endereço de e-mail</title>
+
+    <style>
+        .format-font {
+            font-family: 'Montserrat', sans-serif; 
+        }
+        .my-container {
+            margin: 10px;
+            padding: 10px;
+            padding-top: 0px;
+            justify-content: center;
+            border-radius: 5px;
+            border: 1px solid rgb(204, 203, 203);
+        }
+
+        .my-button {
+            padding: 10px;
+            padding-left: 35px;
+            padding-right: 35px;
+            background-color: #607196;
+            color: white;
+            border-radius: 25px;
+            transition-duration: 500ms;
+            text-decoration: none;
+            
+        }
+        .my-button:hover {
+            color: #607196;
+            background-color: white;
+            border-radius: 0px;
+            border: 1px solid #607196;
+            transition-duration: 200ms;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="my-container">
+
+        <div style="background-color: #81d4fa; border-radius: 15px;">
+            <h1 class="format-font" style="text-align: center; padding: 2px; color:white;">
+                Ativação de Conta
+            </h1>
+        </div>
+
+        <h2 class="format-font" style="text-align: center;">E-mail para confirmação</h2> <hr style="background-color:  #81d4fa; width:100px">
+
+        <div class="format-font" style="margin-top: 20px; line-height: 1.5;">
+            <p style="text-align: center; font-weight: bold;">Olá!</p>
+            Você recebeu esse e-mail porque você tentou realizar um cadastro na plataforma WeONG,
+            Por favor, clique no link abaixo para confirmar o seu e-mail e ativar a sua conta.       
+        </div>
+
+        <p class="format-font" style="text-align: center; margin-top: 50px;">
+            Por favor, verifique seu e-mail:
+            <hr style="background-color:  #607196; width:50px">
+            <div class="format-font" style="text-align: center; margin-top: 30px;" >
+                <a href="{{link}}" class="my-button" >Verificar E-mail</a>
+            </div>
+            
+        </p>
+    
+        <p class="format-font" style="line-height: 1.5;">
+            <b>Obrigado pelo cadastro! <br> Este e-mail foi gerado automaticamente. <br>Não responda esse e-mail. </b>
+        </p>
+        
+    </div>
+   
+</body>
+</html>

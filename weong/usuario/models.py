@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from vaga.models import Endereco
+from .services import enviar_resultado_analise
 
 # Create your models here.
 
@@ -38,6 +39,13 @@ class Ong(models.Model):
     
     def get_absolute_url(self):
         return reverse('detalhe-ong', args=[str(self.id)])
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_status_ong = Ong.objects.get(pk=self.pk).status
+            if old_status_ong != 'Ativa' and self.status == 'Ativa' or old_status_ong != 'Inativa' and self.status == 'Inativa':
+                enviar_resultado_analise(self.status, self.usuario.email)
+        return super().save(**kwargs)
 
 
 class Voluntario(models.Model):

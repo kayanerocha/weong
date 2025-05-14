@@ -15,7 +15,7 @@ from usuario.models import Voluntario
 
 @login_required
 @permission_required(['vaga.add_candidatura'], login_url='lista-vagas')
-def criar_candidatura(request: HttpRequest, pk: int):
+def criar_candidatura(request: HttpRequest, pk: int):    
     if request.method == 'POST':
         try:
             vaga = Vaga.objects.filter(id=pk).get()
@@ -46,9 +46,14 @@ class MinhasCandidaturas(PermissionRequiredMixin, ListView):
 @login_required
 @permission_required(['vaga.delete_candidatura'], login_url='lista-vagas')
 def cancelar_candidatura(request: HttpRequest, pk: int):
+    candidatura = Candidatura.objects.filter(id=pk)
+    voluntario = Voluntario.objects.filter(usuario_id=candidatura.get().id).get()
+    if voluntario.usuario.id != request.user.id:
+        return redirect('lista-vagas')
+    
     if request.method == 'POST':
         try:
-            Candidatura.objects.filter(id=pk).delete()
+            candidatura.delete()
         except Exception as e:
             messages.error(request, _('Erro ao cancelar a candidatura, entre em contato com o admistrador do sistema.'))
             print(e)
@@ -60,26 +65,35 @@ def cancelar_candidatura(request: HttpRequest, pk: int):
 @login_required
 @permission_required(['vaga.change_candidatura'], login_url='lista-vagas')
 def aprovar_candidato(request: HttpRequest, id_candidatura: int):
+    candidatura = Candidatura.objects.filter(id=id_candidatura).get()
+    vaga = Vaga.objects.filter(id=candidatura.vaga.id).get()
+    ong = vaga.ong
+    if ong.usuario.id != request.user.id:
+        return redirect('lista-vagas')
+    
     if request.method == 'POST':
-        try:
-            candidatura = Candidatura.objects.filter(id=id_candidatura).get()
+        try:            
             Candidatura.objects.filter(id=id_candidatura).update(status='Aceito')
         except Exception as e:
             messages.error(request, _('Erro ao aprovar o candidato, entre em contato com o administrador do sistema.'))
         else:
             messages.success(request, _('Candidato aprovado com sucesso, entre em contato com ele!'))
-            return redirect('detalhe-vaga', candidatura.vaga_id)
+            return redirect('detalhe-vaga', candidatura.vaga.id)
     return redirect('lista-vagas')
     
 @login_required
 @permission_required(['vaga.change_candidatura'], login_url='lista-vagas')
 def reprovar_candidato(request: HttpRequest, id_candidatura: int):
+    candidatura = Candidatura.objects.filter(id=id_candidatura).get()
+    vaga = Vaga.objects.filter(id=candidatura.vaga.id).get()
+    ong = vaga.ong
+    if ong.usuario.id != request.user.id:
+        return redirect('lista-vagas')
+    
     if request.method == 'POST':
         try:
-            candidatura = Candidatura.objects.filter(id=id_candidatura).get()
             candidatura.status = 'Recusado'
             candidatura.save()
-            # Candidatura.objects.filter(id=id_candidatura).update(status='Recusado')
         except Exception as e:
             messages.error(request, _('Erro ao reprovar o candidato, entre em contato com o administrador do sistema.'))
         else:

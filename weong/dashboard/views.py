@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.db.models.functions import ExtractYear
 from django.shortcuts import render
 from django.http import HttpRequest, JsonResponse
@@ -82,6 +82,14 @@ def estatisticas(request: HttpRequest):
 
 def get_vagas_data(request: HttpRequest, ano: int):
     vagas = Vaga.objects.filter(created_at__date__year=ano)
+    abertas = vagas.filter(preenchida=0, fim_candidaturas__gte=datetime.now().date())
+    total_abertas = 0
+    for vaga in abertas:
+        total_abertas += vaga.quantidade_vagas
+    fechadas = vagas.filter(preenchida=1)
+    total_fechadas = 0
+    for vaga in fechadas:
+        total_fechadas += vaga.quantidade_vagas
 
     return JsonResponse({
         'title': f'Vagas cadastradas em {ano}',
@@ -92,8 +100,8 @@ def get_vagas_data(request: HttpRequest, ano: int):
                 'backgroundColor': ['#97db4f', '#277348'],
                 'borderColor': ['#97db4f', '#277348'],
                 'data': [
-                    vagas.filter(preenchida=1).count(),
-                    vagas.filter(preenchida=0, fim_candidaturas__gte=datetime.now().date()).count(),
+                    total_abertas,
+                    total_fechadas,
                 ],
             }]
         },
@@ -120,7 +128,7 @@ def get_usuarios_data(request: HttpRequest, ano: int):
     })
 
 def get_vagas_area_data(request: HttpRequest, ano: int):
-    vagas_area = Vaga.objects.filter(created_at__date__year=ano).values('area').annotate(quantidade=Count('area')).order_by()
+    vagas_area = Vaga.objects.filter(created_at__date__year=ano).values('area').annotate(qnt_area=Count('area')).order_by().annotate(quantidade=Sum('quantidade_vagas'))
 
     areas_dict = get_areas()
     
@@ -141,12 +149,12 @@ def get_vagas_area_data(request: HttpRequest, ano: int):
     })
 
 def get_vagas_mes_data(request: HttpRequest, ano: int):
-    vagas_mes = Vaga.objects.filter(created_at__date__year=ano).values('created_at__date__month').annotate(num_vagas=Count('created_at__date__month')).order_by()
+    vagas_mes = Vaga.objects.filter(created_at__date__year=ano).values('created_at__date__month').annotate(meses=Count('created_at__date__month')).order_by().annotate(quantidade_vagas=Sum('quantidade_vagas'))
 
     meses_dict = get_meses()
 
     for vaga in vagas_mes:
-        meses_dict[meses[vaga['created_at__date__month']-1]] = vaga['num_vagas']
+        meses_dict[meses[vaga['created_at__date__month']-1]] = vaga['quantidade_vagas']
     
     return JsonResponse({
         'title': f'Vagas criadas em {ano}',
