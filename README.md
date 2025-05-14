@@ -11,7 +11,18 @@ A apresentação desse projeto pode ser acessada em: https://drive.google.com/fi
 
 A aplicação Web deste projeto está hospedada no Render e o banco de dados na AWS por meio do serviço Amazon RDS.
 
-A versão 1 deste projeto pode ser acessada online em [WeOng](https://weong.onrender.com/vagas/).
+A versão 2 deste projeto pode ser acessada online em [WeOng](https://weong.onrender.com/vagas/).
+
+## Demonstração
+
+### Vagas Abertas
+![Vagas Abertas](image-2.png)
+
+### Mapa de ONGs
+![Mapa de ONGs](image.png)
+
+### Alcande do Projeto
+![Alcance do Projeto](image-1.png)
 
 ## Funcionalidades
 - Cadastro de ONG;
