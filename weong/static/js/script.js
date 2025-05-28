@@ -49,3 +49,19 @@ function pesquisarCnpj() {
         console.error('Error: ', error);
     });
 }
+
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        document.getElementById('video').srcObject = stream;
+    });
+
+function capturarImagem() {
+    const canvas = document.getElementById('canvas');
+    const video = document.getElementById('video');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const base64 = canvas.toDataURL('image/jpeg');
+    document.getElementById('imagem_base64').value = base64;
+    document.getElementById('formulario').submit();
+}

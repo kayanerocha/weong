@@ -31,3 +31,4 @@ urlpatterns = [
     path('', RedirectView.as_view(url='/vagas/', permanent=True)),
     path('verification/', include('verify_email.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MIDIA_URL, document_root=settings.MIDIA_ROOT)

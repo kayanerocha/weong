@@ -1,17 +1,26 @@
+import cv2.data
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import PasswordChangeView
-from django.http import HttpRequest
+from django.core.files.base import ContentFile
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
 from verify_email.email_handler import ActivationMailManager
+import base64
+import cv2
+import json
+import numpy
+import os
 
 from usuario.forms import *
-from usuario.models import Ong, Voluntario
-from usuario.services import consultar_cnpj
+from usuario.models import *
+from usuario.services import *
 from vaga.models import Candidatura, Vaga
 
 # Create your views here.
@@ -59,7 +68,7 @@ def cadastro_ong(request):
         'form_endereco': form_endereco,
     })
 
-def cadastro_voluntario(request):
+def cadastro_voluntario(request: HttpRequest):
     if request.user.is_authenticated:
         return redirect('/')
 
@@ -75,9 +84,10 @@ def cadastro_voluntario(request):
             
             try:
                 usuario = ActivationMailManager().send_verification_link(inactive_user=usuario, form=form_usuario, request=request)
+                usuario
             except Exception: # O servidor de email pode ficar indisponível por ser de teste
                 usuario.is_active = False
-                usuario.save()
+                usuario = usuario.save()
 
             # Criar o endereço
             endereco = form_endereco.save()
@@ -88,8 +98,10 @@ def cadastro_voluntario(request):
             voluntario.endereco = endereco
             voluntario.save()
 
-            messages.success(request, _('Cadastro realizado com sucesso! Aguarde ser validado.'))
-            return redirect('cadastro-voluntario')
+            messages.success(request, _('Cadastro realizado com sucesso!'))
+            request.session['id_usuario'] = usuario.id
+            request.session['acesso_autorizado'] = True
+            return redirect('reconhecimento-facial')
         else:
             messages.error(request, _('Erro no cadastro. Verifique os dados informados.'))
     else:
@@ -103,6 +115,57 @@ def cadastro_voluntario(request):
         'form_voluntario': form_voluntario,
         'form_endereco': form_endereco,
     })
+
+def reconhecimento_facial(request: HttpRequest):
+    if not request.session.get('acesso_autorizado'):
+        return redirect('/')
+    return render(request, 'registration/reconhecimento_facial.html')
+
+@csrf_exempt
+def post_reconhecimento_facial(request: HttpRequest):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            imagem_base64 = data['imagem'].split(',')[1]
+            imagem_bytes = base64.b64decode(imagem_base64)
+            imagem_numpy = numpy.frombuffer(imagem_bytes, numpy.uint8)
+
+            frame = cv2.imdecode(imagem_numpy, cv2.IMREAD_COLOR)
+
+            vivacidade = verificar_vivacidade(frame)
+            fraude = detectar_fraude(frame)
+            reflexo = verificar_reflexo(frame)
+            textura = verificar_textura(frame)
+            bordas_artificiais = detectar_bordas_artificiais(frame)
+
+            if vivacidade and not fraude and not reflexo and not textura and not bordas_artificiais:
+                nome_arquivo = f'reconhecimento_facial_{timezone.now().strftime("%d%m%Y%H%M%S")}.jpg'
+                arquivo_django = ContentFile(imagem_bytes, name=nome_arquivo)
+                
+                ReconhecimentoFacial.objects.create(
+                    imagem=arquivo_django,
+                    vivacidade=vivacidade,
+                    fraude=fraude,
+                    reflexo=reflexo,
+                    textura=textura,
+                    bordas_artificiais=bordas_artificiais,
+                    usuario=User.objects.filter(id=request.session['id_usuario']).get()
+                )
+                del request.session['id_usuario']
+                del request.session['acesso_autorizado']
+            
+            return JsonResponse({
+                'vivacidade': bool(vivacidade),
+                'fraude': bool(fraude),
+                'reflexo': bool(reflexo),
+                'textura': bool(textura),
+                'bordas_artificiais': bool(bordas_artificiais),
+            })
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Requisição inválida'}, status=400)
 
 @login_required
 def perfil_usuario(request):

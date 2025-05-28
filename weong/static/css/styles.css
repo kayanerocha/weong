@@ -6,3 +6,9 @@
 li {
   list-style-type: none;
 }
+
+video, canvas {
+  position: absolute;
+  left: 0;
+  top: 50x;
+}

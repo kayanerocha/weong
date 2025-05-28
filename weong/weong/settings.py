@@ -130,8 +130,11 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    os.path.join(BASE_DIR / "static"),
 ]
+
+MIDIA_URL = '/midia/'
+MIDIA_ROOT = os.path.join(BASE_DIR, 'midia')
 
 # Em produção, o Django coleta os arquivos para STATIC_ROOT
 # (normalmente usado com servidores como Nginx)

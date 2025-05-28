@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+
+    <p>Precisamos realizar um reconhecimento facial seu para garantir a segurança de todos os usuários, se você não realizar o seu acesso não será aprovado.</p>
+    <h3>Instruções: </h3>
+    <p id="instrucoes">Abra a boca</p>
+    <video id="video" width="640" height="480" autoplay muted playsinline></video>
+    <canvas id="saida" width="640" height="480"></canvas>
+</div>
+{% load static %}
+<script src="{% static 'js/reconhecimento_facial.js' %}"></script>
+{% endblock %}

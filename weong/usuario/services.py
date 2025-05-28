@@ -2,8 +2,11 @@ from decouple import config
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.template import loader
+from skimage.feature import local_binary_pattern
 from time import sleep
 from validate_docbr import CNPJ
+import cv2
+import numpy
 import requests
 
 def cnpj_valido(cnpj: str) -> bool:
@@ -64,3 +67,38 @@ def enviar_resultado_analise(status: str, destinatario: str):
             )
     except Exception:
         pass
+
+def verificar_vivacidade(frame):
+    # Técnica simples: verificar se há variação de brilho/pixel (simulação)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    std_dev = numpy.std(gray)
+    return std_dev > 5  # threshold arbitrário
+
+def detectar_fraude(frame):
+    # Simples: detectar se a imagem parece uma tela ou impressão (baixa variação, bordas, etc.)
+    blur = cv2.Laplacian(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), cv2.CV_64F).var()
+    return blur < 50  # imagem muito "suave" pode ser fraude
+
+def verificar_reflexo(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    laplacian_var = cv2.Laplacian(gray, cv2.CV_64F).var()
+    return laplacian_var < 100
+
+def verificar_textura(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    lbp = local_binary_pattern(gray, 8, 1, method='uniform')
+    hist, _ = numpy.histogram(lbp.ravel(), bins=numpy.arange(0, 59))
+    uniformidade = numpy.std(hist)
+    return uniformidade < 10  # baixa variação = possível fraude
+
+def detectar_bordas_artificiais(frame):
+    edges = cv2.Canny(frame, 100, 200)
+    contagem = numpy.sum(edges > 0)
+    return contagem > 10000  # heurística, ajuste com base nos testes
+
+def verificar_filtro_beleza(frame, face_bbox):
+    x, y, w, h = face_bbox
+    face = frame[y:y+h, x:x+w]
+    hsv = cv2.cvtColor(face, cv2.COLOR_BGR2HSV)
+    s = hsv[:, :, 1]
+    return numpy.std(s) < 10  # saturação baixa = filtro ou máscara

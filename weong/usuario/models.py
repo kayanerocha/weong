@@ -79,3 +79,22 @@ class Voluntario(models.Model):
 
     def get_absolute_url(self):
         return reverse('detalhe-voluntario', args=[str(self.id)])
+
+class ReconhecimentoFacial(models.Model):
+    '''Modelo representando as validações realizadas para reconhecimento facial.'''
+    id = models.AutoField(primary_key=True)
+    imagem = models.ImageField(upload_to='reconhecimentos_faciais/')
+    vivacidade = models.BooleanField()
+    fraude = models.BooleanField()
+    reflexo = models.BooleanField()
+    textura = models.BooleanField()
+    bordas_artificiais = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'reconhecimentos_faciais'
+
+    def __str__(self):
+        return f"Verificação em {self.data_hora} - Vivacidade: {self.vivacidade}"
