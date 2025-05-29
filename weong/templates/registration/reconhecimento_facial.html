@@ -1,16 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<div class="container justify-content-center">
     {% for message in messages %}
-    {{ message }}
+    <div class="alert alert-warning alert-dismissible fade show mt-2" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
     {% endfor %}
 
-    <p>Precisamos realizar um reconhecimento facial seu para garantir a segurança de todos os usuários, se você não realizar o seu acesso não será aprovado.</p>
+    <p class="mt-5">Precisamos realizar um reconhecimento facial seu para garantir a segurança de todos os usuários. Caso essa etapa não seja realizada, o seu acesso não será aprovado.</p>
     <h3>Instruções: </h3>
     <p id="instrucoes">Abra a boca</p>
-    <video id="video" width="640" height="480" autoplay muted playsinline></video>
-    <canvas id="saida" width="640" height="480"></canvas>
+    <div class="container justify-content-center mt-5 mb-5" style="margin-left: 50em;">
+        <video id="video" width="640" height="480" autoplay muted playsinline style="margin-left: 30em;" class="mb-5"></video>
+        <canvas id="saida" width="640" height="480" style="margin-left: 30em;" class="mb-5"></canvas>
+    </div>
 </div>
 {% load static %}
 <script src="{% static 'js/reconhecimento_facial.js' %}"></script>
