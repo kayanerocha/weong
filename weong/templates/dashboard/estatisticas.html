@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
-
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 {% block content %}
 <div class="container">
-    <form id="filtro">
-        <label for="Escolha um ano:"></label>
+    <form id="filtro" class="mt-5">
+        <label for="Escolha um ano:">Escolha um ano:</label>
         <select name="ano" id="ano"></select>
         <input type="submit" value="Carregar" name="_carregar">
     </form>

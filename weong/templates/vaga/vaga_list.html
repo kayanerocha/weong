@@ -36,7 +36,7 @@
             <div class="card" style="width: 20rem; margin-top: 1vw; min-height:15rem;">
                 <div class="card-body">
                     <h5 class="card-title"><a href="{{ vaga.get_absolute_url }}">{{ vaga.titulo }}</a></h5>
-                    <p class="card-text"><small>Data de Criação: {{ vaga.created_at }}</small></p> 
+                    <p class="card-text"><small>Data de Criação: {{ vaga.created_at|date:"d/m/Y"}}</small></p> 
                     <p class="card-text">Endereço: {{ vaga.endereco }}</p> 
                 </div>
             </div>
