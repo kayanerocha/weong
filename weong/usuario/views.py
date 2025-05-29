@@ -84,10 +84,9 @@ def cadastro_voluntario(request: HttpRequest):
             
             try:
                 usuario = ActivationMailManager().send_verification_link(inactive_user=usuario, form=form_usuario, request=request)
-                usuario
             except Exception: # O servidor de email pode ficar indisponível por ser de teste
                 usuario.is_active = False
-                usuario = usuario.save()
+                usuario.save()
 
             # Criar o endereço
             endereco = form_endereco.save()
