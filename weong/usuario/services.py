@@ -93,10 +93,3 @@ def detectar_bordas_artificiais(frame):
     edges = cv2.Canny(frame, 100, 200)
     contagem = numpy.sum(edges > 0)
     return contagem > 10000
-
-def verificar_filtro_beleza(frame, face_bbox):
-    x, y, w, h = face_bbox
-    face = frame[y:y+h, x:x+w]
-    hsv = cv2.cvtColor(face, cv2.COLOR_BGR2HSV)
-    s = hsv[:, :, 1]
-    return numpy.std(s) < 10
